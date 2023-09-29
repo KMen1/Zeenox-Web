@@ -1,0 +1,11 @@
+.track:hover .play {
+  opacity: 1;
+}
+
+.track:hover .index {
+  display: none;
+}
+
+.play {
+  opacity: 0;
+}
