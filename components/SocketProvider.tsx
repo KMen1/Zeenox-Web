@@ -55,10 +55,7 @@ export function SocketProvider({
       withCloseButton: false,
     });
     socket = new WebSocket(
-      `ws://${process.env.BOT_URL?.replace(
-        "http://",
-        ""
-      )}/api/v1/WebSocket/Connect?id=${id}`
+      `wss://zeenox.tech/api/v1/WebSocket/Connect?id=${id}`
     );
     socket.onopen = () => {
       socket?.send(serverSessionToken);
