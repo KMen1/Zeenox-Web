@@ -2,7 +2,18 @@ import { authOptions } from "@/auth";
 import { getServerSession } from "next-auth";
 import { NextRequest } from "next/server";
 
-const allowedActions = ["play", "pause", "stop", "next", "back"];
+const allowedActions = [
+  "play",
+  "pause",
+  "stop",
+  "next",
+  "back",
+  "shuffle",
+  "repeat",
+  "skipto",
+  "remove",
+  "like",
+];
 
 export async function POST(
   request: NextRequest,
@@ -28,7 +39,7 @@ export async function POST(
   });
 
   const url = `${process.env.BOT_URL}/api/v1/player/${action}` + queryString;
-
+  console.log(url);
   try {
     const response = await fetch(url, {
       method: "POST",
