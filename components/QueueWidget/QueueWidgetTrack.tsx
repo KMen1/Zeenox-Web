@@ -56,11 +56,11 @@ function QueueWidgetTrack({
             onClick={skipto}
             className={`${styles.play} ${
               colorScheme === "dark" ? "text-white" : "text-black"
-            } absolute right-[0.1rem] top-[0.1rem] duration-75 ease-in-out hover:text-gray-300`}
+            } absolute right-[0rem] top-[0.05rem] duration-75 ease-in-out hover:text-gray-300`}
           />
           <Text
             size="0.9rem"
-            className={`${styles.index} rtl absolute -top-[0.2rem] right-1 z-0 text-right`}
+            className={`${styles.index} rtl absolute -top-[0rem] right-1 z-0 text-right`}
           >
             {index + 1}
           </Text>

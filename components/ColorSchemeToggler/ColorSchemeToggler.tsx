@@ -12,8 +12,9 @@ export function ColorSchemeToggler() {
       color={dark ? "yellow" : "blue"}
       onClick={() => toggleColorScheme()}
       title="Toggle color scheme"
+      size="sm"
     >
-      {dark ? <IconSun size="1.1rem" /> : <IconMoonStars size="1.1rem" />}
+      {dark ? <IconSun size="0.8rem" /> : <IconMoonStars size="0.8rem" />}
     </ActionIcon>
   );
 }

@@ -42,7 +42,7 @@ export default function PlayerWidgetControls() {
       <Flex gap={15} align="center">
         <button onClick={shuffle}>
           <IconArrowsShuffle
-            color="lightgray"
+            color="white"
             size="1rem"
             className="duration-100c transition-all ease-in-out hover:text-white"
           />
@@ -51,7 +51,7 @@ export default function PlayerWidgetControls() {
           <button onClick={back}>
             <FontAwesomeIcon
               icon={faBackwardStep}
-              color="lightgray"
+              color="white"
               size="2xl"
               className="transition-all duration-100 ease-in-out hover:text-white"
             />
@@ -79,7 +79,7 @@ export default function PlayerWidgetControls() {
           <button onClick={next}>
             <FontAwesomeIcon
               icon={faForwardStep}
-              color="lightgray"
+              color="white"
               size="2xl"
               className="transition-all duration-100 ease-in-out hover:text-white"
             />
@@ -89,21 +89,21 @@ export default function PlayerWidgetControls() {
           {repeatMode === RepeatMode.None && (
             <IconRepeatOff
               size="1rem"
-              color="lightgray"
+              color="white"
               className="transition-all duration-100 ease-in-out hover:text-white"
             />
           )}
           {repeatMode === RepeatMode.Track && (
             <IconRepeatOnce
               size="1rem"
-              color="lightgray"
+              color="white"
               className="transition-all duration-100 ease-in-out hover:text-white"
             />
           )}
           {repeatMode === RepeatMode.Queue && (
             <IconRepeat
               size="1rem"
-              color="lightgray"
+              color="white"
               className="transition-all duration-100 ease-in-out hover:text-white"
             />
           )}

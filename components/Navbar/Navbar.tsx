@@ -3,6 +3,7 @@ import { Title, Card, Group } from "@mantine/core";
 import { getServerSession } from "next-auth";
 import { UserDisplay } from "../UserDisplay.tsx/UserDisplay";
 import { SignInDisplay } from "../SignInDisplay/SignInDisplay";
+import Link from "next/link";
 
 export async function Navbar() {
   const session = await getServerSession(authOptions);
@@ -12,7 +13,7 @@ export async function Navbar() {
     <Card
       withBorder
       shadow="md"
-      p="xs"
+      p="6"
       style={{
         borderTop: "none",
         borderLeft: "none",
@@ -21,7 +22,11 @@ export async function Navbar() {
       }}
     >
       <Group justify="space-between">
-        <Title size="lg">Zeenox</Title>
+        <Group>
+          <Title size="lg">Zeenox</Title>
+          <Link href="/">Home</Link>
+          <Link href="/dashboard">Dashboard</Link>
+        </Group>
         {user ? <UserDisplay user={user} /> : <SignInDisplay />}
       </Group>
     </Card>

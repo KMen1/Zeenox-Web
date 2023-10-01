@@ -38,11 +38,7 @@ export default function QueueWidget() {
             Queue
           </Title>
           <Flex gap={2}>
-            {data.Tracks.length === 0 && (
-              <Text size="xs" c={dark ? "white" : "black"}>
-                Empty
-              </Text>
-            )}
+            {data.Tracks.length === 0 && <Text size="xs">Empty</Text>}
             {data.Tracks.length > 0 && (
               <>
                 <Text size="xs" c={dark ? "" : "black"}>
@@ -60,7 +56,7 @@ export default function QueueWidget() {
             )}
           </Flex>
         </Flex>
-        <Divider mb="xs" />
+        <Divider mb="0.3525rem" />
         <ScrollArea style={{ height: "27rem" }} type="hover">
           {winReady && <DragAndDropTrackList data={data.Tracks} />}
         </ScrollArea>

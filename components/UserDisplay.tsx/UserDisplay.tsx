@@ -12,9 +12,8 @@ export function UserDisplay({ user }: { user: Session["user"] }) {
         alt={user.name!}
         radius="xl"
         color="blue"
-        size="sm"
+        size="xs"
       />
-      <Text size="xs">Logged in as {user.name}</Text>
       <ColorSchemeToggler />
     </Group>
   );
