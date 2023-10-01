@@ -75,7 +75,7 @@ async function fetchToken(request: NextRequest, id?: string) {
   );
 
   const serverToken = await tokenRes.text();
-  const response = NextResponse.next();
+  const response = NextResponse.redirect(request.nextUrl.toString());
   response.cookies.set({
     name: "serverSessionToken",
     value: serverToken,
