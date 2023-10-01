@@ -20,7 +20,7 @@ export default function PlayerWidgetAlbumArt() {
     <Image
       priority
       src={
-        trackData.Thumbnail === "" || null
+        trackData.Thumbnail === "" || trackData.Thumbnail === null
           ? "/placeholder-album.jpeg"
           : trackData.Thumbnail!
       }
