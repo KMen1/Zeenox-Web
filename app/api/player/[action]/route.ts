@@ -13,6 +13,7 @@ const allowedActions = [
   "skipto",
   "remove",
   "like",
+  "move",
 ];
 
 export async function POST(
@@ -39,7 +40,7 @@ export async function POST(
   });
 
   const url = `${process.env.BOT_URL}/api/v1/player/${action}` + queryString;
-  console.log(url);
+
   try {
     const response = await fetch(url, {
       method: "POST",
