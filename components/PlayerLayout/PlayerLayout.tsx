@@ -14,6 +14,7 @@ import PlayerWidget from "../PlayerWidget";
 import { NextTrackWidget } from "../NextTrackWidget/NextTrackWidget";
 import QueueWidget from "../QueueWidget";
 import { DiscordUserData, GuildData } from "@/types";
+import { ListenerDisplay } from "./ListenerDisplay";
 
 export function PlayerLayout({
   guildData,
@@ -35,37 +36,7 @@ export function PlayerLayout({
             />
             <Title order={4}>{guildData!.Name}</Title>
           </Group>
-          <Tooltip.Group openDelay={100} closeDelay={100}>
-            <Avatar.Group spacing="sm">
-              {listeners.slice(0, 5).map((listener) => (
-                <Tooltip
-                  key={listener.Username}
-                  label={`${listener.DisplayName} (${listener.Username})`}
-                  withArrow
-                >
-                  <Avatar src={listener.AvatarUrl} radius="xl" size="sm" />
-                </Tooltip>
-              ))}
-              {listeners.length > 5 && (
-                <Tooltip
-                  withArrow
-                  label={
-                    <>
-                      {listeners.slice(5).map((listener) => (
-                        <div key={listener.Username}>
-                          {listener.DisplayName} ({listener.Username})
-                        </div>
-                      ))}
-                    </>
-                  }
-                >
-                  <Avatar radius="xl" size="sm">
-                    +{listeners.length - 5}
-                  </Avatar>
-                </Tooltip>
-              )}
-            </Avatar.Group>
-          </Tooltip.Group>
+          <ListenerDisplay />
         </Group>
       </Card>
       <Grid grow>

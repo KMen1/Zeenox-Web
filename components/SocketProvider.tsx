@@ -8,13 +8,18 @@ import {
   type PlayerData,
 } from "@/types";
 import { notifications } from "@mantine/notifications";
-import { IconCheck, IconExclamationCircle } from "@tabler/icons-react";
+import {
+  IconAlertTriangle,
+  IconCheck,
+  IconExclamationCircle,
+} from "@tabler/icons-react";
 import {
   createContext,
   useReducer,
   useContext,
   useEffect,
   useCallback,
+  useState,
 } from "react";
 import { QueueProvider } from "./QueueProvider";
 import { PlayerStateProvider } from "./PlayerStateProvider";
@@ -22,6 +27,7 @@ import { CurrentTrackProvider } from "./CurrentTrackProvider";
 import { PlayerPositionProvider } from "./PlayerPositionProvider";
 import { PlayerRepeatModeProvider } from "./PlayerRepeatModeProvider";
 import { useSession } from "next-auth/react";
+import { ListenersProvider } from "./ListenersProvider";
 
 const SocketDataContext = createContext<ServerMessage | null>(null);
 const SocketActionContext = createContext<
@@ -43,6 +49,7 @@ export function SocketProvider({
 }) {
   const userId = useSession().data?.user?.id;
   const [state, dispatch] = useReducer(MessageReducer, initialData);
+  const [isPerformingAction, setIsPerformingAction] = useState(false);
 
   useEffect(() => {
     notifications.show({
@@ -103,27 +110,42 @@ export function SocketProvider({
 
   const performAction = useCallback(
     async (action: string, payload?: object) => {
+      if (isPerformingAction) {
+        notifications.show({
+          id: `perform-action-wait-${Date.now()}`,
+          title: "Hold on!",
+          color: "yellow",
+          message: "Please wait for the current action to finish!",
+          icon: <IconAlertTriangle size="1rem" />,
+          autoClose: 2000,
+          withCloseButton: true,
+        });
+        return;
+      }
+
       notifications.show({
         id: `perform-action-${action}`,
         loading: true,
         title: "Performing action...",
-        message:
-          "Please wait while we perform the action, you cannot close this yet!",
+        message: "Please wait while we perform the action!",
         autoClose: false,
         withCloseButton: false,
       });
       try {
+        setIsPerformingAction(true);
         let queryString = "";
         if (payload) {
           for (const [key, value] of Object.entries(payload)) {
-            queryString += `&${key}=${value}`;
+            if (queryString === "") queryString += "?";
+            else queryString += "&";
+            queryString += `${key}=${value}`;
           }
         }
 
         const res = await fetch(`/api/player/${action}` + queryString, {
           method: "POST",
         });
-        console.log(res.status);
+        setIsPerformingAction(false);
         if (!res.ok) {
           notifications.update({
             id: `perform-action-${action}`,
@@ -132,6 +154,7 @@ export function SocketProvider({
             message: "Please try again later!",
             icon: <IconExclamationCircle size="1rem" />,
             autoClose: 2000,
+            withCloseButton: true,
             loading: false,
           });
           return;
@@ -143,6 +166,7 @@ export function SocketProvider({
           message: "You can now close this notification!",
           icon: <IconCheck size="1rem" />,
           autoClose: 2000,
+          withCloseButton: true,
           loading: false,
         });
 
@@ -167,10 +191,11 @@ export function SocketProvider({
           icon: <IconExclamationCircle size="1rem" />,
           autoClose: 2000,
         });
+        setIsPerformingAction(false);
         return;
       }
     },
-    [state.Queue]
+    [isPerformingAction, state.Queue]
   );
 
   return (
@@ -184,9 +209,13 @@ export function SocketProvider({
               <PlayerPositionProvider
                 position={(state.Player as PlayerData).Position}
               >
-                <CurrentTrackProvider track={state.Track}>
-                  {children}
-                </CurrentTrackProvider>
+                <ListenersProvider
+                  listeners={(state.Player as PlayerData).Listeners}
+                >
+                  <CurrentTrackProvider track={state.Track}>
+                    {children}
+                  </CurrentTrackProvider>
+                </ListenersProvider>
               </PlayerPositionProvider>
             </PlayerRepeatModeProvider>
           </PlayerStateProvider>
