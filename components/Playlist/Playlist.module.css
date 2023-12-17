@@ -1,0 +1,57 @@
+.playlist {
+  border-radius: var(--mantine-radius-md);
+  padding: calc(var(--mantine-spacing-sm) / 2);
+
+  &[data-selected="true"] {
+    background-color: light-dark(
+      var(--mantine-color-gray-1),
+      var(--mantine-color-dark-5)
+    );
+  }
+
+  &:hover {
+    background-color: light-dark(
+      var(--mantine-color-gray-2),
+      var(--mantine-color-dark-5)
+    );
+
+    .playlistPlay {
+      opacity: 1;
+    }
+
+    .playlistImage {
+      filter: brightness(0.4);
+    }
+  }
+}
+
+.playlistImage {
+  border-radius: var(--mantine-radius-sm);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 40px;
+  height: 40px;
+
+  @apply duration-100 ease-in-out transition-all;
+}
+
+.playlistTitle {
+  color: light-dark(black, white);
+  font-weight: 600;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.playlistPlay {
+  color: white;
+  opacity: 0;
+
+  &:hover {
+    color: light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-1));
+  }
+
+  @apply duration-100 ease-in-out transition-all;
+}

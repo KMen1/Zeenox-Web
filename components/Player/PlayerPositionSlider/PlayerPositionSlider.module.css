@@ -1,0 +1,24 @@
+.track {
+  &::before {
+    background-color: light-dark(
+      var(--mantine-color-dark-1),
+      var(--mantine-color-dark-2)
+    );
+  }
+}
+
+.thumb {
+  height: 0.8rem;
+  width: 0.8rem;
+  background-color: white;
+  border-width: 0;
+  box-shadow: var(--mantine-shadow-md);
+}
+
+.bar {
+  background-color: white;
+}
+
+.timeText {
+  color: light-dark(white, var(--mantine-color-gray-3));
+}

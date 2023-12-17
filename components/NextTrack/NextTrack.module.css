@@ -1,0 +1,50 @@
+.thumbnail {
+  border-radius: var(--mantine-radius-sm);
+}
+
+.title {
+  color: light-dark(black, white);
+  font-weight: 600;
+}
+
+.nexttrack {
+  border-radius: var(--mantine-radius-md);
+  padding: calc(var(--mantine-spacing-sm) / 2);
+
+  &:hover {
+    background-color: light-dark(
+      var(--mantine-color-gray-1),
+      var(--mantine-color-dark-5)
+    );
+
+    .playButton {
+      opacity: 1;
+    }
+
+    .thumbnail {
+      filter: brightness(0.4);
+    }
+  }
+}
+
+.thumbnail {
+  border-radius: var(--mantine-radius-sm);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 40px;
+  height: 40px;
+
+  @apply duration-100 ease-in-out transition-all;
+}
+
+.playButton {
+  color: white;
+  opacity: 0;
+
+  @apply duration-100 ease-in-out transition-all;
+}
+
+.playButton:hover {
+  color: light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-1));
+}

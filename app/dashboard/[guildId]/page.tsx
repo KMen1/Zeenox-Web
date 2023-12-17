@@ -1,67 +1,70 @@
+import { getDiscordGuilds, getSocketSessionToken } from "@/app/utils";
 import { PlayerLayout } from "@/components/PlayerLayout/PlayerLayout";
-import { SocketProvider } from "@/components/SocketProvider";
-import { GuildData, ServerMessage } from "@/types";
+import { ActionProvider } from "@/components/Providers/ActionProvider";
+import { SocketProvider } from "@/components/Providers/SocketProvider/SocketProvider";
+import { currentUser } from "@clerk/nextjs";
+import { Skeleton } from "@mantine/core";
 import { Metadata } from "next";
-import { cookies } from "next/headers";
 
-export const metadata: Metadata = {
-  title: "Select a server",
-  description: "Welcome to Zeenox",
+type Props = {
+  params: { guildId: string };
+  searchParams: { [key: string]: string | string[] | undefined };
 };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const id = params.guildId;
+
+  const guilds = await getDiscordGuilds((await currentUser())!.id);
+
+  if (!guilds) {
+    throw new Error("No guilds");
+  }
+
+  const guild = guilds.find((g) => g.id === id);
+
+  if (!guild) {
+    throw new Error("Guild not found");
+  }
+
+  return {
+    title: `Listening in ${guild.name}`,
+    icons: {
+      icon: [
+        {
+          url:
+            "https://cdn.discordapp.com/icons/" + guild.id + "/" + guild.icon,
+        },
+      ],
+    },
+  };
+}
 
 export default async function Page({
   params,
 }: {
   params: { guildId: string };
 }) {
-  const cookieStore = cookies();
-  const serverSessionToken = cookieStore.get("serverSessionToken")?.value!;
-  const playerData = await getPlayerData(serverSessionToken, params.guildId);
-  const guildData = await getGuildData(serverSessionToken, params.guildId)!;
+  const user = await currentUser();
+  const discordId = user?.externalAccounts.find(
+    (a) => a.provider === "oauth_discord"
+  )?.externalId;
+  const serverSessionToken = await getSocketSessionToken(
+    discordId!,
+    params.guildId
+  );
+
+  if (!serverSessionToken) {
+    return <Skeleton w="100%" h={500} />;
+  }
 
   return (
-    <SocketProvider
-      id={params.guildId}
-      initialData={playerData!}
-      serverSessionToken={serverSessionToken}
-    >
-      <PlayerLayout
-        guildData={guildData!}
-        listeners={playerData?.Player.Listeners!}
-      />
-    </SocketProvider>
+    <ActionProvider socketSessionToken={serverSessionToken}>
+      <SocketProvider
+        id={params.guildId}
+        socketSessionToken={serverSessionToken}
+      >
+        <PlayerLayout />
+      </SocketProvider>
+    </ActionProvider>
   );
-}
-
-async function getPlayerData(token: string, guildId: string) {
-  try {
-    const playerRes = await fetch(
-      `${process.env.BOT_URL}/api/v1/player/getplayer?id=${guildId}`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        cache: "no-cache",
-      }
-    );
-    return (await playerRes.json()) as ServerMessage;
-  } catch (e) {
-    console.log(e);
-  }
-}
-
-async function getGuildData(token: string, guildId: string) {
-  try {
-    const guildRes = await fetch(
-      `${process.env.BOT_URL}/api/v1/guild/getguild?id=${guildId}`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    return (await guildRes.json()) as GuildData;
-  } catch (e) {
-    console.log(e);
-  }
 }

@@ -1,0 +1,24 @@
+.root {
+  position: relative;
+  z-index: 10;
+  background-image: url("https://images.genius.com/c08136674232240552013a5e403ce84f.1000x1000x1.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  &::before {
+    content: "";
+    @apply backdrop-blur;
+    background: rgba(0, 0, 0, 0.75);
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    position: absolute;
+    z-index: -1;
+  }
+}
+
+.trackImage {
+  border-radius: var(--mantine-radius-sm);
+}

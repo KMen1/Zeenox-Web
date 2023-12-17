@@ -1,13 +1,19 @@
-import { ColorSchemeScript, MantineProvider } from "@mantine/core";
+import {
+  ColorSchemeScript,
+  Container,
+  MantineProvider,
+  Stack,
+} from "@mantine/core";
 import type { Metadata } from "next";
-import NextAuthProvider from "@/components/NextAuthProvider";
-import { Navbar } from "@/components/Navbar/Navbar";
+import { dark } from "@clerk/themes";
 
 import { theme } from "../theme";
 import "./globals.css";
 import "@mantine/core/styles.css";
 import "@mantine/notifications/styles.css";
 import { Notifications } from "@mantine/notifications";
+import { Navbar } from "@/components/Navbar/Navbar";
+import { ClerkProvider } from "@clerk/nextjs";
 
 export const metadata: Metadata = {
   title: "Zeenox",
@@ -20,22 +26,33 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <head>
-        <meta charSet="UTF-8" />
-        <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <ColorSchemeScript />
-      </head>
-      <body>
-        <NextAuthProvider>
+    <ClerkProvider
+      appearance={{
+        baseTheme: dark,
+      }}
+    >
+      <html lang="en">
+        <head>
+          <meta charSet="UTF-8" />
+          <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
+          <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0"
+          />
+          <ColorSchemeScript />
+        </head>
+        <body>
           <MantineProvider defaultColorScheme="dark" theme={theme}>
-            <Notifications />
-            <Navbar />
-            {children}
+            <Container p="md" size="xl">
+              <Stack gap="md">
+                <Navbar />
+                {children}
+              </Stack>
+            </Container>
+            <Notifications position="top-center" />
           </MantineProvider>
-        </NextAuthProvider>
-      </body>
-    </html>
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }

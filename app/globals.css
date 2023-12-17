@@ -2,27 +2,25 @@
 @tailwind components;
 @tailwind utilities;
 
-/*:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+.cl-userButtonPopoverCard {
+  background-color: var(--mantine-color-dark-7);
+  width: 15rem;
+  padding: 0;
+  padding-top: var(--mantine-spacing-md);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
+.cl-userPreview {
+  padding-left: var(--mantine-spacing-md);
+  padding-right: var(--mantine-spacing-md);
 }
 
-body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+.cl-userButtonPopoverActionButton {
+  padding: var(--mantine-spacing-xs) var(--mantine-spacing-md);
 }
-*/
+
+.cl-userButtonPopoverFooter {
+  padding-left: var(--mantine-spacing-md);
+  padding-right: var(--mantine-spacing-md);
+  padding-bottom: var(--mantine-spacing-md);
+  padding-top: var(--mantine-spacing-xs);
+}

@@ -1,0 +1,139 @@
+.track {
+  border-radius: var(--mantine-radius-md);
+  padding: calc(var(--mantine-spacing-sm) / 2) calc(var(--mantine-spacing-sm));
+
+  &:hover {
+    background-color: light-dark(
+      var(--mantine-color-gray-1),
+      var(--mantine-color-dark-4)
+    );
+  }
+
+  &:hover .play {
+    opacity: 1;
+  }
+
+  &:hover .index {
+    display: none;
+  }
+  @apply duration-75 ease-in-out;
+}
+
+.trackDuration {
+  min-width: max-content;
+
+  &[data-left="true"] {
+    margin-left: auto;
+  }
+}
+
+.trackControl {
+  @apply relative inline-block h-[16px] min-h-[16px] w-[16px] min-w-[16px];
+}
+
+.trackControlPlay {
+  color: light-dark(black, white);
+  &:hover {
+    color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-gray-4));
+  }
+
+  @apply absolute -top-[0.1rem];
+}
+
+.trackIndex {
+  @apply absolute -top-[0rem] right-1 z-0 text-right w-max;
+
+  &[data-hide="true"] {
+    display: none;
+  }
+}
+
+.trackQueueControl {
+  &:hover {
+    color: light-dark(var(--mantine-color-red-7), var(--mantine-color-red-5));
+  }
+
+  @apply ml-auto duration-75 ease-in-out;
+}
+
+.trackMoveToTop {
+  &:hover {
+    color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-dark-1));
+  }
+
+  @apply ml-auto duration-75 ease-in-out;
+}
+
+.trackImage {
+  border-radius: var(--mantine-radius-sm);
+}
+
+.trackTitle {
+  color: light-dark(black, white);
+  font-weight: 500;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.play {
+  opacity: 0;
+
+  transition: duration-75 ease-in-out;
+}
+
+.smallTrack {
+  border-radius: var(--mantine-radius-md);
+  padding: calc(var(--mantine-spacing-sm) / 2);
+
+  &:hover {
+    background-color: light-dark(
+      var(--mantine-color-gray-1),
+      var(--mantine-color-dark-5)
+    );
+
+    .playButton {
+      opacity: 1;
+    }
+
+    .thumbnail {
+      filter: brightness(0.4);
+    }
+  }
+
+  &:hover[data-transparent="true"] {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+}
+
+.thumbnail {
+  border-radius: var(--mantine-radius-sm);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 40px;
+  height: 40px;
+
+  @apply duration-100 ease-in-out transition-all;
+}
+
+.playButton {
+  color: white;
+  opacity: 0;
+
+  @apply duration-100 ease-in-out transition-all;
+}
+
+.playButton:hover {
+  color: light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-1));
+}
+
+.title {
+  color: light-dark(black, white);
+  font-weight: 600;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}

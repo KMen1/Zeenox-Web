@@ -1,0 +1,34 @@
+.root[data-hasimage="true"] {
+  background-color: rgba(0, 0, 0, 0.6);
+}
+
+.root[data-hasimage="false"] {
+  background: black;
+}
+
+.container {
+  position: relative;
+  max-width: 350px;
+}
+
+.bgimage {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  border-radius: var(--mantine-radius-lg);
+
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.blur {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: inherit;
+  backdrop-filter: blur(15px);
+  border-radius: var(--mantine-radius-lg);
+}

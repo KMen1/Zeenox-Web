@@ -1,0 +1,72 @@
+"use client";
+
+import { useCurrentTrack } from "@/components/Providers/CurrentTrackProvider";
+import { GradientBackground } from "@/utils/utils";
+import { Skeleton, Stack, Text, useMantineColorScheme } from "@mantine/core";
+import Image from "next/image";
+import { useCallback, useEffect } from "react";
+import classes from "./PlayerSongInfoDisplay.module.css";
+
+export function PlayerSongInfoDisplay() {
+  const { track } = useCurrentTrack();
+  const { colorScheme } = useMantineColorScheme();
+  const isDark = colorScheme === "dark";
+  const setGradientBackground = useCallback(
+    () => GradientBackground(document, ".player-background", isDark),
+    [isDark]
+  );
+
+  const title = track?.Title || "Start playing something";
+  const author = track?.Author || ">_<";
+
+  useEffect(() => {
+    setGradientBackground();
+  }, [setGradientBackground, colorScheme]);
+
+  if (!track)
+    return (
+      <>
+        <Skeleton h={178} w={178} radius="md" />
+        <Skeleton w={67} h={10} />
+        <Skeleton w={50} h={10} />
+      </>
+    );
+
+  return (
+    <>
+      <Image
+        priority
+        src={track.Thumbnail || "/placeholder-album.jpeg"}
+        alt={track.Title || "Placeholder Album Art"}
+        width={400}
+        height={400}
+        style={{ borderRadius: "0.4rem" }}
+        onLoad={setGradientBackground}
+      />
+      <Stack gap={0}>
+        <Text
+          size="lg"
+          c="white"
+          fw={600}
+          lineClamp={1}
+          lh={1.4}
+          component="a"
+          href={track.Url!}
+          target="_blank"
+          className={classes.title}
+        >
+          {title}
+        </Text>
+        <Text
+          size="sm"
+          lineClamp={1}
+          lh={1.4}
+          c={isDark ? "" : "gray.4"}
+          fw={400}
+        >
+          {author}
+        </Text>
+      </Stack>
+    </>
+  );
+}

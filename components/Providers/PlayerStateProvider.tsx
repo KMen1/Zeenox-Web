@@ -1,0 +1,28 @@
+"use client";
+
+import { PlayerState } from "@/types";
+import { createContext, useContext } from "react";
+
+const PlayerStateContext = createContext<PlayerState | undefined>(undefined);
+
+export function PlayerStateProvider({
+  children,
+  state,
+}: {
+  children: React.ReactNode;
+  state: PlayerState | undefined;
+}) {
+  return (
+    <PlayerStateContext.Provider value={state || PlayerState.NotPlaying}>
+      {children}
+    </PlayerStateContext.Provider>
+  );
+}
+
+export function usePlayerState() {
+  const context = useContext(PlayerStateContext);
+  if (context === undefined) {
+    throw new Error("usePlayerState must be used within a PlayerStateProvider");
+  }
+  return context;
+}

@@ -1,55 +1,38 @@
-"use client";
+import { Grid, GridCol, Stack } from "@mantine/core";
+import NextTrack from "../NextTrack/NextTrack";
+import { Player } from "../Player/Player";
+import { QueuePlaylistAccordion } from "../QueuePlaylistAccordion/QueuePlaylistAccordion";
+import { getSpotifyPlaylists } from "@/app/utils";
+import { currentUser } from "@clerk/nextjs";
+import { ActionsList } from "../ActionsList/ActionsList";
 
-import {
-  Container,
-  Card,
-  Group,
-  Grid,
-  Title,
-  Stack,
-  Avatar,
-  Tooltip,
-} from "@mantine/core";
-import PlayerWidget from "../PlayerWidget";
-import { NextTrackWidget } from "../NextTrackWidget/NextTrackWidget";
-import QueueWidget from "../QueueWidget";
-import { DiscordUserData, GuildData } from "@/types";
-import { ListenerDisplay } from "./ListenerDisplay";
+export async function PlayerLayout() {
+  const user = await currentUser();
+  const spotify = user?.externalAccounts.find(
+    (a) => a.provider === "oauth_spotify"
+  );
 
-export function PlayerLayout({
-  guildData,
-  listeners,
-}: {
-  guildData: GuildData;
-  listeners: DiscordUserData[];
-}) {
+  const playlists = await getSpotifyPlaylists(user!.id);
+
   return (
-    <Container p="md" size="xl">
-      <Card mb="md" withBorder shadow="md">
-        <Group justify="space-between">
-          <Group align="center" gap={10}>
-            <Avatar
-              src={guildData!.IconUrl}
-              alt={guildData!.Name}
-              radius="xl"
-              size="sm"
-            />
-            <Title order={4}>{guildData!.Name}</Title>
-          </Group>
-          <ListenerDisplay />
-        </Group>
-      </Card>
-      <Grid grow>
-        <Grid.Col span={1}>
+    <>
+      <Grid grow style={{ overflow: "visible" }}>
+        <GridCol span={1}>
           <Stack>
-            <PlayerWidget />
-            <NextTrackWidget />
+            <Player />
+            <NextTrack />
           </Stack>
-        </Grid.Col>
-        <Grid.Col span={9}>
-          <QueueWidget />
-        </Grid.Col>
+        </GridCol>
+        <GridCol span={6}>
+          <QueuePlaylistAccordion
+            playlists={playlists}
+            spotifyConnected={spotify != undefined}
+          />
+        </GridCol>
+        <GridCol span={2}>
+          <ActionsList />
+        </GridCol>
       </Grid>
-    </Container>
+    </>
   );
 }
