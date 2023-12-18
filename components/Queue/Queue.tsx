@@ -11,7 +11,6 @@ import {
   Tooltip,
 } from "@mantine/core";
 import { useEffect, useState } from "react";
-import { useQueueData } from "../Providers/QueueProvider";
 import { DndTrackList } from "../DndTrackList/DndTrackList";
 import {
   IconArrowsShuffle,
@@ -26,6 +25,8 @@ import {
   showNotification,
   updateNotification,
 } from "@/utils/notificationUtils";
+import { useAtomValue } from "jotai";
+import { queueAtom } from "@/utils/atoms";
 
 export function Queue() {
   const [winReady, setwinReady] = useState(false);
@@ -33,7 +34,7 @@ export function Queue() {
     setwinReady(true);
   }, []);
 
-  const { queue } = useQueueData();
+  const tracks = useAtomValue(queueAtom);
   const { moveTrack, shuffleQueue, clearQueue, distinctQueue, reverseQueue } =
     useActions();
 
@@ -133,7 +134,7 @@ export function Queue() {
     });
   }
 
-  if (queue === null) {
+  if (tracks === null) {
     return (
       <Stack gap={4}>
         {Array.from({ length: 8 }).map((_, i) => (
@@ -156,7 +157,6 @@ export function Queue() {
     );
   }
 
-  const tracks = queue.Tracks;
   if (tracks.length === 0)
     return (
       <Center h={420} p="xl">

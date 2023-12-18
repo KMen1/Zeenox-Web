@@ -10,21 +10,24 @@ import {
   InitData,
   ServerMessageData,
 } from "@/types";
-import { useEffect, useState } from "react";
-import { QueueProvider } from "../QueueProvider";
-import { PlayerStateProvider } from "../PlayerStateProvider";
-import { CurrentTrackProvider } from "../CurrentTrackProvider";
-import { PlayerPositionProvider } from "../PlayerPositionProvider";
-import { PlayerRepeatModeProvider } from "../PlayerRepeatModeProvider";
-import { ListenersProvider } from "../ChannelInfoProvider";
-import { PlayerActionsProvider } from "../PlayerActionsProvider";
+import { useEffect } from "react";
 import { IconCheck, IconNetwork } from "@tabler/icons-react";
 import {
   showNotification,
   updateNotification,
 } from "@/utils/notificationUtils";
-import { PlayerVolumeProvider } from "../PlayerVolumeProvider";
-import { InitDataProvider } from "../InitDataProvider";
+import { useSetAtom } from "jotai";
+import {
+  actionsAtom,
+  initAtom,
+  listenersAtom,
+  positionAtom,
+  queueAtom,
+  repeatAtom,
+  stateAtom,
+  trackAtom,
+  volumeAtom,
+} from "@/utils/atoms";
 
 let socket: WebSocket | null = null;
 
@@ -37,21 +40,15 @@ export function SocketProvider({
   children: React.ReactNode;
   socketSessionToken: string;
 }) {
-  const [init, setInitData] = useState<{ initData: InitData | null }>({
-    initData: null,
-  });
-  const [player, setPlayer] = useState<{ player: PlayerData | null }>({
-    player: null,
-  });
-  const [track, setTrack] = useState<{ track: TrackData | null }>({
-    track: null,
-  });
-  const [queue, setQueue] = useState<{ queue: QueueData | null }>({
-    queue: null,
-  });
-  const [actions, setActions] = useState<{ actions: Action[] | null }>({
-    actions: null,
-  });
+  const setInit = useSetAtom(initAtom);
+  const setQueue = useSetAtom(queueAtom);
+  const setTrack = useSetAtom(trackAtom);
+  const setActions = useSetAtom(actionsAtom);
+  const setVolume = useSetAtom(volumeAtom);
+  const setRepeat = useSetAtom(repeatAtom);
+  const setPosition = useSetAtom(positionAtom);
+  const setState = useSetAtom(stateAtom);
+  const setListeners = useSetAtom(listenersAtom);
 
   useEffect(() => {
     const notificatonId = `connect-socket-${Date.now()}`;
@@ -82,28 +79,32 @@ export function SocketProvider({
     };
     socket.onmessage = (event) => {
       const data = JSON.parse(event.data as string) as ServerMessageData;
-      console.log(data);
       switch (data.Type) {
         case "player-init":
-          setInitData({ initData: data as InitData });
+          setInit(data as InitData);
           break;
         case "player-data":
-          setPlayer({ player: data as PlayerData });
+          const playerData = data as PlayerData;
+          setVolume(playerData.Volume);
+          setRepeat(playerData.RepeatMode);
+          setPosition(playerData.Position || 0);
+          setState(playerData.State);
+          setListeners(playerData.Listeners);
           break;
         case "player-track":
-          setTrack({ track: data as TrackData });
+          setTrack(data as TrackData);
           break;
         case "player-queue":
-          setQueue({ queue: data as QueueData });
+          setQueue((data as QueueData).Tracks);
           break;
         case "player-actions":
-          setActions({ actions: (data as ActionsData).Actions.reverse() });
+          setActions((data as ActionsData).Actions.reverse());
           break;
         case "player-action":
           const action = (data as ActionData).Action as Action;
           setActions((state) => {
-            if (!state.actions) return { actions: [action] };
-            return { actions: [action, ...state.actions] };
+            if (!state) return [action];
+            return [action, ...state];
           });
           break;
       }
@@ -111,32 +112,19 @@ export function SocketProvider({
     return () => {
       socket?.close();
     };
-  }, [id, socketSessionToken]);
+  }, [
+    id,
+    setActions,
+    setInit,
+    setListeners,
+    setPosition,
+    setQueue,
+    setRepeat,
+    setState,
+    setTrack,
+    setVolume,
+    socketSessionToken,
+  ]);
 
-  return (
-    <InitDataProvider data={init}>
-      <QueueProvider data={queue}>
-        <PlayerStateProvider state={player.player?.State}>
-          <PlayerRepeatModeProvider repeatMode={player.player?.RepeatMode}>
-            <PlayerPositionProvider
-              data={{ position: player.player?.Position || 0 }}
-            >
-              <PlayerVolumeProvider data={{ volume: player.player?.Volume }}>
-                <ListenersProvider
-                  listeners={player.player?.Listeners}
-                  name={init.initData?.VoiceChannelName}
-                >
-                  <CurrentTrackProvider data={track}>
-                    <PlayerActionsProvider data={actions}>
-                      {children}
-                    </PlayerActionsProvider>
-                  </CurrentTrackProvider>
-                </ListenersProvider>
-              </PlayerVolumeProvider>
-            </PlayerPositionProvider>
-          </PlayerRepeatModeProvider>
-        </PlayerStateProvider>
-      </QueueProvider>
-    </InitDataProvider>
-  );
+  return <>{children}</>;
 }

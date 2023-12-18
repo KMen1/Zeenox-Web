@@ -22,10 +22,10 @@
     "@tabler/icons-react": "^2.43.0",
     "@yaireo/relative-time": "^1.0.4",
     "fast-average-color": "^9.4.0",
+    "jotai": "^2.6.0",
     "masonic": "^3.7.0",
     "mongodb": "^6.3.0",
     "next": "^14.0.4",
-    "next-auth": "^4.24.5",
     "react": "latest",
     "react-beautiful-dnd": "^13.1.1",
     "react-dom": "latest",
@@ -37,6 +37,7 @@
     "swr": "^2.2.4"
   },
   "devDependencies": {
+    "@swc-jotai/react-refresh": "^0.1.0",
     "@types/node": "latest",
     "@types/react": "latest",
     "@types/react-beautiful-dnd": "^13.1.7",

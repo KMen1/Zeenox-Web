@@ -32,7 +32,7 @@ export function Playlist({
     >
       <div className="relative min-w-[40px] min-h-[40px]">
         <Image
-          src={playlist.images[0].url}
+          src={playlist.images[0]?.url}
           width={40}
           height={40}
           alt={playlist.name}

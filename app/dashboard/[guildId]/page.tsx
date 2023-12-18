@@ -16,23 +16,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const guilds = await getDiscordGuilds((await currentUser())!.id);
 
-  if (!guilds) {
-    throw new Error("No guilds");
-  }
-
-  const guild = guilds.find((g) => g.id === id);
-
-  if (!guild) {
-    throw new Error("Guild not found");
-  }
+  const guild = guilds?.find((g) => g.id === id);
 
   return {
-    title: `Listening in ${guild.name}`,
+    title: `Listening in ${guild?.name ?? "Unknown"}`,
     icons: {
       icon: [
         {
           url:
-            "https://cdn.discordapp.com/icons/" + guild.id + "/" + guild.icon,
+            "https://cdn.discordapp.com/icons/" + guild?.id + "/" + guild?.icon,
         },
       ],
     },

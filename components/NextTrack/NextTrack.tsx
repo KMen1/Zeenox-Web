@@ -1,31 +1,17 @@
 "use client";
 
-import {
-  Card,
-  Divider,
-  Group,
-  Skeleton,
-  Stack,
-  Text,
-  Title,
-} from "@mantine/core";
-import Image from "next/image";
-import { useQueueData } from "../Providers/QueueProvider";
-import classes from "./NextTrack.module.css";
-import { IconPlayerPlayFilled } from "@tabler/icons-react";
+import { Card, Divider, Group, Skeleton, Stack, Title } from "@mantine/core";
 import { useActions } from "../Providers/ActionProvider";
 import { Track } from "../Track/Track";
+import { useAtomValue } from "jotai";
+import { queueAtom } from "@/utils/atoms";
 
 export default function NextTrack() {
-  const { queue } = useQueueData();
-  const track = queue
-    ? queue.Tracks?.length > 0
-      ? queue.Tracks[0]
-      : undefined
-    : null;
+  const tracks = useAtomValue(queueAtom);
+  const track = tracks ? (tracks.length > 0 ? tracks[0] : undefined) : null;
   const { skipToTrack } = useActions();
 
-  function skipTo() {
+  function skipTo(index: number) {
     if (track) {
       skipToTrack(0);
     }

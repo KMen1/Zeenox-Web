@@ -12,10 +12,11 @@ import classes from "./QueuePlaylistAccordion.module.css";
 import { Playlist } from "@/types";
 import { PlaylistSelector } from "../PlaylistSelector/PlaylistSelector";
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
-import { useQueueData } from "../Providers/QueueProvider";
 import { toHumanTime } from "@/utils/utils";
 import { useDebouncedState } from "@mantine/hooks";
 import { LazyTrackList } from "../LazyTrackList/LazyTrackList";
+import { useAtomValue } from "jotai";
+import { queueAtom } from "@/utils/atoms";
 
 export function QueuePlaylistAccordion({
   playlists,
@@ -29,11 +30,10 @@ export function QueuePlaylistAccordion({
     "saved"
   );
   const [searchQuery, setSearchQuery] = useDebouncedState("", 1000);
-  const { queue } = useQueueData();
+  const tracks = useAtomValue(queueAtom);
 
   function getQueueLength() {
-    if (queue === null) return null;
-    const tracks = queue.Tracks;
+    if (tracks === null) return null;
     if (tracks.length === 0) return null;
     return `${tracks.length} ${
       tracks.length === 1 ? "song" : "songs"

@@ -1,14 +1,15 @@
 "use client";
 
-import { useCurrentTrack } from "@/components/Providers/CurrentTrackProvider";
 import { GradientBackground } from "@/utils/utils";
 import { Skeleton, Stack, Text, useMantineColorScheme } from "@mantine/core";
 import Image from "next/image";
 import { useCallback, useEffect } from "react";
 import classes from "./PlayerSongInfoDisplay.module.css";
+import { useAtomValue } from "jotai";
+import { trackAtom } from "@/utils/atoms";
 
 export function PlayerSongInfoDisplay() {
-  const { track } = useCurrentTrack();
+  const track = useAtomValue(trackAtom);
   const { colorScheme } = useMantineColorScheme();
   const isDark = colorScheme === "dark";
   const setGradientBackground = useCallback(

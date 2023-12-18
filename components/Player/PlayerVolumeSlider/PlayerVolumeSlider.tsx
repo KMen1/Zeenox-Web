@@ -1,15 +1,16 @@
 import { useActions } from "@/components/Providers/ActionProvider";
-import { usePlayerVolume } from "@/components/Providers/PlayerVolumeProvider";
+import { volumeAtom } from "@/utils/atoms";
 import {
   showNotification,
   updateNotification,
 } from "@/utils/notificationUtils";
 import { Slider } from "@mantine/core";
 import { IconExclamationMark, IconVolume } from "@tabler/icons-react";
+import { useAtomValue } from "jotai";
 
 export function PlayerVolumeSlider() {
   const { setVolume } = useActions();
-  const { volume } = usePlayerVolume();
+  const volume = useAtomValue(volumeAtom);
 
   function sv(v: number) {
     const id = `volume-${Date.now()}`;

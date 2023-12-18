@@ -1,11 +1,12 @@
 "use client";
 
 import { Flex, Group, Text, Avatar, Skeleton } from "@mantine/core";
-import { useCurrentTrack } from "../../Providers/CurrentTrackProvider";
 import classes from "./PlayerSongRequesterDisplay.module.css";
+import { useAtomValue } from "jotai";
+import { trackAtom } from "@/utils/atoms";
 
 export function PlayerSongRequesterDisplay() {
-  const { track } = useCurrentTrack();
+  const track = useAtomValue(trackAtom);
   if (!track) return <Skeleton w={100} h={10} />;
 
   const requestedBy = track.RequestedBy;

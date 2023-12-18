@@ -10,7 +10,6 @@ import {
   Group,
   ScrollArea,
   Space,
-  Grid,
 } from "@mantine/core";
 import {
   Action,
@@ -29,12 +28,12 @@ import {
   VolumeAction,
 } from "@/types";
 import { IconList, IconMoodSad } from "@tabler/icons-react";
-import { usePlayerActions } from "../Providers/PlayerActionsProvider";
 import { ActionCard } from "../ActionCard/ActionCard";
-import Image from "next/image";
 import { toTime } from "@/utils/utils";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { Track } from "../Track/Track";
+import { useAtomValue } from "jotai";
+import { actionsAtom } from "@/utils/atoms";
 
 function getTitle(action: Action): string {
   switch (action.Type) {
@@ -181,7 +180,7 @@ const titleDict: Record<ActionType, string> = {
 };
 
 export function ActionsList() {
-  const { actions } = usePlayerActions();
+  const actions = useAtomValue(actionsAtom);
   const [parent] = useAutoAnimate();
 
   if (actions === null)

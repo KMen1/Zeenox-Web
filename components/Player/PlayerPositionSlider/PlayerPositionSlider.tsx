@@ -2,11 +2,8 @@
 
 import { Flex, Skeleton, Slider, Text } from "@mantine/core";
 import { useCallback, useEffect, useState } from "react";
-import { useCurrentTrack } from "../../Providers/CurrentTrackProvider";
-import { usePlayerPosition } from "../../Providers/PlayerPositionProvider";
 import { toTime } from "@/utils/utils";
 import { useActions } from "@/components/Providers/ActionProvider";
-import { usePlayerState } from "@/components/Providers/PlayerStateProvider";
 import { PlayerState } from "@/types";
 import classes from "./PlayerPositionSlider.module.css";
 import {
@@ -17,31 +14,36 @@ import {
   IconExclamationMark,
   IconPlayerTrackNextFilled,
 } from "@tabler/icons-react";
-import { useInitData } from "@/components/Providers/InitDataProvider";
+import { useAtom, useAtomValue } from "jotai";
+import {
+  durationAtom,
+  initAtom,
+  positionAtom,
+  stateAtom,
+  trackAtom,
+} from "@/utils/atoms";
 
 export function PlayerPositionSlider() {
-  const { position } = usePlayerPosition();
-  const { initData } = useInitData();
+  const position = useAtomValue(positionAtom);
+  const initData = useAtomValue(initAtom);
   const initialPosition = initData?.Position;
-  const state = usePlayerState();
-  const { track } = useCurrentTrack();
-  const duration = track?.Duration ?? 0;
+  const state = useAtomValue(stateAtom);
+  const track = useAtomValue(trackAtom);
+  const duration = useAtomValue(durationAtom);
   const { seekTrack } = useActions();
 
   const [isDragging, setIsDragging] = useState(false);
   const [_position, setPosition] = useState(initialPosition ?? 0);
 
   useEffect(() => {
-    setPosition(0);
-  }, [track]);
-
-  useEffect(() => {
     setPosition(position);
   }, [position]);
 
   useEffect(() => {
-    setPosition(initialPosition ?? 0);
-  }, [initialPosition]);
+    if (track && position >= track.Duration) {
+      setPosition(0);
+    }
+  }, [position, track]);
 
   useEffect(() => {
     if (

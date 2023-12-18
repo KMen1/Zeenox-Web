@@ -8,8 +8,7 @@ import {
   faForwardStep,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Center, Flex, Group, Popover, Skeleton, Slider } from "@mantine/core";
-import { usePlayerState } from "../../Providers/PlayerStateProvider";
+import { Center, Flex, Group, Popover, Skeleton } from "@mantine/core";
 import {
   IconExclamationCircle,
   IconPlayerPlayFilled,
@@ -19,7 +18,6 @@ import {
   IconRepeatOnce,
   IconVolume,
 } from "@tabler/icons-react";
-import { usePlayerRepeatMode } from "../../Providers/PlayerRepeatModeProvider";
 import { useActions } from "@/components/Providers/ActionProvider";
 import classes from "./PlayerControls.module.css";
 import {
@@ -27,10 +25,12 @@ import {
   updateNotification,
 } from "@/utils/notificationUtils";
 import { PlayerVolumeSlider } from "../PlayerVolumeSlider/PlayerVolumeSlider";
+import { useAtomValue } from "jotai";
+import { repeatAtom, stateAtom } from "@/utils/atoms";
 
 export function PlayerControls() {
-  const state = usePlayerState();
-  const { repeatMode } = usePlayerRepeatMode();
+  const state = useAtomValue(stateAtom);
+  const repeatMode = useAtomValue(repeatAtom);
   const { backTrack, skipTrack, pause, resume, cycleRepeatMode } = useActions();
 
   function back() {
