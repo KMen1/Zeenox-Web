@@ -42,7 +42,7 @@ export function ActionCard({
                 style={{ borderRadius: "50%" }}
               />
               <Text c="white" size="0.875rem">
-                {user.DisplayName} ({user.Username})
+                {user.DisplayName}
               </Text>
             </Group>
             <Tooltip label={time.toLocaleTimeString()}>
