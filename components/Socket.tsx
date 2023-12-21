@@ -71,13 +71,14 @@ export function Socket({
       );
     };
     socket.onclose = (ev) => {
-      console.error(`Socket disconnected with reason: ${ev.reason}`);
       updateNotification(
         notificatonId,
-        `Disconnected from server`,
+        ev.code === 1006 ? "Unable to connect!" : `Disconnected from server`,
         <IconNetwork />,
         "red",
-        `Disconnected from server with reason: ${ev.reason}`
+        ev.code === 1006
+          ? "Start playing before trying to connect!"
+          : `Disconnected from server with reason: ${ev.reason}`
       );
     };
     socket.onmessage = (event) => {
