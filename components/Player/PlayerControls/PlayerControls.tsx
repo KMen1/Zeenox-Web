@@ -152,7 +152,7 @@ export function PlayerControls() {
     }
   }
 
-  if (repeatMode === undefined)
+  if (repeatMode === null)
     return (
       <>
         <Group gap={15}>

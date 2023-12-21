@@ -197,19 +197,17 @@ export function ActionsList() {
 
   if (actions === null)
     return (
-      <Card shadow="xl" style={{ height: "100%" }}>
-        <Skeleton w={80} h={25} />
-        <Divider mt={10} />
-        <Stack gap={4}>
-          {Array.from({ length: 5 }).map((_, i) => (
-            <Group key={i} justify="space-between">
-              <Group gap={10} mt={10}>
-                <Skeleton w={34} h={34} />
-                <Skeleton w={250} h={15} />
-              </Group>
-              <Skeleton w={100} h={15} />
-            </Group>
-          ))}
+      <Card shadow="xl" style={{ height: "100%" }} pt="sm">
+        <Group gap={10} align="center">
+          <IconList />
+          <Text fw={600}>Actions</Text>
+        </Group>
+        <Divider mt="sm" />
+        <Stack gap={10} mt={10}>
+          <Skeleton w="100%" h={140} />
+          <Skeleton w="100%" h={60} />
+          <Skeleton w="100%" h={140} />
+          <Skeleton w="100%" h={60} />
         </Stack>
       </Card>
     );
@@ -232,13 +230,12 @@ export function ActionsList() {
     );
 
   return (
-    <Card shadow="md">
+    <Card shadow="md" pt="sm">
       <Group gap={10} align="center">
         <IconList />
         <Text fw={600}>Actions</Text>
       </Group>
-
-      <Divider p={5} mt={5} />
+      <Divider mt="sm" />
       <ScrollArea h={483}>
         <ul ref={parent}>
           {actions.map((action) => (

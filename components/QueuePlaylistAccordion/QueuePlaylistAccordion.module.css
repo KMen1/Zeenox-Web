@@ -15,7 +15,7 @@
 
 .control[data-opened="true"] {
   border-bottom: 1px solid
-    light-dark(var(--mantine-color-gray-4), var(--mantine-color-dark-4));
+    light-dark(var(--mantine-color-gray-4), var(--mantine-color-dark-3));
 }
 
 .resizeHandle {

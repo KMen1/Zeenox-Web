@@ -21,7 +21,9 @@ export default function NextTrack() {
   if (track === null)
     return (
       <Card>
-        <Skeleton w={100} h={10} />
+        <Title order={5} lh={1}>
+          Upcoming
+        </Title>
         <Divider mt={10} />
         <Group gap={10} mt={10}>
           <Skeleton w={36} h={36} />
