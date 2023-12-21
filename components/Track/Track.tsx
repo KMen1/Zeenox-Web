@@ -184,16 +184,18 @@ export function Track({
             className={classes.thumbnail}
             alt={track?.Title ?? "Nothing here"}
           />
-          <div className="absolute top-[.5rem] left-[.5rem]">
-            <Tooltip label="Play">
-              <IconPlayerPlayFilled
-                role="button"
-                size="1.5rem"
-                className={classes.playButton}
-                onClick={skipTo}
-              />
-            </Tooltip>
-          </div>
+          {track && (
+            <div className="absolute top-[.5rem] left-[.5rem]">
+              <Tooltip label={`Play ${track.Title} by ${track.Author}`}>
+                <IconPlayerPlayFilled
+                  role="button"
+                  size="1.5rem"
+                  className={classes.playButton}
+                  onClick={onSkipTo ? skipTo : play}
+                />
+              </Tooltip>
+            </div>
+          )}
         </div>
         <Stack gap={1} w="70%">
           <Text
@@ -230,7 +232,11 @@ export function Track({
       onDoubleClick={withControls ? skipTo : add}
     >
       <div className={classes.trackControl}>
-        <Tooltip label={withControls ? "Skip to track" : "Play"}>
+        <Tooltip
+          label={`${withControls ? "Skip to" : "Play"} ${track?.Title} by ${
+            track?.Author
+          }`}
+        >
           <IconPlayerPlayFilled
             size="1.2rem"
             role="button"
