@@ -82,7 +82,7 @@ export function LazyTrackList({
     fetchSearchResults();
   }, [searchQuery]);
 
-  const itemCount = hasNextPage ? items.length + 1 : items.length;
+  const itemCount = playlistResponse?.total ?? 0;
   const loadMoreItems = isNextPageLoading ? () => {} : loadNextPage;
   const isItemLoaded = (index: number) => !hasNextPage || index < items.length;
 
