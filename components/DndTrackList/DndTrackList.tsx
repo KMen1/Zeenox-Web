@@ -1,6 +1,6 @@
 "use client";
 
-import { type TrackData } from "@/types";
+import { ActionResult, type TrackData } from "@/types";
 import {
   DragDropContext,
   Droppable,
@@ -10,7 +10,8 @@ import {
 import React, { useEffect, useState } from "react";
 import { Track } from "../Track/Track";
 import { FixedSizeList, areEqual } from "react-window";
-import { ActionResult, useActions } from "../Providers/ActionProvider";
+import { useAtomValue } from "jotai";
+import { actionFetchAtom } from "@/utils/atoms";
 
 function getStyle({ provided, style, isDragging }: any) {
   const combined = {
@@ -73,7 +74,7 @@ export function DndTrackList({
   onMove: (from: number, to: number) => Promise<ActionResult>;
 }) {
   const [tracks, setTracks] = useState<TrackData[]>(baseTracks);
-  const { skipToTrack, removeTrack, moveTrack } = useActions();
+  const { skipToTrack, removeTrack, moveTrack } = useAtomValue(actionFetchAtom);
 
   useEffect(() => {
     setTracks(baseTracks);

@@ -4,7 +4,8 @@ import { Track as TrackComponent } from "../Track/Track";
 import { FixedSizeList } from "react-window";
 import InfiniteLoader from "react-window-infinite-loader";
 import { Box, LoadingOverlay, Skeleton } from "@mantine/core";
-import { useActions } from "../Providers/ActionProvider";
+import { useAtomValue } from "jotai";
+import { actionFetchAtom } from "@/utils/atoms";
 
 export function LazyTrackList({
   id,
@@ -18,7 +19,7 @@ export function LazyTrackList({
   const [hasNextPage, setHasNextPage] = useState(false);
   const [isNextPageLoading, setIsNextPageLoading] = useState(false);
   const [items, setItems] = useState<Track[]>([]);
-  const { addTrack, playTrack } = useActions();
+  const { addTrack, playTrack } = useAtomValue(actionFetchAtom);
 
   async function loadNextPage() {
     setIsNextPageLoading(true);

@@ -18,7 +18,6 @@ import {
   IconRepeatOnce,
   IconVolume,
 } from "@tabler/icons-react";
-import { useActions } from "@/components/Providers/ActionProvider";
 import classes from "./PlayerControls.module.css";
 import {
   showNotification,
@@ -26,12 +25,13 @@ import {
 } from "@/utils/notificationUtils";
 import { PlayerVolumeSlider } from "../PlayerVolumeSlider/PlayerVolumeSlider";
 import { useAtomValue } from "jotai";
-import { repeatAtom, stateAtom } from "@/utils/atoms";
+import { actionFetchAtom, repeatAtom, stateAtom } from "@/utils/atoms";
 
 export function PlayerControls() {
   const state = useAtomValue(stateAtom);
   const repeatMode = useAtomValue(repeatAtom);
-  const { backTrack, skipTrack, pause, resume, cycleRepeatMode } = useActions();
+  const { backTrack, skipTrack, pause, resume, cycleRepeatMode } =
+    useAtomValue(actionFetchAtom);
 
   function back() {
     const id = `back-${Date.now()}`;

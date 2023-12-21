@@ -24,6 +24,7 @@ import {
   positionAtom,
   queueAtom,
   repeatAtom,
+  serverSessionTokenAtom,
   stateAtom,
   trackAtom,
   volumeAtom,
@@ -31,15 +32,17 @@ import {
 
 let socket: WebSocket | null = null;
 
-export function SocketProvider({
+export function Socket({
   id,
-  children,
   socketSessionToken,
 }: {
   id: string;
-  children: React.ReactNode;
   socketSessionToken: string;
 }) {
+  const setServerSessionToken = useSetAtom(serverSessionTokenAtom);
+  useEffect(() => {
+    setServerSessionToken(socketSessionToken);
+  }, [socketSessionToken, setServerSessionToken]);
   const setInit = useSetAtom(initAtom);
   const setQueue = useSetAtom(queueAtom);
   const setTrack = useSetAtom(trackAtom);
@@ -126,5 +129,5 @@ export function SocketProvider({
     socketSessionToken,
   ]);
 
-  return <>{children}</>;
+  return <></>;
 }

@@ -3,7 +3,6 @@
 import { Flex, Skeleton, Slider, Text } from "@mantine/core";
 import { useCallback, useEffect, useState } from "react";
 import { toTime } from "@/utils/utils";
-import { useActions } from "@/components/Providers/ActionProvider";
 import { PlayerState } from "@/types";
 import classes from "./PlayerPositionSlider.module.css";
 import {
@@ -14,8 +13,9 @@ import {
   IconExclamationMark,
   IconPlayerTrackNextFilled,
 } from "@tabler/icons-react";
-import { useAtom, useAtomValue } from "jotai";
+import { useAtomValue } from "jotai";
 import {
+  actionFetchAtom,
   durationAtom,
   initAtom,
   positionAtom,
@@ -30,7 +30,7 @@ export function PlayerPositionSlider() {
   const state = useAtomValue(stateAtom);
   const track = useAtomValue(trackAtom);
   const duration = useAtomValue(durationAtom);
-  const { seekTrack } = useActions();
+  const { seekTrack } = useAtomValue(actionFetchAtom);
 
   const [isDragging, setIsDragging] = useState(false);
   const [_position, setPosition] = useState(initialPosition ?? 0);

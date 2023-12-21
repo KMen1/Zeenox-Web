@@ -1,5 +1,4 @@
-import { useActions } from "@/components/Providers/ActionProvider";
-import { volumeAtom } from "@/utils/atoms";
+import { actionFetchAtom, volumeAtom } from "@/utils/atoms";
 import {
   showNotification,
   updateNotification,
@@ -9,7 +8,7 @@ import { IconExclamationMark, IconVolume } from "@tabler/icons-react";
 import { useAtomValue } from "jotai";
 
 export function PlayerVolumeSlider() {
-  const { setVolume } = useActions();
+  const { setVolume } = useAtomValue(actionFetchAtom);
   const volume = useAtomValue(volumeAtom);
 
   function sv(v: number) {

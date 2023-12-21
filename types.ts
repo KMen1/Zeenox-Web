@@ -116,6 +116,11 @@ export enum ActionType {
   ChangeLoopMode,
 }
 
+export type ActionResult = {
+  success: boolean;
+  error?: string;
+};
+
 export type QueueData = {
   Tracks: TrackData[];
 } & ServerMessageData;

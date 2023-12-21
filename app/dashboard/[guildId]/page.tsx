@@ -1,9 +1,9 @@
 import { getDiscordGuilds, getSocketSessionToken } from "@/app/utils";
 import { PlayerLayout } from "@/components/PlayerLayout/PlayerLayout";
-import { ActionProvider } from "@/components/Providers/ActionProvider";
-import { SocketProvider } from "@/components/Providers/SocketProvider/SocketProvider";
+import { Socket } from "@/components/Socket";
 import { currentUser } from "@clerk/nextjs";
 import { Skeleton } from "@mantine/core";
+import { Provider } from "jotai";
 import { Metadata } from "next";
 
 type Props = {
@@ -50,13 +50,9 @@ export default async function Page({
   }
 
   return (
-    <ActionProvider socketSessionToken={serverSessionToken}>
-      <SocketProvider
-        id={params.guildId}
-        socketSessionToken={serverSessionToken}
-      >
-        <PlayerLayout />
-      </SocketProvider>
-    </ActionProvider>
+    <>
+      <Socket id={params.guildId} socketSessionToken={serverSessionToken} />
+      <PlayerLayout />
+    </>
   );
 }

@@ -1,20 +1,21 @@
 "use client";
 
 import { Card, Divider, Group, Skeleton, Stack, Title } from "@mantine/core";
-import { useActions } from "../Providers/ActionProvider";
 import { Track } from "../Track/Track";
 import { useAtomValue } from "jotai";
-import { queueAtom } from "@/utils/atoms";
+import { actionFetchAtom, queueAtom } from "@/utils/atoms";
 
 export default function NextTrack() {
   const tracks = useAtomValue(queueAtom);
   const track = tracks ? (tracks.length > 0 ? tracks[0] : undefined) : null;
-  const { skipToTrack } = useActions();
+  const { skipToTrack } = useAtomValue(actionFetchAtom);
 
   function skipTo(index: number) {
     if (track) {
-      skipToTrack(0);
+      return skipToTrack(0);
     }
+
+    return Promise.reject();
   }
 
   if (track === null)
@@ -39,7 +40,7 @@ export default function NextTrack() {
           Upcoming
         </Title>
         <Divider />
-        <Track track={track!} small />
+        <Track track={track!} small onSkipTo={skipTo} />
       </Stack>
     </Card>
   );

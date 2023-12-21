@@ -20,13 +20,12 @@ import {
   IconRotateClockwise,
   IconTrash,
 } from "@tabler/icons-react";
-import { useActions } from "../Providers/ActionProvider";
 import {
   showNotification,
   updateNotification,
 } from "@/utils/notificationUtils";
 import { useAtomValue } from "jotai";
-import { queueAtom } from "@/utils/atoms";
+import { actionFetchAtom, queueAtom } from "@/utils/atoms";
 
 export function Queue() {
   const [winReady, setwinReady] = useState(false);
@@ -36,7 +35,7 @@ export function Queue() {
 
   const tracks = useAtomValue(queueAtom);
   const { moveTrack, shuffleQueue, clearQueue, distinctQueue, reverseQueue } =
-    useActions();
+    useAtomValue(actionFetchAtom);
 
   function shuffle() {
     const id = `shuffle-queue-${Date.now()}`;

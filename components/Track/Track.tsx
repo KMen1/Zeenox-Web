@@ -11,8 +11,7 @@ import {
 import Image from "next/image";
 import classes from "./Track.module.css";
 import { toTime } from "@/utils/utils";
-import { TrackData } from "@/types";
-import { ActionResult } from "../Providers/ActionProvider";
+import { ActionResult, TrackData } from "@/types";
 import {
   showNotification,
   updateNotification,

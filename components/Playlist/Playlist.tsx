@@ -2,9 +2,17 @@ import { Group, Stack, Text } from "@mantine/core";
 import Image from "next/image";
 import classes from "./Playlist.module.css";
 import { Playlist } from "@/types";
-import { MouseEventHandler, useCallback, useEffect } from "react";
-import { IconPlayerPlayFilled } from "@tabler/icons-react";
-import { useActions } from "../Providers/ActionProvider";
+import { MouseEventHandler } from "react";
+import {
+  IconExclamationCircle,
+  IconPlayerPlayFilled,
+} from "@tabler/icons-react";
+import { useAtomValue } from "jotai";
+import { actionFetchAtom } from "@/utils/atoms";
+import {
+  showNotification,
+  updateNotification,
+} from "@/utils/notificationUtils";
 
 export function Playlist({
   playlist,
@@ -15,10 +23,31 @@ export function Playlist({
   isSelected?: boolean;
   onClick?: MouseEventHandler<HTMLDivElement>;
 }) {
-  const { playTrack } = useActions();
+  const { playTrack } = useAtomValue(actionFetchAtom);
 
   function play() {
-    playTrack(playlist.external_urls.spotify);
+    if (!playTrack) return;
+    const id = `play-playlist-${playlist.id}-${Date.now()}`;
+    showNotification(id, `Queuing ${playlist.name}`, null, true);
+    playTrack(playlist.external_urls.spotify).then((res) => {
+      if (res.success) {
+        updateNotification(
+          id,
+          `Queued ${playlist.name}`,
+          <IconPlayerPlayFilled />,
+          "green",
+          "Successfully queued playlist!"
+        );
+      } else {
+        updateNotification(
+          id,
+          `Unable to queue ${playlist.name}`,
+          <IconExclamationCircle />,
+          "red",
+          "Playlist might be empty or unavailable. Make sure playlist is available outside your account."
+        );
+      }
+    });
   }
 
   return (
