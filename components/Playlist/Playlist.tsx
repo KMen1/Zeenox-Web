@@ -1,4 +1,4 @@
-import { Group, Stack, Text } from "@mantine/core";
+import { Group, Stack, Text, Tooltip } from "@mantine/core";
 import Image from "next/image";
 import classes from "./Playlist.module.css";
 import { Playlist } from "@/types";
@@ -68,15 +68,17 @@ export function Playlist({
           className={classes.playlistImage}
         />
         <div className="absolute top-[.5rem] left-[.5rem]">
-          <IconPlayerPlayFilled
-            role="button"
-            size="1.5rem"
-            className={classes.playlistPlay}
-            onClick={(e) => {
-              e.stopPropagation();
-              play();
-            }}
-          />
+          <Tooltip label={`Queue ${playlist.name}`}>
+            <IconPlayerPlayFilled
+              role="button"
+              size="1.5rem"
+              className={classes.playlistPlay}
+              onClick={(e) => {
+                e.stopPropagation();
+                play();
+              }}
+            />
+          </Tooltip>
         </div>
       </div>
 
