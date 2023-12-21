@@ -13,6 +13,7 @@ import {
 } from "@mantine/core";
 import {
   Action,
+  ActionResult,
   ActionType,
   ChangeLoopModeAction,
   EnqueuePlaylistAction,
@@ -33,7 +34,7 @@ import { toTime } from "@/utils/utils";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { Track } from "../Track/Track";
 import { useAtomValue } from "jotai";
-import { actionsAtom } from "@/utils/atoms";
+import { actionFetchAtom, actionsAtom } from "@/utils/atoms";
 
 function getTitle(action: Action): string {
   switch (action.Type) {
@@ -101,12 +102,15 @@ function getImage(action: Action): string | undefined {
   return undefined;
 }
 
-function getChildren(action: Action): React.ReactNode {
+function getChildren(
+  action: Action,
+  onPlay: (url: string) => Promise<ActionResult>
+): React.ReactNode {
   const qAction = action as QueueAction;
 
   if (qAction.QueueActionType === QueueActionType.AddPlaylist) {
     const tracks = (qAction as EnqueuePlaylistAction).Tracks;
-    return <ActionCardPlaylist tracks={tracks} />;
+    return <ActionCardPlaylist tracks={tracks} onPlay={onPlay} />;
   }
 
   if (
@@ -118,7 +122,7 @@ function getChildren(action: Action): React.ReactNode {
   ) {
     const track = (action as PlayAction).Track;
 
-    return <Track track={track} small transparent />;
+    return <Track track={track} small transparent onPlay={onPlay} />;
   }
 
   if (action.Type === ActionType.Skip) {
@@ -131,7 +135,7 @@ function getChildren(action: Action): React.ReactNode {
         <Text c="white" size="1rem" fw={600} lh={1.4} lineClamp={1}>
           Skipped
         </Text>
-        <Track track={prevTrack} small transparent />
+        <Track track={prevTrack} small transparent onPlay={onPlay} />
       </>
     );
   }
@@ -139,7 +143,13 @@ function getChildren(action: Action): React.ReactNode {
   return null;
 }
 
-function ActionCardPlaylist({ tracks }: { tracks: TrackData[] }) {
+function ActionCardPlaylist({
+  tracks,
+  onPlay,
+}: {
+  tracks: TrackData[];
+  onPlay?: (url: string) => Promise<ActionResult>;
+}) {
   return (
     <ScrollArea h={100} type="always">
       {tracks.map((track) => (
@@ -148,6 +158,7 @@ function ActionCardPlaylist({ tracks }: { tracks: TrackData[] }) {
           track={track}
           small
           transparent
+          onPlay={onPlay}
         />
       ))}
     </ScrollArea>
@@ -181,6 +192,7 @@ const titleDict: Record<ActionType, string> = {
 
 export function ActionsList() {
   const actions = useAtomValue(actionsAtom);
+  const play = useAtomValue(actionFetchAtom).playTrack;
   const [parent] = useAutoAnimate();
 
   if (actions === null)
@@ -237,7 +249,7 @@ export function ActionsList() {
                 user={action.User}
                 timestampMs={action.Timestamp}
               >
-                {getChildren(action)}
+                {getChildren(action, play)}
               </ActionCard>
               <Space h={10} />
             </li>
