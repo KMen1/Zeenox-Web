@@ -39,8 +39,8 @@ export function PlayerSongInfoDisplay() {
         priority
         src={track.Thumbnail || "/placeholder-album.jpeg"}
         alt={track.Title || "Placeholder Album Art"}
-        width={400}
-        height={400}
+        width={200}
+        height={200}
         style={{ borderRadius: "0.4rem" }}
         onLoad={setGradientBackground}
       />
