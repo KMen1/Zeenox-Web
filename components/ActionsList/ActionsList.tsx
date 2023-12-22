@@ -221,7 +221,7 @@ export function ActionsList() {
             <Text fw={700} size="xl">
               No actions yet
             </Text>
-            <Text fw={400} size="md">
+            <Text fw={400} size="md" ta="center">
               Start using the player and actions will show up here!
             </Text>
           </Stack>
@@ -235,7 +235,7 @@ export function ActionsList() {
         <IconList />
         <Text fw={600}>Actions</Text>
       </Group>
-      <Divider mt="sm" />
+      <Divider my="sm" />
       <ScrollArea h={483}>
         <ul ref={parent}>
           {actions.map((action) => (
