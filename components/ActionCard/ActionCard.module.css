@@ -32,3 +32,10 @@
   backdrop-filter: blur(15px);
   border-radius: var(--mantine-radius-lg);
 }
+
+@media (max-width: 755px) {
+  .blur {
+    backdrop-filter: none;
+    background: rgba(0, 0, 0, 0.6);
+  }
+}
