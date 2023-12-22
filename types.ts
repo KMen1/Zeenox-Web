@@ -119,6 +119,7 @@ export enum ActionType {
 export type ActionResult = {
   success: boolean;
   error?: string;
+  code?: number;
 };
 
 export type QueueData = {

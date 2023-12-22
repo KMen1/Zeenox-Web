@@ -30,7 +30,7 @@ const fetchAtom = atom((get) => {
         return { success: true };
       } else {
         const data = await res.text();
-        return { success: false, error: data };
+        return { success: false, error: data, code: res.status };
       }
     },
   };
