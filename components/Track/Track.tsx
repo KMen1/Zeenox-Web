@@ -10,7 +10,7 @@ import {
 } from "@tabler/icons-react";
 import Image from "next/image";
 import classes from "./Track.module.css";
-import { toTime } from "@/utils/utils";
+import { getErrorMessageFromCode, toTime } from "@/utils/utils";
 import { ActionResult, TrackData } from "@/types";
 import {
   showNotification,
@@ -56,10 +56,10 @@ export function Track({
       } else {
         updateNotification(
           id,
-          `Failed to play ${track.Title}`,
+          `Unable to play ${track.Title}`,
           <IconExclamationCircle />,
           "red",
-          res.error!
+          getErrorMessageFromCode(res.code!)
         );
       }
     });
@@ -81,10 +81,10 @@ export function Track({
       } else {
         updateNotification(
           id,
-          `Failed to add ${track.Title} to queue`,
+          `Unable to add ${track.Title} to queue`,
           <IconExclamationCircle />,
           "red",
-          res.error!
+          getErrorMessageFromCode(res.code!)
         );
       }
     });
@@ -106,10 +106,10 @@ export function Track({
       } else {
         updateNotification(
           id,
-          `Failed to skip to ${track.Title}`,
+          `Unable to skip to ${track.Title}`,
           <IconExclamationCircle />,
           "red",
-          res.error!
+          getErrorMessageFromCode(res.code!)
         );
       }
     });
@@ -131,10 +131,10 @@ export function Track({
       } else {
         updateNotification(
           id,
-          `Failed to remove ${track.Title} from queue`,
+          `Unable to remove ${track.Title} from queue`,
           <IconExclamationCircle />,
           "red",
-          res.error!
+          getErrorMessageFromCode(res.code!)
         );
       }
     });
@@ -156,10 +156,10 @@ export function Track({
       } else {
         updateNotification(
           id,
-          `Failed to move ${track.Title} to top of queue`,
+          `Unable to move ${track.Title} to top of queue`,
           <IconExclamationCircle />,
           "red",
-          res.error!
+          getErrorMessageFromCode(res.code!)
         );
       }
     });

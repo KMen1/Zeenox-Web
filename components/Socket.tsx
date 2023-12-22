@@ -77,7 +77,7 @@ export function Socket({
         <IconNetwork />,
         "red",
         ev.code === 1006
-          ? "Start playing before trying to connect!"
+          ? "Connect to a voice channel to start listening!"
           : `Disconnected from server with reason: ${ev.reason}`
       );
     };

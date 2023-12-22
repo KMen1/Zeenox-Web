@@ -3,6 +3,7 @@ import {
   showNotification,
   updateNotification,
 } from "@/utils/notificationUtils";
+import { getErrorMessageFromCode } from "@/utils/utils";
 import { Slider } from "@mantine/core";
 import { IconExclamationMark, IconVolume } from "@tabler/icons-react";
 import { useAtomValue } from "jotai";
@@ -26,10 +27,10 @@ export function PlayerVolumeSlider() {
       } else {
         updateNotification(
           id,
-          "Failed to change volume",
+          "Unable to change volume",
           <IconExclamationMark />,
           "red",
-          res.error!
+          getErrorMessageFromCode(res.code!)
         );
       }
     });

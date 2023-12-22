@@ -13,7 +13,7 @@ const fetchAtom = atom((get) => {
   if (!serverSessionToken) {
     return {
       fn: async () => {
-        return { success: false, error: "No session token" };
+        return { success: false, error: "No session token", code: 401 };
       },
     };
   }

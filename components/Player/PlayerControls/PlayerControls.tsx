@@ -26,6 +26,7 @@ import {
 import { PlayerVolumeSlider } from "../PlayerVolumeSlider/PlayerVolumeSlider";
 import { useAtomValue } from "jotai";
 import { actionFetchAtom, repeatAtom, stateAtom } from "@/utils/atoms";
+import { getErrorMessageFromCode } from "@/utils/utils";
 
 export function PlayerControls() {
   const state = useAtomValue(stateAtom);
@@ -48,10 +49,10 @@ export function PlayerControls() {
       } else {
         updateNotification(
           id,
-          "Failed to rewind to previous track",
+          "Unable to rewind to previous track",
           <IconExclamationCircle />,
           "red",
-          res.error!
+          getErrorMessageFromCode(res.code!)
         );
       }
     });
@@ -72,10 +73,10 @@ export function PlayerControls() {
       } else {
         updateNotification(
           id,
-          "Failed to skip to next track",
+          "Unable to skip to next track",
           <IconExclamationCircle />,
           "red",
-          res.error!
+          getErrorMessageFromCode(res.code!)
         );
       }
     });
@@ -96,10 +97,10 @@ export function PlayerControls() {
       } else {
         updateNotification(
           id,
-          "Failed to change repeat mode",
+          "Unable to change repeat mode",
           <IconExclamationCircle />,
           "red",
-          res.error!
+          getErrorMessageFromCode(res.code!)
         );
       }
     });
@@ -121,10 +122,10 @@ export function PlayerControls() {
         } else {
           updateNotification(
             id,
-            "Failed to pause playback",
+            "Unable to pause playback",
             <IconExclamationCircle />,
             "red",
-            res.error!
+            getErrorMessageFromCode(res.code!)
           );
         }
       });
@@ -142,10 +143,10 @@ export function PlayerControls() {
         } else {
           updateNotification(
             id,
-            "Failed to resume playback",
+            "Unable to resume playback",
             <IconExclamationCircle />,
             "red",
-            res.error!
+            getErrorMessageFromCode(res.code!)
           );
         }
       });

@@ -2,7 +2,7 @@
 
 import { Flex, Skeleton, Slider, Text } from "@mantine/core";
 import { useCallback, useEffect, useState } from "react";
-import { toTime } from "@/utils/utils";
+import { getErrorMessageFromCode, toTime } from "@/utils/utils";
 import { PlayerState } from "@/types";
 import classes from "./PlayerPositionSlider.module.css";
 import {
@@ -80,10 +80,10 @@ export function PlayerPositionSlider() {
         } else {
           updateNotification(
             id,
-            "Seeking track",
+            "Unable to seek track",
             <IconExclamationMark />,
             "red",
-            res.error!
+            getErrorMessageFromCode(res.code!)
           );
         }
       });

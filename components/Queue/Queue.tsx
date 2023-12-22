@@ -26,6 +26,7 @@ import {
 } from "@/utils/notificationUtils";
 import { useAtomValue } from "jotai";
 import { actionFetchAtom, queueAtom } from "@/utils/atoms";
+import { getErrorMessageFromCode } from "@/utils/utils";
 
 export function Queue() {
   const [winReady, setwinReady] = useState(false);
@@ -52,10 +53,10 @@ export function Queue() {
       } else {
         updateNotification(
           id,
-          "Failed to shuffle the queue",
+          "Unable to shuffle the queue",
           <IconExclamationMark />,
           "red",
-          res.error!
+          getErrorMessageFromCode(res.code!)
         );
       }
     });
@@ -76,10 +77,10 @@ export function Queue() {
       } else {
         updateNotification(
           id,
-          "Failed to clear the queue",
+          "Unable to clear the queue",
           <IconExclamationMark />,
           "red",
-          res.error!
+          getErrorMessageFromCode(res.code!)
         );
       }
     });
@@ -100,10 +101,10 @@ export function Queue() {
       } else {
         updateNotification(
           id,
-          "Failed to remove duplicate tracks",
+          "Unable to remove duplicate tracks",
           <IconExclamationMark />,
           "red",
-          res.error!
+          getErrorMessageFromCode(res.code!)
         );
       }
     });
@@ -124,10 +125,10 @@ export function Queue() {
       } else {
         updateNotification(
           id,
-          "Failed to reverse the queue",
+          "Unable to reverse the queue",
           <IconExclamationMark />,
           "red",
-          res.error!
+          getErrorMessageFromCode(res.code!)
         );
       }
     });

@@ -76,3 +76,20 @@ export function createQueryString(params: object | undefined) {
 
   return queryString;
 }
+
+export function getErrorMessageFromCode(code: number) {
+  switch (code) {
+    case 400:
+      return "Bad request";
+    case 401:
+      return "Session expired, please refresh the page!";
+    case 403:
+      return "Make sure you are in the same channel as the bot!";
+    case 404:
+      return "Player not found!";
+    case 500:
+      return "Something went wrong on our side!";
+    default:
+      return "Unknown error";
+  }
+}
