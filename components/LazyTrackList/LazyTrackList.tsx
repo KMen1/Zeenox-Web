@@ -142,7 +142,7 @@ export function LazyTrackList({
         {({ onItemsRendered, ref }) => (
           <FixedSizeList
             className="List"
-            height={420}
+            height={425}
             itemCount={itemCount}
             itemSize={50}
             onItemsRendered={onItemsRendered}

@@ -158,7 +158,7 @@ export function Queue() {
 
   if (tracks.length === 0)
     return (
-      <Center h={420} p="xl">
+      <Center h={425} p="xl">
         <Stack gap={0} align="center">
           <IconMoodSad size={100} />
           <Text fw={700} size="xl">

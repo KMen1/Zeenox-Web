@@ -144,7 +144,7 @@ export function DndTrackList({
       >
         {(provided) => (
           <FixedSizeList
-            height={420}
+            height={425}
             itemCount={tracks?.length || 0}
             itemSize={50}
             width="100%"
