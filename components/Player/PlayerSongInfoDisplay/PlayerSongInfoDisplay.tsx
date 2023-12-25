@@ -41,6 +41,7 @@ export function PlayerSongInfoDisplay() {
         alt={track.Title || "Placeholder Album Art"}
         width={200}
         height={200}
+        crossOrigin="anonymous"
         style={{ borderRadius: "0.4rem" }}
         onLoad={setGradientBackground}
       />
