@@ -3,7 +3,10 @@
 @tailwind utilities;
 
 .cl-userButtonPopoverCard {
-  background-color: var(--mantine-color-dark-7);
+  background-color: light-dark(white, var(--mantine-color-dark-6));
+  border-radius: var(--mantine-radius-lg);
+  border: 1px solid
+    light-dark(var(--mantine-color-dark-9), var(--mantine-color-dark-4));
   width: 15rem;
   padding: 0;
   padding-top: var(--mantine-spacing-md);
@@ -23,4 +26,8 @@
   padding-right: var(--mantine-spacing-md);
   padding-bottom: var(--mantine-spacing-md);
   padding-top: var(--mantine-spacing-xs);
+}
+
+.cl-card {
+  background-color: light-dark(white, var(--mantine-color-dark-6));
 }
