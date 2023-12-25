@@ -3,7 +3,7 @@ import { PlayerLayout } from "@/components/PlayerLayout/PlayerLayout";
 import { Socket } from "@/components/Socket";
 import { currentUser } from "@clerk/nextjs";
 import { Skeleton } from "@mantine/core";
-import { Provider } from "jotai";
+import { Provider as JotaiProvider } from "jotai";
 import { Metadata } from "next";
 
 type Props = {
@@ -51,8 +51,10 @@ export default async function Page({
 
   return (
     <>
-      <Socket id={params.guildId} socketSessionToken={serverSessionToken} />
-      <PlayerLayout />
+      <JotaiProvider>
+        <Socket id={params.guildId} socketSessionToken={serverSessionToken} />
+        <PlayerLayout />
+      </JotaiProvider>
     </>
   );
 }
