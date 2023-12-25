@@ -14,9 +14,10 @@ import { PlaylistSelector } from "../PlaylistSelector/PlaylistSelector";
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 import { toHumanTime } from "@/utils/utils";
 import { useDebouncedState } from "@mantine/hooks";
-import { LazyTrackList } from "../LazyTrackList/LazyTrackList";
 import { useAtomValue } from "jotai";
 import { queueAtom } from "@/utils/atoms";
+import { PlaylistTrackLazyList } from "../LazyLoaders/PlaylistTrackLazyList";
+import { SearchLazyList } from "../LazyLoaders/SearchLazyList";
 
 export function QueuePlaylistAccordion({
   playlists,
@@ -101,7 +102,7 @@ export function QueuePlaylistAccordion({
         <Accordion.Panel>
           {spotifyConnected && (
             <PanelGroup direction="horizontal" autoSaveId="playlists">
-              <Panel minSizePercentage={10}>
+              <Panel minSizePercentage={10} defaultSizePercentage={30}>
                 <Stack gap="xs">
                   <TextInput
                     placeholder="What do you want to listen to?"
@@ -121,11 +122,12 @@ export function QueuePlaylistAccordion({
               <PanelResizeHandle className={classes.resizeHandle}>
                 <IconMenuOrder className={classes.resizeIcon} />
               </PanelResizeHandle>
-              <Panel minSizePercentage={30}>
-                <LazyTrackList
-                  id={selectedPlaylist}
-                  searchQuery={searchQuery}
-                />
+              <Panel minSizePercentage={30} defaultSizePercentage={70}>
+                {selectedPlaylist === "search" ? (
+                  <SearchLazyList query={searchQuery} />
+                ) : (
+                  <PlaylistTrackLazyList id={selectedPlaylist} />
+                )}
               </Panel>
             </PanelGroup>
           )}
