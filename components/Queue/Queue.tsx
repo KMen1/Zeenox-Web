@@ -140,7 +140,7 @@ export function Queue() {
         {Array.from({ length: 8 }).map((_, i) => (
           <Group key={i} justify="space-between">
             <Flex align="center" gap={10} mt={10}>
-              <Skeleton w={34} h={34} />
+              <Skeleton w={34} h={34} radius="md" />
               <Stack gap={10} w="70%">
                 <Skeleton w={150} h={7} />
                 <Skeleton w={100} h={7} />

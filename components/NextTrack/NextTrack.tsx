@@ -26,7 +26,7 @@ export default function NextTrack() {
         </Title>
         <Divider mt={10} />
         <Group gap={10} mt={10}>
-          <Skeleton w={36} h={36} />
+          <Skeleton w={36} h={36} radius="md" />
           <Stack gap={10} w="70%">
             <Skeleton w={100} h={7} />
             <Skeleton w={75} h={7} />
