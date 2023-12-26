@@ -49,7 +49,7 @@ export function PlayerInfoDisplay() {
         <Text size="10" lh={1.4} lineClamp={1}>
           Added By:
         </Text>
-        <Tooltip label={requestedBy?.Username ?? "Unknown"}>
+        <Tooltip label={requestedBy?.DisplayName ?? "Unknown"}>
           <Avatar
             src={requestedBy?.AvatarUrl}
             alt={requestedBy?.Username ?? "Unknown"}
