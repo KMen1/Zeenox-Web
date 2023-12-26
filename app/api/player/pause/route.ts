@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
       },
     });
     if (!res.ok) {
-      return new Response(await res.text(), { status: 500 });
+      return new Response(await res.text(), { status: res.status });
     } else {
       return new Response("OK", { status: 200 });
     }
