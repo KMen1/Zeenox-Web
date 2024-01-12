@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@auth/mongodb-adapter": "^2.0.7",
-    "@clerk/nextjs": "^4.27.5",
+    "@clerk/nextjs": "^4.29.3",
     "@clerk/themes": "^1.7.9",
     "@formkit/auto-animate": "^0.8.1",
     "@fortawesome/free-solid-svg-icons": "^6.5.1",
