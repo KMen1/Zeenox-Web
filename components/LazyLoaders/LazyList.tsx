@@ -1,6 +1,7 @@
-import { FixedSizeList } from "react-window";
+import { FixedSizeList, areEqual } from "react-window";
 import InfiniteLoader from "react-window-infinite-loader";
 import { Skeleton } from "@mantine/core";
+import { memo } from "react";
 
 export function LazyList<T>({
   items,
@@ -30,13 +31,13 @@ export function LazyList<T>({
   const loadNext = isLoadingNextPage ? () => {} : loadMoreItems;
   const isItemLoaded = (index: number) => !hasMoreItems || index < items.length;
 
-  const nextItem = ({
+  const nextItem = memo(function item({
     index,
     style,
   }: {
     index: number;
     style: React.CSSProperties;
-  }) => {
+  }) {
     if (!isItemLoaded(index)) {
       return (
         <div style={style}>
@@ -46,7 +47,8 @@ export function LazyList<T>({
     }
 
     return itemFactory({ index, style });
-  };
+  },
+  areEqual);
 
   return (
     <InfiniteLoader
