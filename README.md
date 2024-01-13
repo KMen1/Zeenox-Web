@@ -1,36 +1,70 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Zeenox Web
 
-## Getting Started
+[![Discord](https://discordapp.com/api/guilds/863751874922676234/widget.png)](https://discord.gg/hGxaMkfMBR)
+[![License](https://img.shields.io/github/license/kmen1/zeenox-web)](https://github.com/KMen1/Zeenox/blob/main/LICENSE)
+[![CodeFactor](https://www.codefactor.io/repository/github/kmen1/zeenox-web/badge)](https://www.codefactor.io/repository/github/kmen1/zeenox-web)
 
-First, run the development server:
+Web interface for the Zeenox Discord music bot, for more information about the bot [click here](https://github.com/KMen1/Zeenox)
+
+<img src="https://img001.prntscr.com/file/img001/6afxag7yRze15ncAq_4kGw.png" width="50%" style="border-radius: 10px">
+<img src="https://img001.prntscr.com/file/img001/iENwEwPjT1e6p9Mrmn9XPg.png" width="50%" style="float: left; border-radius: 10px">
+
+## Features
+
+- Player controls
+- Queue management
+- Spotify integration
+- Server settings (WIP)
+- Real-time updates and data display
+
+## Setup
+
+### Requirements
+
+- Node.js with npm
+- Clerk application, [click here](https://clerk.com/) to create one
+- Spotify application, [click here](https://developer.spotify.com/dashboard/applications) to create one
+- Discord OAuth application, [click here](https://discord.com/developers/applications) to create one
+- Running instance of the Zeenox bot
+
+---
+
+> ⚠️ **_Note:_** The bot is required to be running for the web interface to work! <br>
+> ⚙️ **_Clerk Settings:_** Only allow login with discord, but allow to link spotify<br>
+> 🔎 **_Required Scopes (discord):_** identify, email, guilds<br>
+> 🔎 **_Required Scopes (spotify):_** user-read-email, playlist-read-private, user-library-modify, user-library-read<br>
+> ⚠️ **_Note:_** You will need to add every user to your spotify application in order for them to be able to use spotify related features!
+
+---
+
+### Installation
+
+1. Clone the repository
+
+```bash
+git clone https://github.com/KMen1/Zeenox-Web.git
+```
+
+2. Install dependencies
+
+```bash
+npm install
+```
+
+3. Create a `.env` file in the root directory and add the following variables
+
+```env
+BOT_URL= # URL to the Zeenox bot
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY= # Clerk publishable key
+CLERK_SECRET_KEY= # Clerk secret key
+```
+
+4. Start the server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## License
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+- See [LICENSE](https://github.com/KMen1/Zeenox-Web/blob/main/LICENSE)
