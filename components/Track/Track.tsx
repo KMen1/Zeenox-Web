@@ -197,7 +197,7 @@ export function Track({
             </div>
           )}
         </div>
-        <Stack gap={1} w="70%">
+        <Stack gap={1}>
           <Text
             size="0.9rem"
             lineClamp={1}
@@ -216,9 +216,18 @@ export function Track({
             lh={1.3}
             c={transparent ? "gray.3" : undefined}
           >
-            {track?.Author ?? "Add some songs"}
+            {track?.Author ?? "Add songs"}
           </Text>
         </Stack>
+        <Text
+          size="0.8rem"
+          lineClamp={1}
+          lh={1.3}
+          ml="auto"
+          c={transparent ? "gray.3" : undefined}
+        >
+          {toTime(track?.Duration)}
+        </Text>
       </Group>
     );
   }
