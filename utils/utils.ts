@@ -16,7 +16,7 @@ export function GradientBackground(
   (container as HTMLElement).style.background =
     "linear-gradient(180deg, " +
     color.rgba +
-    ` 0%, rgba(0,0,0,${isDark ? "0.5" : "0.9"}) 100%)`;
+    ` 0%, rgba(255, 255, 255, ${isDark ? "0.05" : "0.9"}) 100%)`;
 }
 
 export function toTime(seconds: number | null) {
