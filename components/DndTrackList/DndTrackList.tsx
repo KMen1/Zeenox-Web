@@ -149,7 +149,6 @@ export function DndTrackList({
             itemSize={50}
             width="100%"
             outerRef={provided.innerRef}
-            itemData={tracks}
           >
             {Row}
           </FixedSizeList>
