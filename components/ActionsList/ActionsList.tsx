@@ -9,7 +9,6 @@ import {
   Skeleton,
   Group,
   ScrollArea,
-  Space,
 } from "@mantine/core";
 import {
   Action,
@@ -31,10 +30,11 @@ import {
 import { IconList, IconMoodSad } from "@tabler/icons-react";
 import { ActionCard } from "../ActionCard/ActionCard";
 import { toTime } from "@/utils/utils";
-import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { Track } from "../Track/Track";
 import { useAtomValue } from "jotai";
 import { actionFetchAtom, actionsAtom } from "@/utils/atoms";
+import { VariableSizeList, areEqual } from "react-window";
+import { memo, useEffect, useRef } from "react";
 
 function getTitle(action: Action): string {
   switch (action.Type) {
@@ -150,6 +150,8 @@ function ActionCardPlaylist({
   tracks: TrackData[];
   onPlay?: (url: string) => Promise<ActionResult>;
 }) {
+  return <div>playlist</div>;
+
   return (
     <ScrollArea h={100} type="always">
       {tracks.map((track) => (
@@ -190,10 +192,37 @@ const titleDict: Record<ActionType, string> = {
   [ActionType.Seek]: "Seeked to {0}",
 };
 
+function _getItemSize(action: Action): number {
+  switch (action.Type) {
+    case ActionType.Queue:
+      const qAction = action as QueueAction;
+      if (qAction.QueueActionType === QueueActionType.AddPlaylist) {
+        return 210;
+      }
+      if (qAction.QueueActionType === QueueActionType.AddTrack) {
+        return 160;
+      }
+      return 100;
+    case ActionType.Play:
+    case ActionType.Rewind:
+      return 160;
+    case ActionType.Skip:
+      return 260;
+    default:
+      return 100;
+  }
+}
+
 export function ActionsList() {
   const actions = useAtomValue(actionsAtom);
   const play = useAtomValue(actionFetchAtom).playTrack;
-  const [parent] = useAutoAnimate();
+  const listRef = useRef<VariableSizeList<any>>(null);
+
+  useEffect(() => {
+    if (listRef.current) {
+      listRef.current.resetAfterIndex(0, false);
+    }
+  }, [actions]);
 
   if (actions === null)
     return (
@@ -229,6 +258,27 @@ export function ActionsList() {
       </Card>
     );
 
+  const Row = memo(function Row({ index, style }: any) {
+    if (actions === null) return null;
+    const action = actions[index];
+    return (
+      <div key={index} style={style}>
+        <ActionCard
+          title={getTitle(action)}
+          bgImage={getImage(action)}
+          user={action.User}
+          timestampMs={action.Timestamp}
+        >
+          {getChildren(action, play)}
+        </ActionCard>
+      </div>
+    );
+  }, areEqual);
+
+  function getItemSize(index: number): number {
+    return _getItemSize(actions![index]);
+  }
+
   return (
     <Card shadow="md" pt="sm">
       <Group gap={10} align="center">
@@ -236,23 +286,15 @@ export function ActionsList() {
         <Text fw={600}>Actions</Text>
       </Group>
       <Divider my="sm" />
-      <ScrollArea h={483}>
-        <ul ref={parent}>
-          {actions.map((action) => (
-            <li key={action.Timestamp}>
-              <ActionCard
-                title={getTitle(action)}
-                bgImage={getImage(action)}
-                user={action.User}
-                timestampMs={action.Timestamp}
-              >
-                {getChildren(action, play)}
-              </ActionCard>
-              <Space h={10} />
-            </li>
-          ))}
-        </ul>
-      </ScrollArea>
+      <VariableSizeList
+        ref={listRef}
+        height={485}
+        itemCount={actions.length}
+        itemSize={getItemSize}
+        width="100%"
+      >
+        {Row}
+      </VariableSizeList>
     </Card>
   );
 }
