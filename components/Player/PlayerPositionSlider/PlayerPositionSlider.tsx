@@ -42,6 +42,8 @@ export function PlayerPositionSlider() {
   useEffect(() => {
     if (track && position >= track.Duration) {
       setPosition(0);
+    } else if (track && position === 0) {
+      setPosition(0);
     }
   }, [position, track]);
 
@@ -50,14 +52,14 @@ export function PlayerPositionSlider() {
       !isDragging &&
       _position != -1 &&
       _position < duration &&
-      state === PlayerState.Playing
+      track?.Duration !== 0
     ) {
       const interval = setInterval(() => {
         setPosition((p) => p + 1);
       }, 1000);
       return () => clearInterval(interval);
     }
-  }, [_position, duration, isDragging, state]);
+  }, [_position, duration, isDragging, state, track?.Duration]);
 
   const onChangeCache = useCallback((value: number) => {
     setPosition(value);
