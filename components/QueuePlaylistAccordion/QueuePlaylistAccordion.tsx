@@ -102,7 +102,7 @@ export function QueuePlaylistAccordion({
         <Accordion.Panel>
           {spotifyConnected && (
             <PanelGroup direction="horizontal" autoSaveId="playlists">
-              <Panel minSizePercentage={10} defaultSizePercentage={30}>
+              <Panel minSize={10} defaultSize={30}>
                 <Stack gap="xs">
                   <TextInput
                     placeholder="What do you want to listen to?"
@@ -122,7 +122,7 @@ export function QueuePlaylistAccordion({
               <PanelResizeHandle className={classes.resizeHandle}>
                 <IconMenuOrder className={classes.resizeIcon} />
               </PanelResizeHandle>
-              <Panel minSizePercentage={30} defaultSizePercentage={70}>
+              <Panel minSize={30} defaultSize={70}>
                 {selectedPlaylist === "search" ? (
                   <SearchLazyList query={searchQuery} />
                 ) : (
