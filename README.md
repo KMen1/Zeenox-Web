@@ -55,7 +55,8 @@ npm install
 3. Create a `.env` file in the root directory and add the following variables
 
 ```env
-BOT_URL= # URL to the Zeenox bot
+BOT_URL= # URL to the Zeenox bot (https://example.com)
+NEXT_PUBLIC_WS_URL= # URL to the Zeenox bot websocket (wss://example.com)
 NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY= # Clerk publishable key
 CLERK_SECRET_KEY= # Clerk secret key
 ```
