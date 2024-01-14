@@ -6,9 +6,6 @@
 
 Web interface for the Zeenox Discord music bot, for more information about the bot [click here](https://github.com/KMen1/Zeenox)
 
-<img src="https://img001.prntscr.com/file/img001/6afxag7yRze15ncAq_4kGw.png" width="50%" style="border-radius: 10px">
-<img src="https://img001.prntscr.com/file/img001/iENwEwPjT1e6p9Mrmn9XPg.png" width="50%" style="float: left; border-radius: 10px">
-
 ## Features
 
 - Player controls
@@ -16,6 +13,10 @@ Web interface for the Zeenox Discord music bot, for more information about the b
 - Spotify integration
 - Server settings (WIP)
 - Real-time updates and data display
+
+|                              Managing the queue                               |                                 Adding songs                                  |
+| :---------------------------------------------------------------------------: | :---------------------------------------------------------------------------: |
+| <img src="https://img001.prntscr.com/file/img001/6afxag7yRze15ncAq_4kGw.png"> | <img src="https://img001.prntscr.com/file/img001/iENwEwPjT1e6p9Mrmn9XPg.png"> |
 
 ## Setup
 
