@@ -57,8 +57,7 @@ export function Socket({
     const notificatonId = `connect-socket-${Date.now()}`;
     showNotification(notificatonId, `Connecting to server`, null, true);
     socket = new WebSocket(
-      //`wss://zeenox.tech/api/v1/socket?id=${id}`
-      `ws://localhost:5225/api/v1/socket?id=${id}`
+      `${process.env.NEXT_PUBLIC_WS_URL}/api/v1/socket?id=${id}`
     );
     socket.onopen = () => {
       socket?.send(socketSessionToken);
