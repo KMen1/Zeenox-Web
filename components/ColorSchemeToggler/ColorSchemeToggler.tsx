@@ -10,8 +10,16 @@ export function ColorSchemeToggler() {
   };
 
   return (
-    <ActionIcon variant="transparent" onClick={toggleColorScheme}>
-      {colorScheme === "dark" ? <IconSun /> : <IconMoon />}
+    <ActionIcon
+      variant="light"
+      onClick={toggleColorScheme}
+      color={colorScheme === "dark" ? "yellow" : "blue"}
+    >
+      {colorScheme === "dark" ? (
+        <IconSun size="1.1rem" />
+      ) : (
+        <IconMoon size="1.1rem" />
+      )}
     </ActionIcon>
   );
 }
