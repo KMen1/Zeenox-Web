@@ -6,8 +6,8 @@ export const theme = createTheme({
   colors: {
     dark: [
       "#ededed",
-      "#acaebf",
-      "#8c8fa3",
+      "#999999",
+      "#737373",
       "#4d4d4d",
       "#3c3c3c",
       "#1e1e1e",
