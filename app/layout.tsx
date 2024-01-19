@@ -49,7 +49,7 @@ export default function RootLayout({
                 {children}
               </Stack>
             </Container>
-            <Notifications position="top-center" />
+            <Notifications position="top-right" />
           </MantineProvider>
         </body>
       </html>
