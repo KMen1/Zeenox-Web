@@ -36,18 +36,26 @@ export function ActionCard({
             <Group gap={7}>
               <Image
                 src={user.AvatarUrl ?? ""}
-                width={20}
-                height={20}
+                width={15}
+                height={15}
                 alt={user.DisplayName}
                 style={{ borderRadius: "50%" }}
               />
-              <Text c="white" size="0.875rem">
+              <Text c="white" size="0.665rem">
                 {user.DisplayName}
               </Text>
             </Group>
             <Tooltip label={time.toLocaleTimeString()}>
-              <Text c="white" size="0.875rem">
-                <TimeAgo date={time} />
+              <Text c="white" size="0.665rem">
+                <TimeAgo
+                  date={time}
+                  formatter={(value, unit) => {
+                    if (unit === "second" && value < 5) {
+                      return "just now";
+                    }
+                    return `${value} ${unit}${value > 1 ? "s" : ""} ago`;
+                  }}
+                />
               </Text>
             </Tooltip>
           </Group>
