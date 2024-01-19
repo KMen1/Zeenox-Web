@@ -13,10 +13,12 @@ export function GradientBackground(
   if (image === null) return;
 
   const color = fac.getColor(image);
-  (container as HTMLElement).style.background =
-    "linear-gradient(180deg, " +
-    color.rgba +
-    ` 0%, rgba(255, 255, 255, ${isDark ? "0.05" : "0.9"}) 100%)`;
+  const secondColor = isDark
+    ? "rgba(255, 255, 255, 0.05) 100%)"
+    : "rgba(0, 0, 0, 0.9) 100%)";
+  (
+    container as HTMLElement
+  ).style.background = `linear-gradient(180deg, ${color.rgba} 0%, ${secondColor}`;
 }
 
 export function toTime(seconds: number | null) {
