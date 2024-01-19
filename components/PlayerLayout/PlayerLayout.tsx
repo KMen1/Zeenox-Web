@@ -1,4 +1,4 @@
-import { Grid, GridCol, Stack } from "@mantine/core";
+import { Card, Grid, GridCol, Stack } from "@mantine/core";
 import NextTrack from "../NextTrack/NextTrack";
 import { Player } from "../Player/Player";
 import { QueuePlaylistAccordion } from "../QueuePlaylistAccordion/QueuePlaylistAccordion";
@@ -17,19 +17,19 @@ export async function PlayerLayout() {
   return (
     <>
       <Grid grow style={{ overflow: "visible" }}>
-        <GridCol span={1}>
+        <GridCol span={{ base: 12, sm: 1 }}>
           <Stack>
             <Player />
             <NextTrack />
           </Stack>
         </GridCol>
-        <GridCol span={6}>
+        <GridCol span={{ base: 12, sm: 6 }}>
           <QueuePlaylistAccordion
             playlists={playlists}
             spotifyConnected={spotify != undefined}
           />
         </GridCol>
-        <GridCol span={2}>
+        <GridCol span={{ base: 12, md: 2 }}>
           <ActionsList />
         </GridCol>
       </Grid>
