@@ -176,10 +176,10 @@ export function Queue() {
     <>
       {winReady && (
         <div className="relative">
-          <Group align="center" gap={0} className="absolute right-6 -top-12">
+          <Group align="center" gap="xs" className="absolute right-6 -top-12">
             <Tooltip label="Shuffle">
               <ActionIcon
-                variant="transparent"
+                variant="light"
                 color="blue"
                 aria-label="Shuffle"
                 onClick={(e) => {
@@ -187,12 +187,12 @@ export function Queue() {
                   shuffle();
                 }}
               >
-                <IconArrowsShuffle size="1.3rem" />
+                <IconArrowsShuffle size="1.1rem" />
               </ActionIcon>
             </Tooltip>
             <Tooltip label="Reverse">
               <ActionIcon
-                variant="transparent"
+                variant="light"
                 color="blue"
                 aria-label="Reverse"
                 onClick={(e) => {
@@ -200,25 +200,25 @@ export function Queue() {
                   reverse();
                 }}
               >
-                <IconRotateClockwise size="1.3rem" />
+                <IconRotateClockwise size="1.1rem" />
               </ActionIcon>
             </Tooltip>
-            <Tooltip label="Remove duplicate tracks">
+            <Tooltip label="Remove duplicates">
               <ActionIcon
-                variant="transparent"
+                variant="light"
                 color="yellow"
-                aria-label="Remove duplicate tracks"
+                aria-label="Remove duplicates"
                 onClick={(e) => {
                   e.stopPropagation();
                   distinct();
                 }}
               >
-                <IconCopyOff size="1.3rem" />
+                <IconCopyOff size="1.1rem" />
               </ActionIcon>
             </Tooltip>
             <Tooltip label="Clear">
               <ActionIcon
-                variant="transparent"
+                variant="light"
                 color="red"
                 aria-label="Clear"
                 onClick={(e) => {
@@ -226,7 +226,7 @@ export function Queue() {
                   clear();
                 }}
               >
-                <IconTrash size="1.3rem" />
+                <IconTrash size="1.1rem" />
               </ActionIcon>
             </Tooltip>
           </Group>
