@@ -87,6 +87,12 @@ export const actionFetchAtom = atom((get) => {
     cycleRepeatMode: async () => {
       return fetch(`cycleRepeatMode`);
     },
+    resumeSession: async () => {
+      return fetch(`resumeSession`);
+    },
+    disconnect: async () => {
+      return fetch(`disconnect`);
+    },
   };
 });
 export const serverSessionTokenAtom = atom<string | null>(null);

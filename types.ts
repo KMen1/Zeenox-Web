@@ -77,6 +77,7 @@ export type InitData = {
   VoiceChannelName: string;
   StartedAt: number;
   Position: number;
+  ResumeSession?: PlayerResumeSession;
 } & ServerMessageData;
 
 export type PlayerData = {
@@ -99,6 +100,14 @@ export type Action = {
   Type: ActionType;
   User: DiscordUserData;
   Message: string;
+  Timestamp: number;
+};
+
+export type PlayerResumeSession = {
+  ChannelName: string;
+  CurrentTrack: TrackData;
+  QueueLength: number;
+  UpcomingFewTracks: TrackData[];
   Timestamp: number;
 };
 
@@ -134,6 +143,7 @@ export type TrackData = {
   Thumbnail: string | null;
   Duration: number;
   RequestedBy: DiscordUserData;
+  Lyrics: string | null;
 } & ServerMessageData;
 
 export type DiscordUserData = {

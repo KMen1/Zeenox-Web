@@ -16,8 +16,9 @@ import {
   showNotification,
   updateNotification,
 } from "@/utils/notificationUtils";
-import { useSetAtom } from "jotai";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import {
+  actionFetchAtom,
   actionsAtom,
   initAtom,
   listenersAtom,
@@ -29,6 +30,8 @@ import {
   trackAtom,
   volumeAtom,
 } from "@/utils/atoms";
+import { useDisclosure } from "@mantine/hooks";
+import { ResumeSessionModal } from "./ResumeSessionModal/ResumeSessionModal";
 
 let socket: WebSocket | null = null;
 
@@ -39,11 +42,12 @@ export function Socket({
   id: string;
   socketSessionToken: string;
 }) {
+  const [opened, { open, close }] = useDisclosure(false);
   const setServerSessionToken = useSetAtom(serverSessionTokenAtom);
   useEffect(() => {
     setServerSessionToken(socketSessionToken);
   }, [socketSessionToken, setServerSessionToken]);
-  const setInit = useSetAtom(initAtom);
+  const [init, setInit] = useAtom(initAtom);
   const setQueue = useSetAtom(queueAtom);
   const setTrack = useSetAtom(trackAtom);
   const setActions = useSetAtom(actionsAtom);
@@ -52,6 +56,7 @@ export function Socket({
   const setPosition = useSetAtom(positionAtom);
   const setState = useSetAtom(stateAtom);
   const setListeners = useSetAtom(listenersAtom);
+  const { resumeSession } = useAtomValue(actionFetchAtom);
 
   useEffect(() => {
     const notificatonId = `connect-socket-${Date.now()}`;
@@ -85,6 +90,9 @@ export function Socket({
       switch (data.Type) {
         case "player-init":
           setInit(data as InitData);
+          if ((data as InitData).ResumeSession) {
+            open();
+          }
           break;
         case "player-data":
           const playerData = data as PlayerData;
@@ -117,6 +125,7 @@ export function Socket({
     };
   }, [
     id,
+    open,
     setActions,
     setInit,
     setListeners,
@@ -129,5 +138,41 @@ export function Socket({
     socketSessionToken,
   ]);
 
-  return <></>;
+  const resumeData = init?.ResumeSession!;
+
+  function resumeSessionHandler() {
+    const notificatonId = `resume-session-${Date.now()}`;
+    showNotification(notificatonId, `Resuming session`, null, true);
+    resumeSession().then((res) => {
+      if (res.success) {
+        updateNotification(
+          notificatonId,
+          `Resumed session`,
+          <IconCheck />,
+          "green",
+          "Successfully resumed session!"
+        );
+      } else {
+        updateNotification(
+          notificatonId,
+          `Unable to resume session`,
+          <IconNetwork />,
+          "red",
+          "Unable to resume session!"
+        );
+      }
+    });
+    close();
+  }
+
+  return resumeData ? (
+    <ResumeSessionModal
+      opened={opened}
+      onClose={close}
+      onResume={resumeSessionHandler}
+      resumeData={resumeData}
+    />
+  ) : (
+    <></>
+  );
 }
