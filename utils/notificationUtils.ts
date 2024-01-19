@@ -14,6 +14,7 @@ export function showNotification(
     message: "This might take a second or two!",
     icon: icon,
     autoClose: false,
+    withBorder: true,
     withCloseButton: false,
   });
 }
