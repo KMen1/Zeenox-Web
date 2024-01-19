@@ -55,6 +55,7 @@ export function PlayerSongInfoDisplay() {
           component="a"
           href={track.Url!}
           target="_blank"
+          title={title}
           className={classes.title}
         >
           {title}
@@ -64,6 +65,7 @@ export function PlayerSongInfoDisplay() {
           lineClamp={1}
           lh={1.4}
           c={isDark ? "" : "gray.4"}
+          title={author}
           fw={400}
         >
           {author}
