@@ -1,0 +1,3 @@
+.infoText {
+  color: light-dark(white, var(--mantine-color-dark-0));
+}
