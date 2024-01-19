@@ -87,7 +87,7 @@ function getImage(action: Action): string | undefined {
 
       if (qAction.QueueActionType === QueueActionType.AddPlaylist) {
         return (
-          (qAction as EnqueuePlaylistAction).Tracks[0].Thumbnail || undefined
+          (qAction as EnqueuePlaylistAction).Tracks[0]?.Thumbnail || undefined
         );
       }
 
@@ -122,7 +122,16 @@ function getChildren(
   ) {
     const track = (action as PlayAction).Track;
 
-    return <Track track={track} small transparent onPlay={onPlay} />;
+    return (
+      <Track
+        track={track}
+        small
+        transparent
+        hoverable
+        withControls
+        onPlay={onPlay}
+      />
+    );
   }
 
   if (action.Type === ActionType.Skip) {
@@ -135,7 +144,14 @@ function getChildren(
         <Text c="white" size="1rem" fw={600} lh={1.4} lineClamp={1}>
           Skipped
         </Text>
-        <Track track={prevTrack} small transparent onPlay={onPlay} />
+        <Track
+          track={prevTrack}
+          small
+          transparent
+          hoverable
+          withControls
+          onPlay={onPlay}
+        />
       </>
     );
   }
@@ -200,6 +216,9 @@ function _getItemSize(action: Action): number {
         return 210;
       }
       if (qAction.QueueActionType === QueueActionType.AddTrack) {
+        return 160;
+      }
+      if (qAction.QueueActionType === QueueActionType.RemoveTrack) {
         return 160;
       }
       return 100;

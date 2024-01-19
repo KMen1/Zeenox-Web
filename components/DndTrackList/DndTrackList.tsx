@@ -95,6 +95,7 @@ export function DndTrackList({
               track={item}
               index={index}
               withControls
+              hoverable
               onSkipTo={skipToTrack}
               onRemove={removeTrack}
               onMove={moveTrack}

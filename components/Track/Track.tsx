@@ -21,6 +21,7 @@ export function Track({
   track,
   index,
   withControls,
+  hoverable,
   small,
   transparent,
   onPlay,
@@ -32,6 +33,7 @@ export function Track({
   track: TrackData;
   index?: number;
   withControls?: boolean;
+  hoverable?: boolean;
   small?: boolean;
   transparent?: boolean;
   onPlay?: (url: string) => Promise<ActionResult>;
@@ -165,14 +167,18 @@ export function Track({
     });
   }
 
-  if (small) {
-    return (
-      <Group
-        gap={10}
-        className={classes.smallTrack}
-        wrap="nowrap"
-        data-transparent={transparent == true}
-      >
+  return (
+    <Group
+      align="center"
+      gap="sm"
+      wrap="nowrap"
+      className={classes.track}
+      onDoubleClick={withControls ? skipTo : add}
+      data-hoverable={hoverable}
+      data-transparent={transparent}
+      data-small={small}
+    >
+      {small ? (
         <div className="relative min-w-[40px] min-h-[40px]">
           <Image
             src={
@@ -184,7 +190,7 @@ export function Track({
             className={classes.thumbnail}
             alt={track?.Title ?? "Nothing here"}
           />
-          {track && (
+          {track && withControls && (
             <div className="absolute top-[.5rem] left-[.5rem]">
               <Tooltip label={`Play ${track.Title} by ${track.Author}`}>
                 <IconPlayerPlayFilled
@@ -197,142 +203,115 @@ export function Track({
             </div>
           )}
         </div>
-        <Stack gap={1}>
-          <Text
-            size="0.9rem"
-            lineClamp={1}
-            lh={1.3}
-            component="a"
-            href={track?.Url!}
-            target="_blank"
-            className={classes.title}
-            c={transparent ? "white" : undefined}
-          >
-            {track?.Title ?? "Nothing here"}
-          </Text>
-          <Text
-            size="0.8rem"
-            lineClamp={1}
-            lh={1.3}
-            c={transparent ? "gray.3" : undefined}
-          >
-            {track?.Author ?? "Add songs"}
-          </Text>
-        </Stack>
-        <Text
-          size="0.8rem"
-          lineClamp={1}
-          lh={1.3}
-          ml="auto"
-          c={transparent ? "gray.3" : undefined}
-        >
-          {toTime(track?.Duration)}
-        </Text>
-      </Group>
-    );
-  }
-
-  return (
-    <Group
-      align="center"
-      gap="sm"
-      wrap="nowrap"
-      className={classes.track}
-      onDoubleClick={withControls ? skipTo : add}
-    >
-      <div className={classes.trackControl}>
-        <Tooltip
-          label={`${withControls ? "Skip to" : "Play"} ${track?.Title} by ${
-            track?.Author
-          }`}
-        >
-          <IconPlayerPlayFilled
-            size="1.2rem"
-            role="button"
-            onClick={withControls ? skipTo : play}
-            className={`${classes.play} ${classes.trackControlPlay}`}
+      ) : (
+        <>
+          <div className={classes.trackControl}>
+            <Tooltip
+              label={`${withControls ? "Skip to" : "Play"} ${track?.Title} by ${
+                track?.Author
+              }`}
+            >
+              <IconPlayerPlayFilled
+                size="1.2rem"
+                role="button"
+                onClick={withControls ? skipTo : play}
+                className={`${classes.play} ${classes.trackControlPlay}`}
+              />
+            </Tooltip>
+            <Text
+              size="0.9rem"
+              className={`${classes.index} ${classes.trackIndex} `}
+            >
+              {index! + 1}
+            </Text>
+          </div>
+          <Image
+            src={track?.Thumbnail ?? "/placeholder-album.png"}
+            width={36}
+            height={36}
+            alt={track.Title}
+            className={classes.trackImage}
           />
-        </Tooltip>
-        <Text
-          size="0.9rem"
-          className={`${classes.index} ${classes.trackIndex} `}
-        >
-          {index! + 1}
-        </Text>
-      </div>
-      <Image
-        src={track.Thumbnail ?? "/placeholder-album.png"}
-        width={36}
-        height={36}
-        alt={track.Title}
-        className={classes.trackImage}
-      />
+        </>
+      )}
+
       <Stack gap={0}>
         <Text
           size="0.9rem"
           lineClamp={1}
           lh={1.4}
           component="a"
-          href={track.Url!}
+          href={track?.Url!}
           target="_blank"
+          title={track?.Title}
           className={classes.trackTitle}
         >
-          {track.Title}
+          {track?.Title}
         </Text>
-        <Text size="0.8rem" lineClamp={1} lh={1.4}>
-          {track.Author}
+        <Text size="0.8rem" lineClamp={1} lh={1.4} title={track?.Author}>
+          {track?.Author}
         </Text>
       </Stack>
-      {withControls && (
-        <Group className={classes.trackQueueControl} gap={0}>
-          <Tooltip label="Move to top" position="top">
-            <ActionIcon
-              variant="transparent"
-              color="green"
-              aria-label="Move to top"
-              onClick={moveToTop}
-              className={`${classes.play} ${classes.trackMoveToTop} `}
-            >
-              <IconArrowUp size="1.2rem" />
-            </ActionIcon>
-          </Tooltip>
-          <Tooltip label="Remove from queue" position="top">
-            <ActionIcon
-              variant="transparent"
-              color="red"
-              aria-label="Remove Track"
-              onClick={remove}
-              className={`${classes.play} ${classes.trackQueueControl} `}
-            >
-              <IconTrash size="1.2rem" />
-            </ActionIcon>
-          </Tooltip>
+      {withControls ? (
+        <Group className="ml-auto" gap="xs">
+          {onMove && (
+            <Tooltip label="Move to top" position="top">
+              <ActionIcon
+                size={20}
+                variant="light"
+                color="green"
+                aria-label="Move to top"
+                onClick={moveToTop}
+                className={classes.play}
+              >
+                <IconArrowUp size={15} />
+              </ActionIcon>
+            </Tooltip>
+          )}
+          {onRemove && (
+            <Tooltip label="Remove from queue" position="top">
+              <ActionIcon
+                size={20}
+                variant="light"
+                color="red"
+                aria-label="Remove Track"
+                onClick={remove}
+                className={classes.play}
+              >
+                <IconTrash size={15} />
+              </ActionIcon>
+            </Tooltip>
+          )}
         </Group>
-      )}
-      {!withControls && (
+      ) : onAdd ? (
         <Tooltip label="Add to queue" position="top">
           <ActionIcon
-            variant="transparent"
-            color="dark.2"
-            aria-label="Remove Track"
+            size={20}
+            variant="light"
+            color="dark.1"
+            aria-label="Add to queue"
             onClick={add}
-            className={classes.trackMoveToTop}
+            className="ml-auto"
           >
-            <IconPlaylistAdd size="1.2rem" />
+            <IconPlaylistAdd size={15} />
           </ActionIcon>
         </Tooltip>
-      )}
-      <Text size="0.9rem" className={classes.trackDuration}>
-        {toTime(track.Duration)}
+      ) : null}
+      <Text
+        size="0.8rem"
+        className={classes.trackDuration}
+        data-left={!onAdd && !withControls}
+      >
+        {toTime(track?.Duration)}
       </Text>
 
-      {track.RequestedBy.AvatarUrl && (
-        <Tooltip label={track.RequestedBy.DisplayName} position="top">
+      {track?.RequestedBy.AvatarUrl && !small && (
+        <Tooltip label={track?.RequestedBy.DisplayName} position="top">
           <Image
-            src={track.RequestedBy.AvatarUrl}
+            src={track?.RequestedBy.AvatarUrl}
             width={20}
             height={20}
-            alt={track.RequestedBy.DisplayName}
+            alt={track?.RequestedBy.DisplayName}
             style={{ borderRadius: "50%" }}
           />
         </Tooltip>

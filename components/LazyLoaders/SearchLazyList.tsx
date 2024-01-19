@@ -55,6 +55,7 @@ export function SearchLazyList({ query }: { query: string | null }) {
       <div style={style}>
         <TrackComponent
           index={index}
+          hoverable
           track={{
             Type: "player-track",
             Identifier: track.id,
@@ -68,6 +69,7 @@ export function SearchLazyList({ query }: { query: string | null }) {
               DisplayName: "",
               AvatarUrl: null,
             },
+            Lyrics: null,
           }}
           onPlay={playTrack}
           onAdd={addTrack}

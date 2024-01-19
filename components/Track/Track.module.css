@@ -2,11 +2,29 @@
   border-radius: var(--mantine-radius-md);
   padding: calc(var(--mantine-spacing-sm) / 2) calc(var(--mantine-spacing-sm));
 
-  &:hover {
+  &[data-small="true"] {
+    padding: calc(var(--mantine-spacing-sm) / 2);
+  }
+
+  &[data-hoverable="true"]&:hover {
     background-color: light-dark(
       var(--mantine-color-gray-1),
       var(--mantine-color-dark-5)
     );
+
+    &[data-transparent="true"] {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    &[data-small="true"] {
+      .playButton {
+        opacity: 1;
+      }
+
+      .thumbnail {
+        filter: brightness(0.4);
+      }
+    }
   }
 
   &:hover .play {
@@ -16,6 +34,7 @@
   &:hover .index {
     display: none;
   }
+
   @apply duration-75 ease-in-out;
 }
 
@@ -48,24 +67,10 @@
   }
 }
 
-.trackQueueControl {
-  &:hover {
-    color: light-dark(var(--mantine-color-red-7), var(--mantine-color-red-5));
-  }
-
-  @apply ml-auto duration-75 ease-in-out;
-}
-
-.trackMoveToTop {
-  &:hover {
-    color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-dark-1));
-  }
-
-  @apply ml-auto duration-75 ease-in-out;
-}
-
 .trackImage {
   border-radius: var(--mantine-radius-sm);
+  height: 36px;
+  width: 36px;
 }
 
 .trackTitle {
@@ -81,30 +86,6 @@
   opacity: 0;
 
   transition: duration-75 ease-in-out;
-}
-
-.smallTrack {
-  border-radius: var(--mantine-radius-md);
-  padding: calc(var(--mantine-spacing-sm) / 2);
-
-  &:hover {
-    background-color: light-dark(
-      var(--mantine-color-gray-1),
-      var(--mantine-color-dark-5)
-    );
-
-    .playButton {
-      opacity: 1;
-    }
-
-    .thumbnail {
-      filter: brightness(0.4);
-    }
-  }
-
-  &:hover[data-transparent="true"] {
-    background-color: rgba(255, 255, 255, 0.1);
-  }
 }
 
 .thumbnail {
@@ -127,13 +108,4 @@
 
 .playButton:hover {
   color: light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-1));
-}
-
-.title {
-  color: light-dark(black, white);
-  font-weight: 600;
-
-  &:hover {
-    text-decoration: underline;
-  }
 }

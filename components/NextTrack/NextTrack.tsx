@@ -1,9 +1,18 @@
 "use client";
 
-import { Card, Divider, Group, Skeleton, Stack, Title } from "@mantine/core";
+import {
+  Card,
+  Divider,
+  Group,
+  Skeleton,
+  Stack,
+  Text,
+  Title,
+} from "@mantine/core";
 import { Track } from "../Track/Track";
 import { useAtomValue } from "jotai";
 import { actionFetchAtom, queueAtom } from "@/utils/atoms";
+import { IconMoodSad } from "@tabler/icons-react";
 
 export default function NextTrack() {
   const tracks = useAtomValue(queueAtom);
@@ -42,7 +51,17 @@ export default function NextTrack() {
           Upcoming
         </Title>
         <Divider />
-        <Track track={track!} small onSkipTo={skipTo} />
+        {track ? (
+          <Track track={track} small hoverable withControls onSkipTo={skipTo} />
+        ) : (
+          <Group p="xs" wrap="nowrap">
+            <Text>
+              <IconMoodSad size={33} />
+            </Text>
+
+            <Text size="0.9rem">No upcoming tracks</Text>
+          </Group>
+        )}
       </Stack>
     </Card>
   );
