@@ -90,11 +90,17 @@ export function Playlist({
           component="a"
           target="_blank"
           href={playlist.external_urls.spotify}
+          title={playlist.name}
           className={classes.playlistTitle}
         >
           {playlist.name}
         </Text>
-        <Text size="sm" lineClamp={1} lh={1.4}>
+        <Text
+          size="sm"
+          lineClamp={1}
+          lh={1.4}
+          title={playlist.owner.display_name}
+        >
           {playlist.owner.display_name}
         </Text>
       </Stack>
