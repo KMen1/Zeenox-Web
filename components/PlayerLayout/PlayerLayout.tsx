@@ -1,10 +1,20 @@
-import { Card, Grid, GridCol, Stack } from "@mantine/core";
+import {
+  Accordion,
+  AccordionControl,
+  AccordionItem,
+  AccordionPanel,
+  Grid,
+  GridCol,
+  Stack,
+} from "@mantine/core";
 import NextTrack from "../NextTrack/NextTrack";
 import { Player } from "../Player/Player";
 import { QueuePlaylistAccordion } from "../QueuePlaylistAccordion/QueuePlaylistAccordion";
 import { getSpotifyPlaylists } from "@/app/utils";
 import { currentUser } from "@clerk/nextjs";
 import { ActionsList } from "../ActionsList/ActionsList";
+import { LyricsCard } from "../LyricsCard/LyricsCard";
+import { IconBlockquote, IconLayoutList } from "@tabler/icons-react";
 
 export async function PlayerLayout() {
   const user = await currentUser();
@@ -30,7 +40,24 @@ export async function PlayerLayout() {
           />
         </GridCol>
         <GridCol span={{ base: 12, md: 2 }}>
-          <ActionsList />
+          <Accordion variant="separated" radius="lg">
+            <AccordionItem value="actions">
+              <AccordionControl icon={<IconLayoutList />}>
+                Actions
+              </AccordionControl>
+              <AccordionPanel>
+                <ActionsList />
+              </AccordionPanel>
+            </AccordionItem>
+            <AccordionItem value="lyrics">
+              <AccordionControl icon={<IconBlockquote />}>
+                Lyrics
+              </AccordionControl>
+              <AccordionPanel>
+                <LyricsCard />
+              </AccordionPanel>
+            </AccordionItem>
+          </Accordion>
         </GridCol>
       </Grid>
     </>
