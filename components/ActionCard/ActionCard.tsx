@@ -26,9 +26,14 @@ export function ActionCard({
         style={{ backgroundImage: `url(${bgImage})` }}
       />
       <div className={classes.blur} />
-      <Card classNames={classes} p="1.25rem" data-hasimage={!!bgImage}>
+      <Card
+        classNames={classes}
+        p="1.25rem"
+        data-hasimage={!!bgImage}
+        withBorder
+      >
         <Stack gap="xs">
-          <Text fw={700} c="white" size="1.2rem">
+          <Text fw={700} c="dark.0" size="1.2rem">
             {title}
           </Text>
           {children}
@@ -41,12 +46,12 @@ export function ActionCard({
                 alt={user.DisplayName}
                 style={{ borderRadius: "50%" }}
               />
-              <Text c="white" size="0.665rem">
+              <Text size="0.665rem" className={classes.footerText}>
                 {user.DisplayName}
               </Text>
             </Group>
             <Tooltip label={time.toLocaleTimeString()}>
-              <Text c="white" size="0.665rem">
+              <Text size="0.665rem" className={classes.footerText}>
                 <TimeAgo
                   date={time}
                   formatter={(value, unit) => {

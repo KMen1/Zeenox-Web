@@ -48,7 +48,6 @@ export function PlayerSongInfoDisplay() {
       <Stack gap={0}>
         <Text
           size="lg"
-          c="white"
           fw={600}
           lineClamp={1}
           lh={1.4}
@@ -64,9 +63,9 @@ export function PlayerSongInfoDisplay() {
           size="sm"
           lineClamp={1}
           lh={1.4}
-          c={isDark ? "" : "gray.4"}
           title={author}
           fw={400}
+          className={classes.author}
         >
           {author}
         </Text>

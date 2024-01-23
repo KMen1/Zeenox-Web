@@ -176,7 +176,7 @@ export function Queue() {
     <>
       {winReady && (
         <div className="relative">
-          <Group align="center" gap="xs" className="absolute right-6 -top-12">
+          <Group align="center" gap="xs" className="absolute right-6 -top-11">
             <Tooltip label="Shuffle">
               <ActionIcon
                 variant="light"

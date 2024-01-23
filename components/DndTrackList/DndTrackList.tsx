@@ -86,9 +86,8 @@ export function DndTrackList({
       <Draggable draggableId={item.Url!} index={index} key={item.Url}>
         {(provided) => (
           <div
-            {...provided.draggableProps}
-            {...provided.dragHandleProps}
             ref={provided.innerRef}
+            {...provided.draggableProps}
             style={getStyle({ provided, style })}
           >
             <Track
@@ -99,6 +98,7 @@ export function DndTrackList({
               onSkipTo={skipToTrack}
               onRemove={removeTrack}
               onMove={moveTrack}
+              dragHandleProps={provided.dragHandleProps}
             />
           </div>
         )}
@@ -145,7 +145,7 @@ export function DndTrackList({
       >
         {(provided) => (
           <FixedSizeList
-            height={425}
+            height={435}
             itemCount={tracks?.length || 0}
             itemSize={50}
             width="100%"

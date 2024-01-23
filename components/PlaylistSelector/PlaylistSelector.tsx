@@ -48,7 +48,7 @@ export function PlaylistSelector({
   playlists: Playlist[] | null;
 }) {
   return (
-    <ScrollArea h={380}>
+    <ScrollArea h={385}>
       <PlaylistComponent
         playlist={SAVED}
         isSelected={selected === "saved"}

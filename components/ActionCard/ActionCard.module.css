@@ -40,3 +40,7 @@
     background: rgba(0, 0, 0, 0.6);
   }
 }
+
+.footerText {
+  color: var(--mantine-color-dark-0);
+}

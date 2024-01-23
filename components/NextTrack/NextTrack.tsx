@@ -12,7 +12,8 @@ import {
 import { Track } from "../Track/Track";
 import { useAtomValue } from "jotai";
 import { actionFetchAtom, queueAtom } from "@/utils/atoms";
-import { IconMoodSad } from "@tabler/icons-react";
+import { IconMoodSad, IconPlayerTrackNext } from "@tabler/icons-react";
+import classes from "./NextTrack.module.css";
 
 export default function NextTrack() {
   const tracks = useAtomValue(queueAtom);
@@ -29,10 +30,8 @@ export default function NextTrack() {
 
   if (track === null)
     return (
-      <Card>
-        <Title order={5} lh={1}>
-          Upcoming
-        </Title>
+      <Card className={classes.nextTrackCard}>
+        <Text lh={1}>Upcoming</Text>
         <Divider mt={10} />
         <Group gap={10} mt={10}>
           <Skeleton w={36} h={36} radius="md" />
@@ -45,11 +44,12 @@ export default function NextTrack() {
     );
 
   return (
-    <Card shadow="xl">
+    <Card shadow="xl" className={classes.nextTrackCard}>
       <Stack gap={8}>
-        <Title order={5} lh={1}>
-          Upcoming
-        </Title>
+        <Group gap={10} align="center">
+          <IconPlayerTrackNext size={24} />
+          <Text pb={3}>Upcoming</Text>
+        </Group>
         <Divider />
         {track ? (
           <Track track={track} small hoverable withControls onSkipTo={skipTo} />

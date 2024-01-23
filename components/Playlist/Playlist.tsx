@@ -100,6 +100,7 @@ export function Playlist({
           lineClamp={1}
           lh={1.4}
           title={playlist.owner.display_name}
+          className={classes.playlistOwner}
         >
           {playlist.owner.display_name}
         </Text>

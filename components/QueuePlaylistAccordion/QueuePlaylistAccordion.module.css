@@ -1,4 +1,4 @@
-.item {
+/*.item {
   background-color: light-dark(white, var(--mantine-color-dark-6));
   border: none;
   box-shadow: var(--mantine-shadow-xl);
@@ -16,7 +16,7 @@
 .control[data-opened="true"] {
   border-bottom: 1px solid
     light-dark(var(--mantine-color-gray-4), var(--mantine-color-dark-3));
-}
+}*/
 
 .resizeHandle {
   background-color: light-dark(

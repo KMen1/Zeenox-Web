@@ -140,7 +140,7 @@ function getChildren(
 
     return (
       <>
-        <Track track={track} small transparent />
+        <Track track={track} small transparent hoverable withControls />
         <Text c="white" size="1rem" fw={600} lh={1.4} lineClamp={1}>
           Skipped
         </Text>
@@ -299,6 +299,18 @@ export function ActionsList() {
   }
 
   return (
+    <VariableSizeList
+      ref={listRef}
+      height={435}
+      itemCount={actions.length}
+      itemSize={getItemSize}
+      width="100%"
+    >
+      {Row}
+    </VariableSizeList>
+  );
+
+  /*return (
     <Card shadow="md" pt="sm">
       <Group gap={10} align="center">
         <IconList />
@@ -315,5 +327,5 @@ export function ActionsList() {
         {Row}
       </VariableSizeList>
     </Card>
-  );
+  );*/
 }

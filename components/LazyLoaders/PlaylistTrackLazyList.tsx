@@ -7,7 +7,7 @@ import { LazyList } from "./LazyList";
 import { Skeleton } from "@mantine/core";
 
 const ITEM_HEIGHT = 50;
-const LIST_HEIGHT = 425;
+const LIST_HEIGHT = 435;
 
 export function PlaylistTrackLazyList({ id }: { id: string | null }) {
   const [response, setResponse] = useState<SavedTracksResponse | null>(null);
