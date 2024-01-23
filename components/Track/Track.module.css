@@ -9,7 +9,7 @@
   &[data-hoverable="true"]&:hover {
     background-color: light-dark(
       var(--mantine-color-gray-1),
-      var(--mantine-color-dark-5)
+      var(--mantine-color-dark-6)
     );
 
     &[data-transparent="true"] {
@@ -40,6 +40,7 @@
 
 .trackDuration {
   min-width: max-content;
+  color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-dark-1));
 
   &[data-left="true"] {
     margin-left: auto;
@@ -74,12 +75,16 @@
 }
 
 .trackTitle {
-  color: light-dark(black, white);
+  color: light-dark(var(--mantine-color-gray-9), var(--mantine-color-dark-0));
   font-weight: 500;
 
   &:hover {
     text-decoration: underline;
   }
+}
+
+.trackAuthor {
+  color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-dark-1));
 }
 
 .play {

@@ -4,6 +4,7 @@ import { ActionIcon, Group, Stack, Text, Tooltip } from "@mantine/core";
 import {
   IconArrowUp,
   IconExclamationCircle,
+  IconGripVertical,
   IconPlayerPlayFilled,
   IconPlaylistAdd,
   IconTrash,
@@ -16,6 +17,7 @@ import {
   showNotification,
   updateNotification,
 } from "@/utils/notificationUtils";
+import { DraggableProvidedDragHandleProps } from "react-beautiful-dnd";
 
 export function Track({
   track,
@@ -29,6 +31,7 @@ export function Track({
   onRemove,
   onMove,
   onSkipTo,
+  dragHandleProps,
 }: {
   track: TrackData;
   index?: number;
@@ -41,6 +44,7 @@ export function Track({
   onRemove?: (index: number) => Promise<ActionResult>;
   onMove?: (from: number, to: number) => Promise<ActionResult>;
   onSkipTo?: (index: number) => Promise<ActionResult>;
+  dragHandleProps?: DraggableProvidedDragHandleProps | null;
 }) {
   function play() {
     if (!onPlay) return;
@@ -178,6 +182,11 @@ export function Track({
       data-transparent={transparent}
       data-small={small}
     >
+      {dragHandleProps && (
+        <div {...dragHandleProps}>
+          <IconGripVertical size={15} />
+        </div>
+      )}
       {small ? (
         <div className="relative min-w-[40px] min-h-[40px]">
           <Image
@@ -222,7 +231,7 @@ export function Track({
               size="0.9rem"
               className={`${classes.index} ${classes.trackIndex} `}
             >
-              {index! + 1}
+              {index !== undefined ? index + 1 : ""}
             </Text>
           </div>
           <Image
@@ -248,12 +257,18 @@ export function Track({
         >
           {track?.Title}
         </Text>
-        <Text size="0.8rem" lineClamp={1} lh={1.4} title={track?.Author}>
+        <Text
+          size="0.8rem"
+          lineClamp={1}
+          lh={1.4}
+          title={track?.Author}
+          className={classes.trackAuthor}
+        >
           {track?.Author}
         </Text>
       </Stack>
       {withControls ? (
-        <Group className="ml-auto" gap="xs">
+        <Group className="ml-auto" gap="xs" wrap="nowrap">
           {onMove && (
             <Tooltip label="Move to top" position="top">
               <ActionIcon
@@ -278,7 +293,7 @@ export function Track({
                 onClick={remove}
                 className={classes.play}
               >
-                <IconTrash size={15} />
+                <IconTrash size={13} />
               </ActionIcon>
             </Tooltip>
           )}
