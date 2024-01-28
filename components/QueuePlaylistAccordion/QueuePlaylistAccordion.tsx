@@ -9,7 +9,6 @@ import {
 import { Queue } from "../Queue/Queue";
 import { useCallback, useEffect, useState } from "react";
 import classes from "./QueuePlaylistAccordion.module.css";
-import { Playlist } from "@/types";
 import { PlaylistSelector } from "../PlaylistSelector/PlaylistSelector";
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 import { toHumanTime } from "@/utils/utils";
@@ -18,6 +17,7 @@ import { useAtomValue } from "jotai";
 import { queueAtom } from "@/utils/atoms";
 import { PlaylistTrackLazyList } from "../LazyLoaders/PlaylistTrackLazyList";
 import { SearchLazyList } from "../LazyLoaders/SearchLazyList";
+import { Playlist } from "@/types/spotify";
 
 export function QueuePlaylistAccordion({
   playlists,

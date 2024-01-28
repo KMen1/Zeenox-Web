@@ -10,129 +10,31 @@ import {
   Text,
   Tooltip,
 } from "@mantine/core";
-import { useEffect, useState } from "react";
 import { DndTrackList } from "../DndTrackList/DndTrackList";
 import {
   IconArrowsShuffle,
   IconCopyOff,
-  IconExclamationMark,
   IconMoodSad,
   IconRotateClockwise,
   IconTrash,
 } from "@tabler/icons-react";
-import {
-  showNotification,
-  updateNotification,
-} from "@/utils/notificationUtils";
 import { useAtomValue } from "jotai";
-import { actionFetchAtom, queueAtom } from "@/utils/atoms";
-import { getErrorMessageFromCode } from "@/utils/utils";
+import { queueAtom } from "@/utils/atoms";
+import {
+  useClear,
+  useDistinct,
+  useMove,
+  useReverse,
+  useShuffle,
+} from "../hooks";
 
 export function Queue() {
-  const [winReady, setwinReady] = useState(false);
-  useEffect(() => {
-    setwinReady(true);
-  }, []);
-
   const tracks = useAtomValue(queueAtom);
-  const { moveTrack, shuffleQueue, clearQueue, distinctQueue, reverseQueue } =
-    useAtomValue(actionFetchAtom);
-
-  function shuffle() {
-    const id = `shuffle-queue-${Date.now()}`;
-    showNotification(id, "Shuffling queue", null, true);
-    shuffleQueue().then((res) => {
-      if (res.success) {
-        updateNotification(
-          id,
-          "Shuffled the queue",
-          <IconTrash />,
-          "green",
-          "Successfully shuffled the queue!"
-        );
-      } else {
-        updateNotification(
-          id,
-          "Unable to shuffle the queue",
-          <IconExclamationMark />,
-          "red",
-          getErrorMessageFromCode(res.code!)
-        );
-      }
-    });
-  }
-
-  function clear() {
-    const id = `clear-queue-${Date.now()}`;
-    showNotification(id, "Clearing queue", null, true);
-    clearQueue().then((res) => {
-      if (res.success) {
-        updateNotification(
-          id,
-          "Cleared the queue",
-          <IconTrash />,
-          "green",
-          "Successfully cleared the queue!"
-        );
-      } else {
-        updateNotification(
-          id,
-          "Unable to clear the queue",
-          <IconExclamationMark />,
-          "red",
-          getErrorMessageFromCode(res.code!)
-        );
-      }
-    });
-  }
-
-  function distinct() {
-    const id = `distinct-queue-${Date.now()}`;
-    showNotification(id, "Removing duplicate tracks", null, true);
-    distinctQueue().then((res) => {
-      if (res.success) {
-        updateNotification(
-          id,
-          "Removed duplicate tracks",
-          <IconCopyOff />,
-          "green",
-          "Successfully removed duplicate tracks!"
-        );
-      } else {
-        updateNotification(
-          id,
-          "Unable to remove duplicate tracks",
-          <IconExclamationMark />,
-          "red",
-          getErrorMessageFromCode(res.code!)
-        );
-      }
-    });
-  }
-
-  function reverse() {
-    const id = `reverse-queue-${Date.now()}`;
-    showNotification(id, "Reversing queue", null, true);
-    reverseQueue().then((res) => {
-      if (res.success) {
-        updateNotification(
-          id,
-          "Reversed the queue",
-          <IconRotateClockwise />,
-          "green",
-          "Successfully reversed the queue!"
-        );
-      } else {
-        updateNotification(
-          id,
-          "Unable to reverse the queue",
-          <IconExclamationMark />,
-          "red",
-          getErrorMessageFromCode(res.code!)
-        );
-      }
-    });
-  }
+  const move = useMove();
+  const shuffle = useShuffle();
+  const clear = useClear();
+  const distinct = useDistinct();
+  const reverse = useReverse();
 
   if (tracks === null) {
     return (
@@ -173,66 +75,62 @@ export function Queue() {
     );
 
   return (
-    <>
-      {winReady && (
-        <div className="relative">
-          <Group align="center" gap="xs" className="absolute right-6 -top-11">
-            <Tooltip label="Shuffle">
-              <ActionIcon
-                variant="light"
-                color="blue"
-                aria-label="Shuffle"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  shuffle();
-                }}
-              >
-                <IconArrowsShuffle size="1.1rem" />
-              </ActionIcon>
-            </Tooltip>
-            <Tooltip label="Reverse">
-              <ActionIcon
-                variant="light"
-                color="blue"
-                aria-label="Reverse"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  reverse();
-                }}
-              >
-                <IconRotateClockwise size="1.1rem" />
-              </ActionIcon>
-            </Tooltip>
-            <Tooltip label="Remove duplicates">
-              <ActionIcon
-                variant="light"
-                color="yellow"
-                aria-label="Remove duplicates"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  distinct();
-                }}
-              >
-                <IconCopyOff size="1.1rem" />
-              </ActionIcon>
-            </Tooltip>
-            <Tooltip label="Clear">
-              <ActionIcon
-                variant="light"
-                color="red"
-                aria-label="Clear"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  clear();
-                }}
-              >
-                <IconTrash size="1.1rem" />
-              </ActionIcon>
-            </Tooltip>
-          </Group>
-          <DndTrackList baseTracks={tracks} onMove={moveTrack} />
-        </div>
-      )}
-    </>
+    <div className="relative">
+      <Group align="center" gap="xs" className="absolute right-6 -top-11">
+        <Tooltip label="Shuffle">
+          <ActionIcon
+            variant="light"
+            color="blue"
+            aria-label="Shuffle"
+            onClick={(e) => {
+              e.stopPropagation();
+              shuffle();
+            }}
+          >
+            <IconArrowsShuffle size="1.1rem" />
+          </ActionIcon>
+        </Tooltip>
+        <Tooltip label="Reverse">
+          <ActionIcon
+            variant="light"
+            color="blue"
+            aria-label="Reverse"
+            onClick={(e) => {
+              e.stopPropagation();
+              reverse();
+            }}
+          >
+            <IconRotateClockwise size="1.1rem" />
+          </ActionIcon>
+        </Tooltip>
+        <Tooltip label="Remove duplicates">
+          <ActionIcon
+            variant="light"
+            color="yellow"
+            aria-label="Remove duplicates"
+            onClick={(e) => {
+              e.stopPropagation();
+              distinct();
+            }}
+          >
+            <IconCopyOff size="1.1rem" />
+          </ActionIcon>
+        </Tooltip>
+        <Tooltip label="Clear">
+          <ActionIcon
+            variant="light"
+            color="red"
+            aria-label="Clear"
+            onClick={(e) => {
+              e.stopPropagation();
+              clear();
+            }}
+          >
+            <IconTrash size="1.1rem" />
+          </ActionIcon>
+        </Tooltip>
+      </Group>
+      <DndTrackList baseTracks={tracks} onMove={(from, to) => move(from, to)} />
+    </div>
   );
 }

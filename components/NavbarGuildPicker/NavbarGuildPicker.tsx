@@ -12,10 +12,10 @@ import {
 } from "@mantine/core";
 import { IconChevronDown, IconShield, IconX } from "@tabler/icons-react";
 import classes from "./NavbarGuildPicker.module.css";
-import { PartialGuild } from "@/types";
 import cx from "clsx";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
+import { PartialGuild } from "@/types/discord";
 
 export function NavbarGuildPicker({
   guilds,

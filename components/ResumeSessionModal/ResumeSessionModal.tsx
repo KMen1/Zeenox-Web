@@ -1,4 +1,4 @@
-import { PlayerResumeSession } from "@/types";
+import { PlayerResumeSession } from "@/types/socket";
 import { Modal, Group, Stack, Button, Text } from "@mantine/core";
 import {
   IconClockPlay,

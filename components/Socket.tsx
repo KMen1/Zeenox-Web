@@ -1,15 +1,4 @@
 "use client";
-
-import {
-  type QueueData,
-  type PlayerData,
-  TrackData,
-  ActionData,
-  ActionsData,
-  Action,
-  InitData,
-  ServerMessageData,
-} from "@/types";
 import { useEffect } from "react";
 import { IconCheck, IconNetwork } from "@tabler/icons-react";
 import {
@@ -32,6 +21,17 @@ import {
 } from "@/utils/atoms";
 import { useDisclosure } from "@mantine/hooks";
 import { ResumeSessionModal } from "./ResumeSessionModal/ResumeSessionModal";
+import {
+  Action,
+  AddActionPayload,
+  AddActionsPayload,
+  InitPayload,
+  Payload,
+  PayloadType,
+  Track,
+  UpdatePlayerPayload,
+  UpdateQueuePayload,
+} from "@/types/socket";
 
 let socket: WebSocket | null = null;
 
@@ -69,16 +69,15 @@ export function Socket({
       updateNotification(
         notificatonId,
         `Connected to server`,
-        <IconCheck />,
-        "green",
-        "Successfully connected to server!"
+        <IconCheck width="70%" height="70%" />,
+        "green"
       );
     };
     socket.onclose = (ev) => {
       updateNotification(
         notificatonId,
         ev.code === 1006 ? "Unable to connect!" : `Disconnected from server`,
-        <IconNetwork />,
+        <IconNetwork width="70%" height="70%" />,
         "red",
         ev.code === 1006
           ? "Connect to a voice channel to start listening!"
@@ -86,37 +85,38 @@ export function Socket({
       );
     };
     socket.onmessage = (event) => {
-      const data = JSON.parse(event.data as string) as ServerMessageData;
-      switch (data.Type) {
-        case "player-init":
-          setInit(data as InitData);
-          if ((data as InitData).ResumeSession) {
+      const payload = JSON.parse(event.data as string) as Payload;
+      switch (payload.Type) {
+        case PayloadType.InitPlayer:
+          const initPayload = payload as InitPayload;
+          setInit(initPayload);
+          if (initPayload.ResumeSession) {
             open();
           }
           break;
-        case "player-data":
-          const playerData = data as PlayerData;
+        case PayloadType.UpdatePlayer:
+          const playerData = payload as UpdatePlayerPayload;
           setVolume(playerData.Volume);
           setRepeat(playerData.RepeatMode);
           setPosition(playerData.Position || 0);
           setState(playerData.State);
           setListeners(playerData.Listeners);
           break;
-        case "player-track":
-          setTrack(data as TrackData);
+        case PayloadType.UpdateTrack:
+          setTrack(payload as Track);
           break;
-        case "player-queue":
-          setQueue((data as QueueData).Tracks);
+        case PayloadType.UpdateQueue:
+          setQueue((payload as UpdateQueuePayload).Tracks);
           break;
-        case "player-actions":
-          setActions((data as ActionsData).Actions.reverse());
-          break;
-        case "player-action":
-          const action = (data as ActionData).Action as Action;
+        case PayloadType.AddAction:
+          const action = (payload as AddActionPayload).Action as Action;
           setActions((state) => {
             if (!state) return [action];
             return [action, ...state];
           });
+          break;
+        case PayloadType.AddActions:
+          setActions((payload as AddActionsPayload).Actions.reverse());
           break;
       }
     };

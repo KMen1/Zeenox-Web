@@ -10,12 +10,13 @@ import {
   Stack,
   Text,
 } from "@mantine/core";
-import { IconMoodSad } from "@tabler/icons-react";
+import { IconMoodSad, IconSettings } from "@tabler/icons-react";
 import { useAtomValue } from "jotai";
 import { useEffect, useState } from "react";
 
 export function LyricsCard() {
-  const [lyricsHtml, setLyricsHtml] = useState<string | null>("");
+  const [lyricsHtml, setLyricsHtml] = useState<string | null>(null);
+  const [fontSize, setFontSize] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
   const track = useAtomValue(trackAtom);
   const token = useAtomValue(serverSessionTokenAtom);
@@ -32,7 +33,8 @@ export function LyricsCard() {
       setIsLoading(false);
     }
 
-    fetchLyricsHtml();
+    if (track?.Url) fetchLyricsHtml();
+    else setLyricsHtml(null);
   }, [token, track]);
 
   return (
@@ -41,7 +43,25 @@ export function LyricsCard() {
         visible={isLoading}
         overlayProps={{ radius: "lg", blur: 3 }}
       />
-      <Card>
+      <Card pos="relative">
+        {/*<Popover position="left" width={150}>
+          <Popover.Target>
+            <ActionIcon variant="light" color="gray">
+              <IconSettings />
+            </ActionIcon>
+          </Popover.Target>
+          <Popover.Dropdown>
+            <Slider
+              title="Font Size"
+              step={0.1}
+              defaultValue={1}
+              min={0.1}
+              max={2}
+              onChange={(val) => setFontSize(val)}
+            />
+          </Popover.Dropdown>
+  </Popover>*/}
+
         <ScrollArea h={403}>
           {lyricsHtml === null ? (
             <Center h={403} p="xl">
@@ -53,9 +73,11 @@ export function LyricsCard() {
               </Stack>
             </Center>
           ) : (
-            <Text>
-              <div dangerouslySetInnerHTML={{ __html: lyricsHtml || "" }} />
-            </Text>
+            <Text
+              size={`${fontSize}rem`}
+              lh={1.4}
+              dangerouslySetInnerHTML={{ __html: lyricsHtml || "" }}
+            />
           )}
         </ScrollArea>
       </Card>

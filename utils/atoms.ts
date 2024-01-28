@@ -1,11 +1,11 @@
 import {
   Action,
-  DiscordUserData,
-  InitData,
+  BasicDiscordUser,
+  InitPayload,
   PlayerState,
   RepeatMode,
-  TrackData,
-} from "@/types";
+  Track,
+} from "@/types/socket";
 import { atom } from "jotai";
 
 const fetchAtom = atom((get) => {
@@ -96,14 +96,14 @@ export const actionFetchAtom = atom((get) => {
   };
 });
 export const serverSessionTokenAtom = atom<string | null>(null);
-export const initAtom = atom<InitData | null>(null);
+export const initAtom = atom<InitPayload | null>(null);
 export const positionAtom = atom<number>(0);
 export const repeatAtom = atom<RepeatMode | null>(null);
 export const stateAtom = atom<PlayerState | null>(null);
 export const actionsAtom = atom<Action[] | null>(null);
-export const queueAtom = atom<TrackData[] | null>(null);
-export const trackAtom = atom<TrackData | null>(null);
-export const requesterAtom = atom<DiscordUserData | null>(
+export const queueAtom = atom<Track[] | null>(null);
+export const trackAtom = atom<Track | null>(null);
+export const requesterAtom = atom<BasicDiscordUser | null>(
   (get) => get(trackAtom)?.RequestedBy ?? null
 );
 export const durationAtom = atom<number>(
@@ -112,5 +112,5 @@ export const durationAtom = atom<number>(
 export const channelNameAtom = atom<string | null>(
   (get) => get(initAtom)?.VoiceChannelName ?? null
 );
-export const listenersAtom = atom<DiscordUserData[] | null>(null);
+export const listenersAtom = atom<BasicDiscordUser[] | null>(null);
 export const volumeAtom = atom<number>(100);

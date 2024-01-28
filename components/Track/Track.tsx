@@ -3,7 +3,6 @@
 import { ActionIcon, Group, Stack, Text, Tooltip } from "@mantine/core";
 import {
   IconArrowUp,
-  IconExclamationCircle,
   IconGripVertical,
   IconPlayerPlayFilled,
   IconPlaylistAdd,
@@ -11,13 +10,10 @@ import {
 } from "@tabler/icons-react";
 import Image from "next/image";
 import classes from "./Track.module.css";
-import { getErrorMessageFromCode, toTime } from "@/utils/utils";
-import { ActionResult, TrackData } from "@/types";
-import {
-  showNotification,
-  updateNotification,
-} from "@/utils/notificationUtils";
+import { toTime } from "@/utils/utils";
+import { Track } from "@/types/socket";
 import { DraggableProvidedDragHandleProps } from "react-beautiful-dnd";
+import { useAdd, useMove, usePlay, useRemove, useSkipTo } from "../hooks";
 
 export function Track({
   track,
@@ -26,150 +22,37 @@ export function Track({
   hoverable,
   small,
   transparent,
-  onPlay,
-  onAdd,
-  onRemove,
-  onMove,
-  onSkipTo,
+  withPlay,
+  withAdd,
+  withRemove,
+  withMove,
+  withSkipTo,
   dragHandleProps,
 }: {
-  track: TrackData;
+  track: Track;
   index?: number;
   withControls?: boolean;
   hoverable?: boolean;
   small?: boolean;
   transparent?: boolean;
-  onPlay?: (url: string) => Promise<ActionResult>;
-  onAdd?: (url: string) => Promise<ActionResult>;
-  onRemove?: (index: number) => Promise<ActionResult>;
-  onMove?: (from: number, to: number) => Promise<ActionResult>;
-  onSkipTo?: (index: number) => Promise<ActionResult>;
+  withPlay?: boolean;
+  withAdd?: boolean;
+  withRemove?: boolean;
+  withMove?: boolean;
+  withSkipTo?: boolean;
   dragHandleProps?: DraggableProvidedDragHandleProps | null;
 }) {
-  function play() {
-    if (!onPlay) return;
-    const id = `play-track-${track.Identifier}-${Date.now()}`;
-    showNotification(id, `Playing ${track.Title}`, null, true);
-    onPlay(track.Url!).then((res) => {
-      if (res.success) {
-        updateNotification(
-          id,
-          `Playing ${track.Title}`,
-          <IconPlayerPlayFilled />,
-          "green",
-          "Successfully played track!"
-        );
-      } else {
-        updateNotification(
-          id,
-          `Unable to play ${track.Title}`,
-          <IconExclamationCircle />,
-          "red",
-          getErrorMessageFromCode(res.code!)
-        );
-      }
-    });
-  }
+  const play = usePlay();
+  const add = useAdd();
+  const remove = useRemove();
+  const move = useMove();
+  const skipTo = useSkipTo();
 
-  function add() {
-    if (!onAdd) return;
-    const id = `add-track-${track.Identifier}-${Date.now()}`;
-    showNotification(id, `Adding ${track.Title} to queue`, null, true);
-    onAdd(track.Url!).then((res) => {
-      if (res.success) {
-        updateNotification(
-          id,
-          `Added ${track.Title} to queue`,
-          <IconPlaylistAdd />,
-          "green",
-          "Successfully added to queue!"
-        );
-      } else {
-        updateNotification(
-          id,
-          `Unable to add ${track.Title} to queue`,
-          <IconExclamationCircle />,
-          "red",
-          getErrorMessageFromCode(res.code!)
-        );
-      }
-    });
-  }
-
-  function skipTo() {
-    if (!onSkipTo) return;
-    const id = `skip-to-track-${track.Identifier}-${Date.now()}`;
-    showNotification(id, `Skipping to ${track.Title}`, null, true);
-    onSkipTo(index!).then((res) => {
-      if (res.success) {
-        updateNotification(
-          id,
-          `Skipped to ${track.Title}`,
-          <IconPlayerPlayFilled />,
-          "green",
-          "Successfully skipped to track!"
-        );
-      } else {
-        updateNotification(
-          id,
-          `Unable to skip to ${track.Title}`,
-          <IconExclamationCircle />,
-          "red",
-          getErrorMessageFromCode(res.code!)
-        );
-      }
-    });
-  }
-
-  function remove() {
-    if (!onRemove) return;
-    const id = `remove-track-${track.Identifier}-${Date.now()}`;
-    showNotification(id, `Removing ${track.Title} from queue`, null, true);
-    onRemove(index!).then((res) => {
-      if (res.success) {
-        updateNotification(
-          id,
-          `Removed ${track.Title} from queue`,
-          <IconTrash />,
-          "green",
-          "Successfully removed from queue!"
-        );
-      } else {
-        updateNotification(
-          id,
-          `Unable to remove ${track.Title} from queue`,
-          <IconExclamationCircle />,
-          "red",
-          getErrorMessageFromCode(res.code!)
-        );
-      }
-    });
-  }
-
-  function moveToTop() {
-    if (!onMove || !index) return;
-    const id = `move-track-${track.Identifier}-${Date.now()}`;
-    showNotification(id, `Moving ${track.Title} to top of queue`, null, true);
-    onMove(index, 0).then((res) => {
-      if (res.success) {
-        updateNotification(
-          id,
-          `Moved ${track.Title} to top of queue`,
-          <IconArrowUp />,
-          "green",
-          "Successfully moved to top of queue!"
-        );
-      } else {
-        updateNotification(
-          id,
-          `Unable to move ${track.Title} to top of queue`,
-          <IconExclamationCircle />,
-          "red",
-          getErrorMessageFromCode(res.code!)
-        );
-      }
-    });
-  }
+  const onPlay = withPlay ? play : null;
+  const onAdd = withAdd ? add : null;
+  const onRemove = withRemove ? remove : null;
+  const onMove = withMove ? move : null;
+  const onSkipTo = withSkipTo ? skipTo : null;
 
   return (
     <Group
@@ -177,7 +60,11 @@ export function Track({
       gap="sm"
       wrap="nowrap"
       className={classes.track}
-      onDoubleClick={withControls ? skipTo : add}
+      onDoubleClick={
+        withControls
+          ? () => skipTo(track.Title, index!)
+          : () => add(track.Title, track.Url)
+      }
       data-hoverable={hoverable}
       data-transparent={transparent}
       data-small={small}
@@ -199,14 +86,18 @@ export function Track({
             className={classes.thumbnail}
             alt={track?.Title ?? "Nothing here"}
           />
-          {track && withControls && (
+          {track && (withControls || onPlay) && (
             <div className="absolute top-[.5rem] left-[.5rem]">
               <Tooltip label={`Play ${track.Title} by ${track.Author}`}>
                 <IconPlayerPlayFilled
                   role="button"
                   size="1.5rem"
                   className={classes.playButton}
-                  onClick={onSkipTo ? skipTo : play}
+                  onClick={
+                    onSkipTo
+                      ? () => skipTo(track.Title, index!)
+                      : () => play(track.Title, track.Url!)
+                  }
                 />
               </Tooltip>
             </div>
@@ -223,7 +114,11 @@ export function Track({
               <IconPlayerPlayFilled
                 size="1.2rem"
                 role="button"
-                onClick={withControls ? skipTo : play}
+                onClick={
+                  withControls
+                    ? () => skipTo(track.Title, index!)
+                    : () => play(track.Title, track.Url!)
+                }
                 className={`${classes.play} ${classes.trackControlPlay}`}
               />
             </Tooltip>
@@ -276,7 +171,7 @@ export function Track({
                 variant="light"
                 color="green"
                 aria-label="Move to top"
-                onClick={moveToTop}
+                onClick={() => move(index!, 0)}
                 className={classes.play}
               >
                 <IconArrowUp size={15} />
@@ -290,7 +185,7 @@ export function Track({
                 variant="light"
                 color="red"
                 aria-label="Remove Track"
-                onClick={remove}
+                onClick={() => remove(track.Title, index!)}
                 className={classes.play}
               >
                 <IconTrash size={13} />
@@ -305,7 +200,7 @@ export function Track({
             variant="light"
             color="dark.1"
             aria-label="Add to queue"
-            onClick={add}
+            onClick={() => add(track.Title, track.Url)}
             className="ml-auto"
           >
             <IconPlaylistAdd size={15} />

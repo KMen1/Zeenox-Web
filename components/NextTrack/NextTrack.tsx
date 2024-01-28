@@ -1,32 +1,15 @@
 "use client";
 
-import {
-  Card,
-  Divider,
-  Group,
-  Skeleton,
-  Stack,
-  Text,
-  Title,
-} from "@mantine/core";
+import { Card, Divider, Group, Skeleton, Stack, Text } from "@mantine/core";
 import { Track } from "../Track/Track";
 import { useAtomValue } from "jotai";
-import { actionFetchAtom, queueAtom } from "@/utils/atoms";
+import { queueAtom } from "@/utils/atoms";
 import { IconMoodSad, IconPlayerTrackNext } from "@tabler/icons-react";
 import classes from "./NextTrack.module.css";
 
 export default function NextTrack() {
   const tracks = useAtomValue(queueAtom);
   const track = tracks ? (tracks.length > 0 ? tracks[0] : undefined) : null;
-  const { skipToTrack } = useAtomValue(actionFetchAtom);
-
-  function skipTo(index: number) {
-    if (track) {
-      return skipToTrack(0);
-    }
-
-    return Promise.reject();
-  }
 
   if (track === null)
     return (
@@ -52,14 +35,21 @@ export default function NextTrack() {
         </Group>
         <Divider />
         {track ? (
-          <Track track={track} small hoverable withControls onSkipTo={skipTo} />
+          <Track
+            track={track}
+            small
+            hoverable
+            withControls
+            withSkipTo
+            index={0}
+          />
         ) : (
           <Group p="xs" wrap="nowrap">
             <Text>
               <IconMoodSad size={33} />
             </Text>
 
-            <Text size="0.9rem">No upcoming tracks</Text>
+            <Text size="0.9rem">No upcoming</Text>
           </Group>
         )}
       </Stack>

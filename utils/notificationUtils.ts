@@ -11,7 +11,7 @@ export function showNotification(
     loading: loading,
     title: title,
     color: "yellow",
-    message: "This might take a second or two!",
+    message: undefined,
     icon: icon,
     autoClose: false,
     withBorder: true,
@@ -24,7 +24,7 @@ export function updateNotification(
   title: string,
   icon: JSX.Element,
   color: string,
-  message: string
+  message?: string
 ) {
   notifications.update({
     id: id,

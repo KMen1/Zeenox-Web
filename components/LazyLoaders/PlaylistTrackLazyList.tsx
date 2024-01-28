@@ -1,10 +1,9 @@
-import { SavedTracksResponse, type Track } from "@/types";
 import { useEffect, useState } from "react";
 import { Track as TrackComponent } from "../Track/Track";
-import { useAtomValue } from "jotai";
-import { actionFetchAtom } from "@/utils/atoms";
 import { LazyList } from "./LazyList";
 import { Skeleton } from "@mantine/core";
+import { SavedTracksResponse, Track } from "@/types/spotify";
+import { PayloadType } from "@/types/socket";
 
 const ITEM_HEIGHT = 50;
 const LIST_HEIGHT = 435;
@@ -13,7 +12,6 @@ export function PlaylistTrackLazyList({ id }: { id: string | null }) {
   const [response, setResponse] = useState<SavedTracksResponse | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [items, setItems] = useState<Track[]>([]);
-  const { addTrack, playTrack } = useAtomValue(actionFetchAtom);
 
   async function loadNextPage() {
     setIsLoading(true);
@@ -57,7 +55,7 @@ export function PlaylistTrackLazyList({ id }: { id: string | null }) {
           index={index}
           hoverable
           track={{
-            Type: "player-track",
+            Type: PayloadType.UpdateTrack,
             Identifier: track.id,
             Title: track.name,
             Author: track.artists.map((artist) => artist.name).join(", "),
@@ -71,8 +69,8 @@ export function PlaylistTrackLazyList({ id }: { id: string | null }) {
             },
             Lyrics: null,
           }}
-          onPlay={playTrack}
-          onAdd={addTrack}
+          withPlay
+          withAdd
         />
       </div>
     );

@@ -1,14 +1,13 @@
 "use server";
 
+import { AccessTokenResponse, Provider } from "@/types/clerk";
+import { PartialGuild } from "@/types/discord";
 import {
-  AccessTokenResponse,
-  PartialGuild,
   Playlist,
   PlaylistsResponse,
-  Provider,
   SavedTracksResponse,
   Track,
-} from "@/types";
+} from "@/types/spotify";
 
 async function getAccessToken(
   userId: string,
@@ -293,6 +292,34 @@ export async function getDiscordGuilds(
     return null;
   }
   const data = (await res.json()) as PartialGuild[];
+  return data;
+}
+
+export async function getDiscordGuild(
+  userId: string,
+  guildId: string
+): Promise<PartialGuild | null> {
+  const accessToken = await getAccessToken(userId, Provider.Discord);
+  if (!accessToken) {
+    return null;
+  }
+
+  const url = `https://discord.com/api/users/@me/guilds/${guildId}`;
+  const res = await fetch(url, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`,
+    },
+    next: {
+      revalidate: 300,
+    },
+  });
+
+  if (!res.ok) {
+    return null;
+  }
+  const data = (await res.json()) as PartialGuild;
   return data;
 }
 

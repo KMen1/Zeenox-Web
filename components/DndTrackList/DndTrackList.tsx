@@ -1,6 +1,5 @@
 "use client";
 
-import { ActionResult, type TrackData } from "@/types";
 import {
   DragDropContext,
   Droppable,
@@ -8,10 +7,9 @@ import {
   DraggableLocation,
 } from "react-beautiful-dnd";
 import React, { useEffect, useState } from "react";
-import { Track } from "../Track/Track";
 import { FixedSizeList, areEqual } from "react-window";
-import { useAtomValue } from "jotai";
-import { actionFetchAtom } from "@/utils/atoms";
+import { Track } from "@/types/socket";
+import { Track as TrackComponent } from "../Track/Track";
 
 function getStyle({ provided, style, isDragging }: any) {
   const combined = {
@@ -48,7 +46,7 @@ function Item({
   index,
 }: {
   provided: any;
-  item: TrackData;
+  item: Track;
   style?: any;
   isDragging?: boolean;
   index?: number;
@@ -61,7 +59,14 @@ function Item({
       style={getStyle({ provided, style, isDragging })}
       className={`item ${isDragging ? "is-dragging" : ""}`}
     >
-      <Track track={item} index={index} withControls />
+      <TrackComponent
+        track={item}
+        index={index}
+        withControls
+        withMove
+        withRemove
+        withSkipTo
+      />
     </div>
   );
 }
@@ -70,11 +75,10 @@ export function DndTrackList({
   baseTracks,
   onMove,
 }: {
-  baseTracks: TrackData[];
-  onMove: (from: number, to: number) => Promise<ActionResult>;
+  baseTracks: Track[];
+  onMove: (from: number, to: number) => void;
 }) {
-  const [tracks, setTracks] = useState<TrackData[]>(baseTracks);
-  const { skipToTrack, removeTrack, moveTrack } = useAtomValue(actionFetchAtom);
+  const [tracks, setTracks] = useState<Track[]>(baseTracks);
 
   useEffect(() => {
     setTracks(baseTracks);
@@ -90,14 +94,14 @@ export function DndTrackList({
             {...provided.draggableProps}
             style={getStyle({ provided, style })}
           >
-            <Track
+            <TrackComponent
               track={item}
               index={index}
               withControls
               hoverable
-              onSkipTo={skipToTrack}
-              onRemove={removeTrack}
-              onMove={moveTrack}
+              withSkipTo
+              withRemove
+              withMove
               dragHandleProps={provided.dragHandleProps}
             />
           </div>
@@ -122,8 +126,8 @@ export function DndTrackList({
       result.source.index,
       result.destination.index
     );
-    setTracks(newItems as TrackData[]);
-    onMove(result.source.index, result.destination?.index ?? 0).then(() => {});
+    setTracks(newItems as Track[]);
+    onMove(result.source.index, result.destination?.index ?? 0);
   }
 
   return (

@@ -1,7 +1,7 @@
-import { ItemType, OwnerType, Playlist as Playlist } from "@/types";
 import { ScrollArea } from "@mantine/core";
 import { Dispatch, SetStateAction } from "react";
 import { Playlist as PlaylistComponent } from "../Playlist/Playlist";
+import { ItemType, OwnerType, Playlist } from "@/types/spotify";
 
 const SAVED = {
   collaborative: false,

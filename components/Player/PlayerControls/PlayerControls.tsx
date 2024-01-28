@@ -1,6 +1,6 @@
 "use client";
 
-import { PlayerState, RepeatMode } from "@/types";
+import { PlayerState, RepeatMode } from "@/types/socket";
 import {
   faBackwardStep,
   faCirclePause,
@@ -10,146 +10,38 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Center, Flex, Group, Popover, Skeleton } from "@mantine/core";
 import {
-  IconExclamationCircle,
-  IconPlayerPlayFilled,
-  IconPlayerTrackPrevFilled,
   IconRepeat,
   IconRepeatOff,
   IconRepeatOnce,
   IconVolume,
 } from "@tabler/icons-react";
 import classes from "./PlayerControls.module.css";
-import {
-  showNotification,
-  updateNotification,
-} from "@/utils/notificationUtils";
 import { PlayerVolumeSlider } from "../PlayerVolumeSlider/PlayerVolumeSlider";
 import { useAtomValue } from "jotai";
-import { actionFetchAtom, repeatAtom, stateAtom } from "@/utils/atoms";
-import { getErrorMessageFromCode } from "@/utils/utils";
+import { repeatAtom, stateAtom, trackAtom } from "@/utils/atoms";
+import {
+  useBack,
+  useCycleRepeat,
+  usePause,
+  useResume,
+  useSkip,
+} from "@/components/hooks";
 
 export function PlayerControls() {
   const state = useAtomValue(stateAtom);
+  const pause = usePause();
+  const resume = useResume();
+  const skip = useSkip();
+  const back = useBack();
+  const cycleRepeatMode = useCycleRepeat();
+  const currentTrack = useAtomValue(trackAtom);
   const repeatMode = useAtomValue(repeatAtom);
-  const { backTrack, skipTrack, pause, resume, cycleRepeatMode } =
-    useAtomValue(actionFetchAtom);
-
-  function back() {
-    const id = `back-${Date.now()}`;
-    showNotification(id, "Rewinding to previous track", null, true);
-    backTrack().then((res) => {
-      if (res.success) {
-        updateNotification(
-          id,
-          "Rewound to previous track",
-          <IconPlayerTrackPrevFilled />,
-          "green",
-          "Successfully rewound to previous track!"
-        );
-      } else {
-        updateNotification(
-          id,
-          "Unable to rewind to previous track",
-          <IconExclamationCircle />,
-          "red",
-          getErrorMessageFromCode(res.code!)
-        );
-      }
-    });
-  }
-
-  function next() {
-    const id = `next-${Date.now()}`;
-    showNotification(id, "Skipping to next track", null, true);
-    skipTrack().then((res) => {
-      if (res.success) {
-        updateNotification(
-          id,
-          "Skipped to next track",
-          <IconPlayerTrackPrevFilled />,
-          "green",
-          "Successfully skipped to next track!"
-        );
-      } else {
-        updateNotification(
-          id,
-          "Unable to skip to next track",
-          <IconExclamationCircle />,
-          "red",
-          getErrorMessageFromCode(res.code!)
-        );
-      }
-    });
-  }
-
-  function repeat() {
-    const id = `repeat-${Date.now()}`;
-    showNotification(id, "Changing repeat mode", null, true);
-    cycleRepeatMode().then((res) => {
-      if (res.success) {
-        updateNotification(
-          id,
-          "Repeat mode changed",
-          <IconRepeat />,
-          "green",
-          `Successfully changed repeat mode`
-        );
-      } else {
-        updateNotification(
-          id,
-          "Unable to change repeat mode",
-          <IconExclamationCircle />,
-          "red",
-          getErrorMessageFromCode(res.code!)
-        );
-      }
-    });
-  }
 
   function pauseOrResume() {
-    const id = `pause-resume-${Date.now()}`;
     if (state === PlayerState.Playing) {
-      showNotification(id, "Pausing playback", null, true);
-      pause().then((res) => {
-        if (res.success) {
-          updateNotification(
-            id,
-            "Paused playback",
-            <IconPlayerPlayFilled />,
-            "green",
-            "Successfully paused playback!"
-          );
-        } else {
-          updateNotification(
-            id,
-            "Unable to pause playback",
-            <IconExclamationCircle />,
-            "red",
-            getErrorMessageFromCode(res.code!)
-          );
-        }
-      });
+      pause();
     } else {
-      showNotification(id, "Resuming playback", null, true);
-      resume().then((res) => {
-        if (res.success) {
-          updateNotification(
-            id,
-            "Resumed playback",
-            <IconPlayerPlayFilled />,
-            "green",
-            "Successfully resumed playback!"
-          );
-        } else {
-          updateNotification(
-            id,
-            "Unable to resume playback",
-            <IconExclamationCircle />,
-            "red",
-            getErrorMessageFromCode(res.code!)
-          );
-        }
-      });
+      resume();
     }
   }
 
@@ -175,7 +67,7 @@ export function PlayerControls() {
               size="1rem"
               color="white"
               role="button"
-              onClick={repeat}
+              onClick={() => cycleRepeatMode()}
               className={classes.controlIcon}
             />
           )}
@@ -184,7 +76,7 @@ export function PlayerControls() {
               size="1rem"
               color="white"
               role="button"
-              onClick={repeat}
+              onClick={() => cycleRepeatMode()}
               className={classes.controlIcon}
             />
           )}
@@ -193,7 +85,7 @@ export function PlayerControls() {
               size="1rem"
               color="white"
               role="button"
-              onClick={repeat}
+              onClick={() => cycleRepeatMode()}
               className={classes.controlIcon}
             />
           )}
@@ -229,7 +121,7 @@ export function PlayerControls() {
             color="white"
             size="2xl"
             role="button"
-            onClick={next}
+            onClick={() => skip(currentTrack?.Title!)}
             className={classes.controlIcon}
           />
         </Flex>

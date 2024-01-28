@@ -1,8 +1,8 @@
-import { DiscordUserData } from "@/types";
 import { Card, Group, Stack, Text, Tooltip } from "@mantine/core";
 import Image from "next/image";
 import TimeAgo from "react-timeago";
 import classes from "./ActionCard.module.css";
+import { BasicDiscordUser } from "@/types/socket";
 
 export function ActionCard({
   title,
@@ -12,7 +12,7 @@ export function ActionCard({
   children,
 }: {
   title: string;
-  user: DiscordUserData;
+  user: BasicDiscordUser;
   timestampMs: number;
   bgImage?: string;
   children: React.ReactNode;
