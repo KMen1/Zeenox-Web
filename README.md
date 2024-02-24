@@ -14,9 +14,7 @@ Web interface for the Zeenox Discord music bot, for more information about the b
 - Server settings (WIP)
 - Real-time updates and data display
 
-|                              Managing the queue                               |                                 Adding songs                                  |
-| :---------------------------------------------------------------------------: | :---------------------------------------------------------------------------: |
-| <img src="https://img001.prntscr.com/file/img001/6afxag7yRze15ncAq_4kGw.png"> | <img src="https://img001.prntscr.com/file/img001/iENwEwPjT1e6p9Mrmn9XPg.png"> |
+<img src="https://img001.prntscr.com/file/img001/jidWn2lfTfSMF-csVhoZJQ.png">
 
 ## Setup
 
