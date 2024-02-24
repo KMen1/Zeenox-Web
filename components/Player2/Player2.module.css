@@ -1,0 +1,10 @@
+.title {
+  color: white;
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.author {
+  color: var(--mantine-color-dark-0);
+}

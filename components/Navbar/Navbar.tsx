@@ -1,50 +1,29 @@
-import {
-  Title,
-  Card,
-  Group,
-  UnstyledButton,
-  Text,
-  Avatar,
-} from "@mantine/core";
-import Link from "next/link";
-import classes from "./Navbar.module.css";
-import { IconHome } from "@tabler/icons-react";
-import { SignedIn, UserButton, currentUser } from "@clerk/nextjs";
-import { getDiscordGuilds } from "@/app/utils";
-import { NavbarGuildPicker } from "../NavbarGuildPicker/NavbarGuildPicker";
+import { SignedIn, UserButton } from "@clerk/nextjs";
+import { Box, Card, Group, Title } from "@mantine/core";
 import { ColorSchemeToggler } from "../ColorSchemeToggler/ColorSchemeToggler";
+import classes from "./Navbar.module.css";
+import { NavbarBackButton } from "./NavbarBackButton";
 
 export async function Navbar() {
-  const user = await currentUser();
-  const guilds = user ? await getDiscordGuilds(user.id) : null;
-
   return (
-    <Card py="xs" pl="lg" className={classes.header} shadow="sm">
+    <Card py="xs" pl="lg" className={classes.header}>
       <Group justify="space-between">
-        <Group gap={0}>
-          <Title size="lg" pr="sm">
-            Zeenox
-          </Title>
-          <UnstyledButton component={Link} href="/" className={classes.link}>
-            <Group gap={7}>
-              <Avatar alt="Home" radius="xl" size={20}>
-                <IconHome size=".8rem" />
-              </Avatar>
-              <Text fw={500} size="sm" lh={1} mr={3}>
-                Home
-              </Text>
-            </Group>
-          </UnstyledButton>
-          <SignedIn>
-            <NavbarGuildPicker guilds={guilds} />
-          </SignedIn>
-        </Group>
-        <Group gap="xs">
-          <ColorSchemeToggler />
-          <SignedIn>
-            <UserButton />
-          </SignedIn>
-        </Group>
+        <Box style={{ display: "flex", flex: 1, justifyContent: "flex-start" }}>
+          <Group gap={0}>
+            <Title size="lg" pr="sm">
+              Zeenox
+            </Title>
+            <NavbarBackButton />
+          </Group>
+        </Box>
+        <Box style={{ display: "flex", flex: 1, justifyContent: "flex-end" }}>
+          <Group gap="xs">
+            <ColorSchemeToggler />
+            <SignedIn>
+              <UserButton />
+            </SignedIn>
+          </Group>
+        </Box>
       </Group>
     </Card>
   );

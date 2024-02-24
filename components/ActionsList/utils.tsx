@@ -1,56 +1,59 @@
 import {
+  AddPlaylistAction,
+  AddTrackAction,
+  ChangeVolumeAction,
+  CycleRepeatModeAction,
+  MoveTrackAction,
+  PlayAction,
+  QueueAction,
+  SeekAction,
+  SkipAction,
+} from "@/types/actions";
+import {
   Action,
-  ActionPayloadType,
-  AddPlaylistPayload,
-  AddTrackPayload,
-  ChangeVolumePayload,
-  CycleRepeatModePayload,
-  MoveTrackPayload,
-  PlayPayload,
-  QueuePayload,
-  QueuePayloadType,
-  RepeatMode,
-  SeekPayload,
-  SkipPayload,
+  ActionType,
+  QueueActionType,
+  TrackRepeatMode,
 } from "@/types/socket";
 import { toTime } from "@/utils/utils";
-import { Track } from "../Track/Track";
 import { Text } from "@mantine/core";
 import { Playlist } from "../Playlist/Playlist";
+import { Track } from "../Track/Track";
 
-const queueTitleDict: Record<QueuePayloadType, string> = {
-  [QueuePayloadType.AddTrack]: "Song added",
-  [QueuePayloadType.AddPlaylist]: "Playlist added",
-  [QueuePayloadType.Clear]: "Queue cleared",
-  [QueuePayloadType.Distinct]: "Removed duplicates",
-  [QueuePayloadType.Reverse]: "Reversed queue",
-  [QueuePayloadType.Shuffle]: "Shuffled queue",
-  [QueuePayloadType.MoveTrack]: "Moved from {0} to {1}",
-  [QueuePayloadType.RemoveTrack]: "Song removed",
+const queueTitleDict: Record<QueueActionType, string> = {
+  [QueueActionType.AddTrack]: "Added to queue",
+  [QueueActionType.AddPlaylist]: "Added to queue",
+  [QueueActionType.Clear]: "Queue cleared",
+  [QueueActionType.Distinct]: "Removed duplicates",
+  [QueueActionType.Reverse]: "Reversed queue",
+  [QueueActionType.Shuffle]: "Shuffled queue",
+  [QueueActionType.MoveTrack]: "Moved to #{1} from #{0}",
+  [QueueActionType.RemoveTrack]: "Song removed",
 };
 
-const titleDict: Record<ActionPayloadType, string> = {
-  [ActionPayloadType.Play]: "Started playing",
-  [ActionPayloadType.Skip]: "Started playing",
-  [ActionPayloadType.Rewind]: "Started playing (rewind)",
-  [ActionPayloadType.Pause]: "Paused playback",
-  [ActionPayloadType.Resume]: "Resumed playback",
-  [ActionPayloadType.VolumeUp]: "Volume set to {0}%",
-  [ActionPayloadType.VolumeDown]: "Volume set to {0}%",
-  [ActionPayloadType.Queue]: "Queue",
-  [ActionPayloadType.ChangeLoopMode]: "Loop",
-  [ActionPayloadType.Stop]: "Stopped playback",
-  [ActionPayloadType.Seek]: "Seeked to {0}",
+const titleDict: Record<ActionType, string> = {
+  [ActionType.Play]: "Started playing",
+  [ActionType.Skip]: "Started playing",
+  [ActionType.Rewind]: "Started playing (rew)",
+  [ActionType.Pause]: "Paused playback",
+  [ActionType.Resume]: "Resumed playback",
+  [ActionType.VolumeUp]: "Volume set to {0}%",
+  [ActionType.VolumeDown]: "Volume set to {0}%",
+  [ActionType.Queue]: "Queue",
+  [ActionType.ChangeLoopMode]: "Loop",
+  [ActionType.Stop]: "Stopped playback",
+  [ActionType.Seek]: "Seeked to {0}",
+  [ActionType.ToggleAutoPlay]: "Autoplay toggled",
 };
 
 export function getTitle(action: Action): string {
   switch (action.Type) {
-    case ActionPayloadType.Queue: {
-      const qAction = action as QueuePayload;
+    case ActionType.Queue: {
+      const qAction = action as QueueAction;
       const qTitle = queueTitleDict[qAction.QueueActionType];
 
-      if (qAction.QueueActionType === QueuePayloadType.MoveTrack) {
-        const moveTrackAction = action as MoveTrackPayload;
+      if (qAction.QueueActionType === QueueActionType.MoveTrack) {
+        const moveTrackAction = action as MoveTrackAction;
         return qTitle
           .replace("{0}", (moveTrackAction.From + 1).toString())
           .replace("{1}", (moveTrackAction.To + 1).toString());
@@ -58,22 +61,22 @@ export function getTitle(action: Action): string {
 
       return queueTitleDict[qAction.QueueActionType];
     }
-    case ActionPayloadType.VolumeUp:
-    case ActionPayloadType.VolumeDown:
+    case ActionType.VolumeUp:
+    case ActionType.VolumeDown:
       return titleDict[action.Type].replace(
         "{0}",
-        (action as ChangeVolumePayload).Volume.toString()
+        (action as ChangeVolumeAction).Volume.toString()
       );
-    case ActionPayloadType.Seek:
+    case ActionType.Seek:
       return titleDict[action.Type].replace(
         "{0}",
-        toTime((action as SeekPayload).Position)
+        toTime((action as SeekAction).Position)
       );
-    case ActionPayloadType.ChangeLoopMode: {
-      const mode = (action as CycleRepeatModePayload).LoopMode;
-      if (mode === RepeatMode.None) return "Looping disabled";
-      if (mode === RepeatMode.Track) return "Looping current track";
-      if (mode === RepeatMode.Queue) return "Looping queue";
+    case ActionType.ChangeLoopMode: {
+      const mode = (action as CycleRepeatModeAction).TrackRepeatMode;
+      if (mode === TrackRepeatMode.None) return "Looping disabled";
+      if (mode === TrackRepeatMode.Track) return "Looping current track";
+      if (mode === TrackRepeatMode.Queue) return "Looping queue";
     }
   }
 
@@ -82,82 +85,68 @@ export function getTitle(action: Action): string {
 
 export function getImage(action: Action): string | undefined {
   switch (action.Type) {
-    case ActionPayloadType.Queue: {
-      const qAction = action as QueuePayload;
+    case ActionType.Queue: {
+      const qAction = action as QueueAction;
       if (
-        qAction.QueueActionType === QueuePayloadType.AddTrack ||
-        qAction.QueueActionType === QueuePayloadType.RemoveTrack ||
-        qAction.QueueActionType === QueuePayloadType.MoveTrack
+        qAction.QueueActionType === QueueActionType.AddTrack ||
+        qAction.QueueActionType === QueueActionType.RemoveTrack ||
+        qAction.QueueActionType === QueueActionType.MoveTrack
       ) {
-        return (qAction as AddTrackPayload).Track.Thumbnail || undefined;
+        return (qAction as AddTrackAction).Track.ArtworkUrl || undefined;
       }
 
-      if (qAction.QueueActionType === QueuePayloadType.AddPlaylist) {
-        const addPlaylistAction = qAction as AddPlaylistPayload;
-        return addPlaylistAction.ArtworkUrl
-          ? addPlaylistAction.ArtworkUrl
-          : addPlaylistAction.Tracks[0]?.Thumbnail || undefined;
+      if (qAction.QueueActionType === QueueActionType.AddPlaylist) {
+        const addPlaylistAction = qAction as AddPlaylistAction;
+        return (
+          addPlaylistAction.Playlist?.ArtworkUrl ||
+          addPlaylistAction.Tracks[0]?.ArtworkUrl ||
+          undefined
+        );
       }
 
       return undefined;
     }
-    case ActionPayloadType.Play:
-    case ActionPayloadType.Skip:
-    case ActionPayloadType.Rewind:
-      return (action as PlayPayload).Track.Thumbnail ?? undefined;
+    case ActionType.Play:
+    case ActionType.Skip:
+    case ActionType.Rewind:
+      return (action as PlayAction).Track.ArtworkUrl ?? undefined;
   }
 
   return undefined;
 }
 
 export function getChildren(action: Action): React.ReactNode {
-  const qAction = action as QueuePayload;
+  const qAction = action as QueueAction;
 
-  if (qAction.QueueActionType === QueuePayloadType.AddPlaylist) {
-    const data = qAction as AddPlaylistPayload;
+  if (qAction.QueueActionType === QueueActionType.AddPlaylist) {
+    const data = qAction as AddPlaylistAction;
     return <Playlist playlist={data} transparent expandable />;
   }
 
   if (
-    action.Type === ActionPayloadType.Play ||
-    action.Type === ActionPayloadType.Rewind ||
-    qAction.QueueActionType === QueuePayloadType.AddTrack ||
-    qAction.QueueActionType === QueuePayloadType.RemoveTrack ||
-    qAction.QueueActionType === QueuePayloadType.MoveTrack
+    action.Type === ActionType.Play ||
+    action.Type === ActionType.Rewind ||
+    qAction.QueueActionType === QueueActionType.AddTrack ||
+    qAction.QueueActionType === QueueActionType.RemoveTrack ||
+    qAction.QueueActionType === QueueActionType.MoveTrack
   ) {
-    const track = (action as PlayPayload).Track;
+    const track = (action as PlayAction).Track;
 
-    return (
-      <Track track={track} small transparent hoverable withControls withPlay />
-    );
+    return <Track track={track} small transparent hoverable withPlay withAdd />;
   }
 
-  if (action.Type === ActionPayloadType.Skip) {
-    const skipPayload = action as SkipPayload;
+  if (action.Type === ActionType.Skip) {
+    const skipPayload = action as SkipAction;
     const track = skipPayload.Track;
     const prevTrack = skipPayload.PreviousTrack;
 
     return (
       <>
-        <Track
-          track={track}
-          small
-          transparent
-          hoverable
-          withControls
-          withPlay
-        />
+        <Track track={track} small transparent hoverable withPlay withAdd />
         <Text c="white" size="1rem" fw={600} lh={1.4} lineClamp={1}>
           Skipped
         </Text>
-        <Track
-          track={prevTrack}
-          small
-          transparent
-          hoverable
-          withControls
-          withPlay
-        />
+        <Track track={prevTrack} small transparent hoverable withPlay withAdd />
       </>
     );
   }
@@ -167,21 +156,21 @@ export function getChildren(action: Action): React.ReactNode {
 
 export function getItemSize(action: Action): number {
   switch (action.Type) {
-    case ActionPayloadType.Queue:
-      switch ((action as QueuePayload).QueueActionType) {
-        case QueuePayloadType.AddPlaylist:
-        case QueuePayloadType.AddTrack:
-        case QueuePayloadType.RemoveTrack:
+    case ActionType.Queue:
+      switch ((action as QueueAction).QueueActionType) {
+        case QueueActionType.AddPlaylist:
+        case QueueActionType.AddTrack:
+        case QueueActionType.RemoveTrack:
           return 160;
-        case QueuePayloadType.MoveTrack:
+        case QueueActionType.MoveTrack:
           return 160;
         default:
           return 100;
       }
-    case ActionPayloadType.Play:
-    case ActionPayloadType.Rewind:
+    case ActionType.Play:
+    case ActionType.Rewind:
       return 160;
-    case ActionPayloadType.Skip:
+    case ActionType.Skip:
       return 260;
     default:
       return 100;

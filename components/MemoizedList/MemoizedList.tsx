@@ -1,6 +1,15 @@
 import { CSSProperties, memo, useEffect, useRef } from "react";
 import { FixedSizeList, VariableSizeList, areEqual } from "react-window";
 
+type MemoizedListProps<T> = {
+  items: T[];
+  height: number | string;
+  width: number | string;
+  itemHeight?: number | ((item: T, index: number) => number);
+  variableSize?: boolean;
+  renderItem: (item: T, index: number) => any;
+};
+
 export function MemoizedList<T>({
   height,
   width,
@@ -8,19 +17,12 @@ export function MemoizedList<T>({
   items,
   variableSize,
   renderItem,
-}: {
-  items: T[];
-  height: number | string;
-  width: number | string;
-  itemHeight?: number | ((item: T, index: number) => number);
-  variableSize?: boolean;
-  renderItem: (item: T, index: number) => any;
-}) {
+}: MemoizedListProps<T>) {
   const ref = useRef<VariableSizeList<any>>(null);
 
   useEffect(() => {
     if (ref.current) {
-      ref.current.resetAfterIndex(0, false);
+      ref.current.resetAfterIndex(0, true);
     }
   }, [items]);
 
@@ -40,7 +42,7 @@ export function MemoizedList<T>({
     );
   }
 
-  function _getItemHeight(index: number): number {
+  function getItemHeight(index: number): number {
     if (items === null) return 0;
     if (typeof itemHeight === "function")
       return itemHeight(items[index], index);
@@ -53,7 +55,7 @@ export function MemoizedList<T>({
     <VariableSizeList
       height={height}
       itemCount={items.length}
-      itemSize={_getItemHeight}
+      itemSize={getItemHeight}
       width={width}
       ref={ref}
     >

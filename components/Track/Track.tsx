@@ -1,19 +1,44 @@
 "use client";
 
+import { Track } from "@/types/socket";
+import { botTokenAtom } from "@/utils/atoms";
+import { toTime } from "@/utils/utils";
+import { DraggableProvidedDragHandleProps } from "@hello-pangea/dnd";
 import { ActionIcon, Group, Stack, Text, Tooltip } from "@mantine/core";
 import {
   IconArrowUp,
   IconGripVertical,
   IconPlayerPlayFilled,
   IconPlaylistAdd,
+  IconRefreshDot,
   IconTrash,
 } from "@tabler/icons-react";
+import { useAtomValue } from "jotai";
 import Image from "next/image";
+import {
+  addTrack,
+  moveTrack,
+  playTrack,
+  removeTrack,
+  skipToTrack,
+} from "../actions";
+import { withNotification } from "../withNotification";
 import classes from "./Track.module.css";
-import { toTime } from "@/utils/utils";
-import { Track } from "@/types/socket";
-import { DraggableProvidedDragHandleProps } from "react-beautiful-dnd";
-import { useAdd, useMove, usePlay, useRemove, useSkipTo } from "../hooks";
+
+type TrackProps = {
+  track: Track;
+  index?: number;
+  withControls?: boolean;
+  hoverable?: boolean;
+  small?: boolean;
+  transparent?: boolean;
+  withPlay?: boolean;
+  withAdd?: boolean;
+  withRemove?: boolean;
+  withMove?: boolean;
+  withSkipTo?: boolean;
+  dragHandleProps?: DraggableProvidedDragHandleProps | null;
+};
 
 export function Track({
   track,
@@ -28,31 +53,8 @@ export function Track({
   withMove,
   withSkipTo,
   dragHandleProps,
-}: {
-  track: Track;
-  index?: number;
-  withControls?: boolean;
-  hoverable?: boolean;
-  small?: boolean;
-  transparent?: boolean;
-  withPlay?: boolean;
-  withAdd?: boolean;
-  withRemove?: boolean;
-  withMove?: boolean;
-  withSkipTo?: boolean;
-  dragHandleProps?: DraggableProvidedDragHandleProps | null;
-}) {
-  const play = usePlay();
-  const add = useAdd();
-  const remove = useRemove();
-  const move = useMove();
-  const skipTo = useSkipTo();
-
-  const onPlay = withPlay ? play : null;
-  const onAdd = withAdd ? add : null;
-  const onRemove = withRemove ? remove : null;
-  const onMove = withMove ? move : null;
-  const onSkipTo = withSkipTo ? skipTo : null;
+}: TrackProps) {
+  const token = useAtomValue(botTokenAtom);
 
   return (
     <Group
@@ -60,11 +62,6 @@ export function Track({
       gap="sm"
       wrap="nowrap"
       className={classes.track}
-      onDoubleClick={
-        withControls
-          ? () => skipTo(track.Title, index!)
-          : () => add(track.Title, track.Url)
-      }
       data-hoverable={hoverable}
       data-transparent={transparent}
       data-small={small}
@@ -78,7 +75,7 @@ export function Track({
         <div className="relative min-w-[40px] min-h-[40px]">
           <Image
             src={
-              track?.Thumbnail ??
+              track?.ArtworkUrl ??
               "https://misc.scdn.co/liked-songs/liked-songs-640.png"
             }
             width={36}
@@ -86,7 +83,7 @@ export function Track({
             className={classes.thumbnail}
             alt={track?.Title ?? "Nothing here"}
           />
-          {track && (withControls || onPlay) && (
+          {track && (withControls || withPlay) && (
             <div className="absolute top-[.5rem] left-[.5rem]">
               <Tooltip label={`Play ${track.Title} by ${track.Author}`}>
                 <IconPlayerPlayFilled
@@ -94,9 +91,13 @@ export function Track({
                   size="1.5rem"
                   className={classes.playButton}
                   onClick={
-                    onSkipTo
-                      ? () => skipTo(track.Title, index!)
-                      : () => play(track.Title, track.Url!)
+                    withSkipTo
+                      ? async () =>
+                          withNotification(await skipToTrack(index!, token))
+                      : async () =>
+                          withNotification(
+                            await playTrack(track.Url ?? "", token)
+                          )
                   }
                 />
               </Tooltip>
@@ -116,8 +117,12 @@ export function Track({
                 role="button"
                 onClick={
                   withControls
-                    ? () => skipTo(track.Title, index!)
-                    : () => play(track.Title, track.Url!)
+                    ? async () =>
+                        withNotification(await skipToTrack(index!, token))
+                    : async () =>
+                        withNotification(
+                          await playTrack(track.Url ?? "", token)
+                        )
                 }
                 className={`${classes.play} ${classes.trackControlPlay}`}
               />
@@ -130,7 +135,7 @@ export function Track({
             </Text>
           </div>
           <Image
-            src={track?.Thumbnail ?? "/placeholder-album.png"}
+            src={track?.ArtworkUrl ?? "/placeholder-album.png"}
             width={36}
             height={36}
             alt={track.Title}
@@ -164,28 +169,32 @@ export function Track({
       </Stack>
       {withControls ? (
         <Group className="ml-auto" gap="xs" wrap="nowrap">
-          {onMove && (
+          {withMove && (
             <Tooltip label="Move to top" position="top">
               <ActionIcon
                 size={20}
                 variant="light"
                 color="green"
                 aria-label="Move to top"
-                onClick={() => move(index!, 0)}
+                onClick={async () =>
+                  withNotification(await moveTrack(index!, 0, token))
+                }
                 className={classes.play}
               >
                 <IconArrowUp size={15} />
               </ActionIcon>
             </Tooltip>
           )}
-          {onRemove && (
+          {withRemove && (
             <Tooltip label="Remove from queue" position="top">
               <ActionIcon
                 size={20}
                 variant="light"
                 color="red"
                 aria-label="Remove Track"
-                onClick={() => remove(track.Title, index!)}
+                onClick={async () =>
+                  withNotification(await removeTrack(index!, token))
+                }
                 className={classes.play}
               >
                 <IconTrash size={13} />
@@ -193,14 +202,16 @@ export function Track({
             </Tooltip>
           )}
         </Group>
-      ) : onAdd ? (
+      ) : withAdd ? (
         <Tooltip label="Add to queue" position="top">
           <ActionIcon
             size={20}
             variant="light"
             color="dark.1"
             aria-label="Add to queue"
-            onClick={() => add(track.Title, track.Url)}
+            onClick={async () =>
+              withNotification(await addTrack(track.Url ?? "", token))
+            }
             className="ml-auto"
           >
             <IconPlaylistAdd size={15} />
@@ -210,20 +221,25 @@ export function Track({
       <Text
         size="0.8rem"
         className={classes.trackDuration}
-        data-left={!onAdd && !withControls}
+        data-left={!withAdd && !withControls}
       >
         {toTime(track?.Duration)}
       </Text>
 
-      {track?.RequestedBy.AvatarUrl && !small && (
-        <Tooltip label={track?.RequestedBy.DisplayName} position="top">
+      {track?.RequestedBy !== null && !small && (
+        <Tooltip label={track.RequestedBy.DisplayName} position="top">
           <Image
-            src={track?.RequestedBy.AvatarUrl}
-            width={20}
-            height={20}
-            alt={track?.RequestedBy.DisplayName}
+            src={track.RequestedBy.AvatarUrl ?? "/placeholder-user.png"}
+            width={15}
+            height={15}
+            alt={track.RequestedBy.DisplayName}
             style={{ borderRadius: "50%" }}
           />
+        </Tooltip>
+      )}
+      {track?.RequestedBy === null && withSkipTo && (
+        <Tooltip label="Autoplay" position="top">
+          <IconRefreshDot size={15} />
         </Tooltip>
       )}
     </Group>

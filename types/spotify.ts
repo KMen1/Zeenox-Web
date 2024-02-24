@@ -49,7 +49,7 @@ export enum ItemType {
 }
 
 /// spotify
-export interface SavedTracksResponse {
+export interface TracksResponse {
   href: string;
   limit: number;
   next: string;

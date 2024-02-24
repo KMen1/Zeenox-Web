@@ -1,8 +1,16 @@
+import { SocketUser } from "@/types/socket";
 import { Card, Group, Stack, Text, Tooltip } from "@mantine/core";
 import Image from "next/image";
 import TimeAgo from "react-timeago";
 import classes from "./ActionCard.module.css";
-import { BasicDiscordUser } from "@/types/socket";
+
+type ActionCardProps = {
+  title: string;
+  user: SocketUser;
+  timestampMs: number;
+  bgImage?: string;
+  children: React.ReactNode;
+};
 
 export function ActionCard({
   title,
@@ -10,13 +18,7 @@ export function ActionCard({
   timestampMs,
   bgImage,
   children,
-}: {
-  title: string;
-  user: BasicDiscordUser;
-  timestampMs: number;
-  bgImage?: string;
-  children: React.ReactNode;
-}) {
+}: ActionCardProps) {
   const time = new Date(timestampMs * 1000);
 
   return (

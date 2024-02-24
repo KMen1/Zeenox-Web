@@ -1,7 +1,7 @@
 "use client";
 
-import ListenersTooltip from "@/components/ListenersTooltip/ListenersTooltip";
-import { initAtom, requesterAtom } from "@/utils/atoms";
+import { ListenersTooltip } from "@/components/ListenersTooltip/ListenersTooltip";
+import { currentTrackAtom, initAtom } from "@/utils/atoms";
 import { Avatar, Group, Skeleton, Stack, Text, Tooltip } from "@mantine/core";
 import { useAtomValue } from "jotai";
 import Timeago from "react-timeago";
@@ -9,7 +9,8 @@ import classes from "./PlayerInfoDisplay.module.css";
 
 export function PlayerInfoDisplay() {
   const initData = useAtomValue(initAtom);
-  const requestedBy = useAtomValue(requesterAtom);
+  const track = useAtomValue(currentTrackAtom);
+  const requestedBy = track?.RequestedBy;
   const startedAt = initData?.StartedAt || 0;
   const time = new Date(startedAt * 1000);
 

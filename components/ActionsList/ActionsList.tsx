@@ -1,50 +1,38 @@
 "use client";
 
-import {
-  Card,
-  Center,
-  Stack,
-  Text,
-  Divider,
-  Skeleton,
-  Group,
-} from "@mantine/core";
-import { IconList, IconMoodSad } from "@tabler/icons-react";
-import { ActionCard } from "../ActionCard/ActionCard";
-import { useAtomValue } from "jotai";
-import { actionsAtom } from "@/utils/atoms";
-import { getChildren, getImage, getTitle, getItemSize } from "./utils";
-import { MemoizedList } from "../MemoizedList/MemoizedList";
 import { Action } from "@/types/socket";
+import { actionsAtom } from "@/utils/atoms";
+import { Card, Center, Skeleton, Stack, Text } from "@mantine/core";
+import { IconMoodSad } from "@tabler/icons-react";
+import { useAtomValue } from "jotai";
+import { ActionCard } from "../ActionCard/ActionCard";
+import { MemoizedList } from "../MemoizedList/MemoizedList";
+import { useSize } from "../useSize";
+import { getChildren, getImage, getItemSize, getTitle } from "./utils";
 
 export function ActionsList() {
   const actions = useAtomValue(actionsAtom);
+  const windowSize = useSize();
+
+  const height = (windowSize[1] - 425) / 2;
 
   if (actions === null)
     return (
-      <Card shadow="xl" style={{ height: "100%" }} pt="sm">
-        <Group gap={10} align="center">
-          <IconList />
-          <Text fw={600}>Actions</Text>
-        </Group>
-        <Divider mt="sm" />
-        <Stack gap={10} mt={10}>
-          <Skeleton w="100%" h={140} />
-          <Skeleton w="100%" h={60} />
-          <Skeleton w="100%" h={140} />
-          <Skeleton w="100%" h={60} />
-        </Stack>
-      </Card>
+      <Stack gap={10} h={height}>
+        <Skeleton w="100%" h={140} />
+        <Skeleton w="100%" h={60} />
+        <Skeleton w="100%" h={60} />
+      </Stack>
     );
 
   if (actions.length === 0)
     return (
-      <Card shadow="md" style={{ height: "100%" }}>
+      <Card shadow="md" h={height} maw={350}>
         <Center h="100%">
           <Stack gap={0} align="center">
             <IconMoodSad size={100} />
             <Text fw={700} size="xl">
-              No actions yet
+              Nothing here
             </Text>
             <Text fw={400} size="md" ta="center">
               Start using the player and actions will show up here!
@@ -57,7 +45,7 @@ export function ActionsList() {
   return (
     <MemoizedList<Action>
       items={actions}
-      height={435}
+      height={height}
       width="100%"
       renderItem={(item) => {
         return (

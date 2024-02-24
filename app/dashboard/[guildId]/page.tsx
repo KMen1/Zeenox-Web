@@ -1,4 +1,4 @@
-import { getDiscordGuilds, getSocketSessionToken } from "@/app/utils";
+import { getBotToken, getDiscordGuilds } from "@/app/actions";
 import { PlayerLayout } from "@/components/PlayerLayout/PlayerLayout";
 import { Socket } from "@/components/Socket";
 import { currentUser } from "@clerk/nextjs";
@@ -40,21 +40,16 @@ export default async function Page({
   const discordId = user?.externalAccounts.find(
     (a) => a.provider === "oauth_discord"
   )?.externalId;
-  const serverSessionToken = await getSocketSessionToken(
-    discordId!,
-    params.guildId
-  );
+  const serverSessionToken = await getBotToken(discordId!, params.guildId);
 
   if (!serverSessionToken) {
     return <Skeleton w="100%" h={500} />;
   }
 
   return (
-    <>
-      <JotaiProvider>
-        <Socket id={params.guildId} socketSessionToken={serverSessionToken} />
-        <PlayerLayout />
-      </JotaiProvider>
-    </>
+    <JotaiProvider>
+      <Socket id={params.guildId} botToken={serverSessionToken} />
+      <PlayerLayout />
+    </JotaiProvider>
   );
 }

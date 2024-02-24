@@ -1,122 +1,146 @@
 "use client";
-import { useEffect } from "react";
-import { IconCheck, IconNetwork } from "@tabler/icons-react";
 import {
-  showNotification,
-  updateNotification,
-} from "@/utils/notificationUtils";
-import { useAtom, useAtomValue, useSetAtom } from "jotai";
+  AddActionPayload,
+  AddActionsPayload,
+  InitPlayerPayload,
+  Payload,
+  UpdatePlayerPayload,
+  UpdateQueuePayload,
+  UpdateTrackPayload,
+} from "@/types/payloads";
+import { Action, PayloadType } from "@/types/socket";
 import {
-  actionFetchAtom,
   actionsAtom,
+  botTokenAtom,
+  currentTrackAtom,
+  historyAtom,
   initAtom,
+  isAutoPlayEnabledAtom,
   listenersAtom,
+  playerStateAtom,
   positionAtom,
   queueAtom,
-  repeatAtom,
-  serverSessionTokenAtom,
-  stateAtom,
-  trackAtom,
+  trackRepeatModeAtom,
   volumeAtom,
 } from "@/utils/atoms";
 import { useDisclosure } from "@mantine/hooks";
-import { ResumeSessionModal } from "./ResumeSessionModal/ResumeSessionModal";
-import {
-  Action,
-  AddActionPayload,
-  AddActionsPayload,
-  InitPayload,
-  Payload,
-  PayloadType,
-  Track,
-  UpdatePlayerPayload,
-  UpdateQueuePayload,
-} from "@/types/socket";
+import { showNotification, updateNotification } from "@mantine/notifications";
+import { IconCheck } from "@tabler/icons-react";
+import { useAtom, useSetAtom } from "jotai";
+import { useEffect } from "react";
+import { ReconnectModal } from "./Modals/ReconnectModal";
+import { ResumeSessionModal } from "./Modals/ResumeSessionModal";
+import { deletePreviousSession, resumePreviousSession } from "./actions";
 
 let socket: WebSocket | null = null;
 
-export function Socket({
-  id,
-  socketSessionToken,
-}: {
-  id: string;
-  socketSessionToken: string;
-}) {
-  const [opened, { open, close }] = useDisclosure(false);
-  const setServerSessionToken = useSetAtom(serverSessionTokenAtom);
+export function Socket({ id, botToken }: { id: string; botToken: string }) {
+  const [resumeModalopened, resumeModalHandlers] = useDisclosure(false);
+  const openResumeModal = resumeModalHandlers.open;
+  const closeResumeModal = resumeModalHandlers.close;
+
+  const [reconnectModalOpened, reconnectModalHandlers] = useDisclosure(false);
+  const openReconnectModal = reconnectModalHandlers.open;
+  const closeReconnectModal = reconnectModalHandlers.close;
+
+  const setBotToken = useSetAtom(botTokenAtom);
   useEffect(() => {
-    setServerSessionToken(socketSessionToken);
-  }, [socketSessionToken, setServerSessionToken]);
+    setBotToken(botToken);
+  }, [botToken, setBotToken]);
+
   const [init, setInit] = useAtom(initAtom);
   const setQueue = useSetAtom(queueAtom);
-  const setTrack = useSetAtom(trackAtom);
+  const setHistory = useSetAtom(historyAtom);
+  const setTrack = useSetAtom(currentTrackAtom);
   const setActions = useSetAtom(actionsAtom);
   const setVolume = useSetAtom(volumeAtom);
-  const setRepeat = useSetAtom(repeatAtom);
+  const setRepeat = useSetAtom(trackRepeatModeAtom);
   const setPosition = useSetAtom(positionAtom);
-  const setState = useSetAtom(stateAtom);
+  const setState = useSetAtom(playerStateAtom);
   const setListeners = useSetAtom(listenersAtom);
-  const { resumeSession } = useAtomValue(actionFetchAtom);
+  const setAutoPlay = useSetAtom(isAutoPlayEnabledAtom);
 
   useEffect(() => {
     const notificatonId = `connect-socket-${Date.now()}`;
-    showNotification(notificatonId, `Connecting to server`, null, true);
+    showNotification({
+      id: notificatonId,
+      title: `Connecting...`,
+      loading: true,
+      message: null,
+      color: "gray",
+      icon: null,
+      autoClose: false,
+      withBorder: true,
+    });
     socket = new WebSocket(
       `${process.env.NEXT_PUBLIC_WS_URL}/api/v1/socket?id=${id}`
     );
     socket.onopen = () => {
-      socket?.send(socketSessionToken);
-      updateNotification(
-        notificatonId,
-        `Connected to server`,
-        <IconCheck width="70%" height="70%" />,
-        "green"
-      );
+      socket?.send(botToken);
+      updateNotification({
+        id: notificatonId,
+        title: `Connected`,
+        loading: false,
+        message: null,
+        color: "green",
+        icon: <IconCheck size={18} />,
+        autoClose: true,
+      });
+      closeReconnectModal();
     };
-    socket.onclose = (ev) => {
-      updateNotification(
-        notificatonId,
-        ev.code === 1006 ? "Unable to connect!" : `Disconnected from server`,
-        <IconNetwork width="70%" height="70%" />,
-        "red",
-        ev.code === 1006
-          ? "Connect to a voice channel to start listening!"
-          : `Disconnected from server with reason: ${ev.reason}`
-      );
+    socket.onclose = () => {
+      openReconnectModal();
     };
     socket.onmessage = (event) => {
       const payload = JSON.parse(event.data as string) as Payload;
       switch (payload.Type) {
         case PayloadType.InitPlayer:
-          const initPayload = payload as InitPayload;
+          const initPayload = payload as InitPlayerPayload;
           setInit(initPayload);
+          const player = initPayload.Player;
+          setVolume(player.Volume);
+          setRepeat(player.TrackRepeatMode);
+          setPosition(player.Position || 0);
+          setState(player.State);
+          setListeners(player.Listeners);
+          setTrack(initPayload.CurrentTrack);
+          setQueue(initPayload.Queue.Tracks);
+          setAutoPlay(player.IsAutoPlayEnabled);
+          setHistory(initPayload.Queue.History.reverse());
+          setActions(initPayload.Actions.reverse());
           if (initPayload.ResumeSession) {
-            open();
+            openResumeModal();
           }
           break;
         case PayloadType.UpdatePlayer:
-          const playerData = payload as UpdatePlayerPayload;
+          const playerData = (payload as UpdatePlayerPayload).Player;
           setVolume(playerData.Volume);
-          setRepeat(playerData.RepeatMode);
+          setRepeat(playerData.TrackRepeatMode);
           setPosition(playerData.Position || 0);
           setState(playerData.State);
           setListeners(playerData.Listeners);
+          setAutoPlay(playerData.IsAutoPlayEnabled);
           break;
         case PayloadType.UpdateTrack:
-          setTrack(payload as Track);
+          const track = (payload as UpdateTrackPayload).Track;
+          setTrack(track);
           break;
         case PayloadType.UpdateQueue:
-          setQueue((payload as UpdateQueuePayload).Tracks);
+          const queue = (payload as UpdateQueuePayload).Queue;
+          setQueue(queue.Tracks);
+          setHistory(queue.History.reverse());
           break;
         case PayloadType.AddAction:
           const action = (payload as AddActionPayload).Action as Action;
           setActions((state) => {
             if (!state) return [action];
-            return [action, ...state];
+            return [action, ...state].slice(0, 10);
           });
           break;
         case PayloadType.AddActions:
-          setActions((payload as AddActionsPayload).Actions.reverse());
+          setActions(
+            (payload as AddActionsPayload).Actions.slice(0, 10).reverse()
+          );
           break;
       }
     };
@@ -124,9 +148,14 @@ export function Socket({
       socket?.close();
     };
   }, [
+    botToken,
+    closeReconnectModal,
     id,
-    open,
+    openReconnectModal,
+    openResumeModal,
     setActions,
+    setAutoPlay,
+    setHistory,
     setInit,
     setListeners,
     setPosition,
@@ -135,44 +164,31 @@ export function Socket({
     setState,
     setTrack,
     setVolume,
-    socketSessionToken,
   ]);
 
   const resumeData = init?.ResumeSession!;
 
-  function resumeSessionHandler() {
-    const notificatonId = `resume-session-${Date.now()}`;
-    showNotification(notificatonId, `Resuming session`, null, true);
-    resumeSession().then((res) => {
-      if (res.success) {
-        updateNotification(
-          notificatonId,
-          `Resumed session`,
-          <IconCheck />,
-          "green",
-          "Successfully resumed session!"
-        );
-      } else {
-        updateNotification(
-          notificatonId,
-          `Unable to resume session`,
-          <IconNetwork />,
-          "red",
-          "Unable to resume session!"
-        );
-      }
-    });
-    close();
+  async function onResume() {
+    await resumePreviousSession(botToken);
+    closeResumeModal();
   }
 
-  return resumeData ? (
-    <ResumeSessionModal
-      opened={opened}
-      onClose={close}
-      onResume={resumeSessionHandler}
-      resumeData={resumeData}
-    />
-  ) : (
-    <></>
+  async function onDelete() {
+    await deletePreviousSession(botToken);
+    closeResumeModal();
+  }
+
+  return (
+    <>
+      {resumeData && (
+        <ResumeSessionModal
+          opened={resumeModalopened}
+          onClose={closeResumeModal}
+          onResume={onResume}
+          onDelete={onDelete}
+        />
+      )}
+      <ReconnectModal opened={reconnectModalOpened} />
+    </>
   );
 }

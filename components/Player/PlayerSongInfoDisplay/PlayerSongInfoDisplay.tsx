@@ -1,21 +1,23 @@
 "use client";
 
-import { GradientBackground } from "@/utils/utils";
+import { currentTrackAtom } from "@/utils/atoms";
+import { getGradient } from "@/utils/colorUtils";
 import { Skeleton, Stack, Text, useMantineColorScheme } from "@mantine/core";
+import { useAtomValue } from "jotai";
 import Image from "next/image";
 import { useCallback, useEffect } from "react";
 import classes from "./PlayerSongInfoDisplay.module.css";
-import { useAtomValue } from "jotai";
-import { trackAtom } from "@/utils/atoms";
 
 export function PlayerSongInfoDisplay() {
-  const track = useAtomValue(trackAtom);
+  const track = useAtomValue(currentTrackAtom);
   const { colorScheme } = useMantineColorScheme();
   const isDark = colorScheme === "dark";
-  const setGradientBackground = useCallback(
-    () => GradientBackground(document, ".player-background", isDark),
-    [isDark]
-  );
+  const setGradientBackground = useCallback(() => {
+    const gradient = getGradient(document, ".player-background", isDark);
+    document
+      .querySelector(".player-background")!
+      .setAttribute("style", `background: ${gradient}`);
+  }, [isDark]);
 
   const title = track?.Title || "Start playing something";
   const author = track?.Author || ">_<";
@@ -37,7 +39,7 @@ export function PlayerSongInfoDisplay() {
     <>
       <Image
         priority
-        src={track.Thumbnail || "/placeholder-album.jpeg"}
+        src={track.ArtworkUrl || "/placeholder-album.jpeg"}
         alt={track.Title || "Placeholder Album Art"}
         width={200}
         height={200}

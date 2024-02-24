@@ -1,0 +1,17 @@
+.track {
+  &::before {
+    background-color: rgba(255, 255, 255, 0.3);
+  }
+}
+
+.bar {
+  background: white;
+}
+
+.thumb {
+  height: rem(12px);
+  width: rem(12px);
+  background-color: var(--mantine-color-white);
+  border: none;
+  box-shadow: var(--mantine-shadow-md);
+}

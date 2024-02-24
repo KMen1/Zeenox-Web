@@ -1,100 +1,160 @@
 "use client";
 
-import { Flex, Skeleton, Slider, Text } from "@mantine/core";
-import { useCallback, useEffect, useState } from "react";
-import { toTime } from "@/utils/utils";
+import { seekTrack } from "@/components/actions";
+import { withNotification } from "@/components/withNotification";
 import { PlayerState } from "@/types/socket";
-import classes from "./PlayerPositionSlider.module.css";
-import { useAtom, useAtomValue } from "jotai";
 import {
-  durationAtom,
+  botTokenAtom,
+  currentTrackAtom,
   initAtom,
+  playerStateAtom,
   positionAtom,
-  stateAtom,
-  trackAtom,
 } from "@/utils/atoms";
-import { useSeek } from "@/components/hooks";
+import { toTime } from "@/utils/utils";
+import { Center, Flex, Group, Skeleton, Slider, Text } from "@mantine/core";
+import { useAtom, useAtomValue } from "jotai";
+import { useCallback, useEffect, useState } from "react";
+import classes from "./PlayerPositionSlider.module.css";
 
-export function PlayerPositionSlider() {
-  const position = useAtomValue(positionAtom);
+const sliderSizeDict = {
+  sm: 4,
+  md: "xs",
+};
+
+const textSizeDict = {
+  sm: "0.7rem",
+  md: "xs",
+};
+
+function Container({
+  size,
+  children,
+}: {
+  size: "sm" | "md";
+  children: React.ReactNode;
+}) {
+  if (size === "sm")
+    return (
+      <Group gap={10} wrap="nowrap">
+        {children}
+      </Group>
+    );
+
+  return <div>{children}</div>;
+}
+
+export function PlayerPositionSlider({ size }: { size: "sm" | "md" }) {
+  const serverPosition = useAtomValue(positionAtom);
   const initData = useAtomValue(initAtom);
   const initialPosition = initData?.Position;
-  const [state, setState] = useAtom(stateAtom);
-  const track = useAtomValue(trackAtom);
-  const duration = useAtomValue(durationAtom);
-  const seek = useSeek();
+  const [state, setState] = useAtom(playerStateAtom);
+  const track = useAtomValue(currentTrackAtom);
+  const duration = track?.Duration ?? 0;
+  const token = useAtomValue(botTokenAtom);
 
+  const [hasSetInitialPosition, setHasSetInitialPosition] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
-  const [_position, setPosition] = useState(initialPosition ?? 0);
+  const [localPosition, setLocalPosition] = useState(0);
 
   useEffect(() => {
-    setPosition(position);
-  }, [position]);
+    setLocalPosition(serverPosition);
+  }, [serverPosition]);
 
   useEffect(() => {
-    if (track && position >= track.Duration) {
-      setPosition(0);
-    } else if (track && position === 0) {
-      setPosition(0);
+    if (track && !hasSetInitialPosition) {
+      setLocalPosition(0);
+      setState(PlayerState.Playing);
     }
-  }, [position, track]);
+  }, [hasSetInitialPosition, setState, track]);
+
+  useEffect(() => {
+    if (initialPosition && !hasSetInitialPosition) {
+      setLocalPosition(initialPosition);
+      setHasSetInitialPosition(true);
+    }
+  }, [initialPosition, hasSetInitialPosition]);
 
   useEffect(() => {
     if (
       !isDragging &&
-      _position != -1 &&
-      _position < duration &&
+      localPosition < duration &&
       state === PlayerState.Playing
     ) {
       const interval = setInterval(() => {
-        setPosition((p) => p + 1);
+        setLocalPosition((p) => p + 1);
       }, 1000);
       return () => clearInterval(interval);
     }
-  }, [_position, duration, isDragging, state, track?.Duration]);
+  }, [localPosition, duration, isDragging, state, track?.Duration]);
 
   const onChangeCache = useCallback((value: number) => {
-    setPosition(value);
+    setLocalPosition(value);
     setIsDragging(true);
   }, []);
 
-  useEffect(() => {
-    if (track?.Duration != 0) {
-      setState(PlayerState.Playing);
-    }
-  }, [setState, track]);
-
   const onChangeEnd = useCallback(
-    (value: number) => {
-      seek(value);
+    async (value: number) => {
+      withNotification(await seekTrack(value, token));
       setIsDragging(false);
     },
-    [seek]
+    [token]
   );
 
-  if (initialPosition === undefined) return <Skeleton w={178} h={10} />;
+  if (initialPosition === undefined)
+    return (
+      <Center>
+        <Skeleton w="100%" h={10} />
+      </Center>
+    );
 
   return (
-    <div>
-      <Slider
-        value={_position ?? 0}
-        onChange={onChangeCache}
-        max={duration}
-        size="xs"
-        label={null}
-        thumbSize={12}
-        showLabelOnHover={false}
-        onChangeEnd={onChangeEnd}
-        classNames={classes}
-      />
-      <Flex justify="space-between" mt={4}>
-        <Text size="xs" lh={1} className={classes.timeText}>
-          {toTime(_position)}
-        </Text>
-        <Text size="xs" lh={1} className={classes.timeText}>
-          {`-${toTime(duration - _position)}`}
-        </Text>
-      </Flex>
-    </div>
+    <Container size={size}>
+      <>
+        {size === "sm" ? (
+          <Text
+            size={textSizeDict[size]}
+            lh={1}
+            className={classes.timeText}
+            w="min-content"
+          >
+            {toTime(localPosition)}
+          </Text>
+        ) : null}
+        <Slider
+          value={localPosition ?? 0}
+          onChange={onChangeCache}
+          max={duration}
+          size={sliderSizeDict[size]}
+          label={null}
+          thumbSize={12}
+          showLabelOnHover={false}
+          onChangeEnd={onChangeEnd}
+          classNames={classes}
+          w="100%"
+        />
+        {size === "sm" ? (
+          <Text
+            size={textSizeDict[size]}
+            lh={1}
+            className={classes.timeText}
+            w="min-content"
+          >
+            {`-${toTime(duration - localPosition)}`}
+          </Text>
+        ) : null}
+        {size === "md" ? (
+          <Flex justify="space-between" mt={4}>
+            <Text size={textSizeDict[size]} lh={1} className={classes.timeText}>
+              {toTime(localPosition)}
+            </Text>
+            <Text size={textSizeDict[size]} lh={1} className={classes.timeText}>
+              {`-${toTime(
+                localPosition > duration ? duration : duration - localPosition
+              )}`}
+            </Text>
+          </Flex>
+        ) : null}
+      </>
+    </Container>
   );
 }

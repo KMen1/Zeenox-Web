@@ -1,10 +1,10 @@
 "use client";
 
 import { listenersAtom } from "@/utils/atoms";
-import { Tooltip, Avatar, Skeleton } from "@mantine/core";
+import { Avatar, Skeleton, Tooltip } from "@mantine/core";
 import { useAtomValue } from "jotai";
 
-export default function ListenersTooltip() {
+export function ListenersTooltip() {
   const listeners = useAtomValue(listenersAtom);
 
   if (!listeners) return <Skeleton w={20} h={5} />;

@@ -1,14 +1,14 @@
 "use client";
 
+import { Track } from "@/types/socket";
 import {
   DragDropContext,
-  Droppable,
   Draggable,
   DraggableLocation,
-} from "react-beautiful-dnd";
+  Droppable,
+} from "@hello-pangea/dnd";
 import React, { useEffect, useState } from "react";
 import { FixedSizeList, areEqual } from "react-window";
-import { Track } from "@/types/socket";
 import { Track as TrackComponent } from "../Track/Track";
 
 function getStyle({ provided, style, isDragging }: any) {
@@ -71,13 +71,17 @@ function Item({
   );
 }
 
+type DndTrackListProps = {
+  baseTracks: Track[];
+  onMove: (from: number, to: number) => void;
+  height: number;
+};
+
 export function DndTrackList({
   baseTracks,
   onMove,
-}: {
-  baseTracks: Track[];
-  onMove: (from: number, to: number) => void;
-}) {
+  height,
+}: DndTrackListProps) {
   const [tracks, setTracks] = useState<Track[]>(baseTracks);
 
   useEffect(() => {
@@ -149,7 +153,7 @@ export function DndTrackList({
       >
         {(provided) => (
           <FixedSizeList
-            height={435}
+            height={height}
             itemCount={tracks?.length || 0}
             itemSize={50}
             width="100%"

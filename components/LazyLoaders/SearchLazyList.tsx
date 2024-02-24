@@ -1,27 +1,33 @@
+import { Track, TracksResponse } from "@/types/spotify";
+import { Stack } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { Track as TrackComponent } from "../Track/Track";
+import { TrackSkeleton } from "../Track/TrackSkeleton";
+import { getSearchResults } from "../actions";
+import { useSize } from "../useSize";
 import { LazyList } from "./LazyList";
-import { Skeleton } from "@mantine/core";
-import { SavedTracksResponse, SearchResponse, Track } from "@/types/spotify";
-import { PayloadType } from "@/types/socket";
 
 const ITEM_HEIGHT = 50;
-const LIST_HEIGHT = 425;
 
-export function SearchLazyList({ query }: { query: string | null }) {
-  const [response, setResponse] = useState<SavedTracksResponse | null>(null);
+type SearchLazyListProps = {
+  query: string;
+};
+
+export function SearchLazyList({ query }: SearchLazyListProps) {
+  const [response, setResponse] = useState<TracksResponse | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [items, setItems] = useState<Track[]>([]);
+  const windowSize = useSize();
+  const height = windowSize[1] - 357;
 
   async function loadNextPage() {
     setIsLoading(true);
     const nextUrl = response?.next;
     if (nextUrl == null) return;
     const offset = new URL(nextUrl).searchParams.get("offset");
-    const res = await fetch(`/api/spotify/search?q=${query}&offset=${offset}`);
-    const data = (await res.json()) as SearchResponse;
-    setResponse(data.tracks as unknown as SavedTracksResponse);
-    setItems(items.concat(data.tracks.items));
+    const res = await getSearchResults(query, Number(offset));
+    setResponse(res?.tracks as unknown as TracksResponse);
+    setItems(items.concat(res?.tracks.items ?? []));
     setIsLoading(false);
   }
 
@@ -32,10 +38,9 @@ export function SearchLazyList({ query }: { query: string | null }) {
     setIsLoading(false);
 
     async function fetchSearchResults() {
-      const res = await fetch(`/api/spotify/search?q=${query}`);
-      const data = (await res.json()) as SearchResponse;
-      setResponse(data.tracks as unknown as SavedTracksResponse);
-      setItems(data.tracks.items);
+      const data = await getSearchResults(query);
+      setResponse(data?.tracks as unknown as TracksResponse);
+      setItems(data?.tracks.items ?? []);
     }
 
     fetchSearchResults();
@@ -55,19 +60,13 @@ export function SearchLazyList({ query }: { query: string | null }) {
           index={index}
           hoverable
           track={{
-            Type: PayloadType.UpdateTrack,
-            Identifier: track.id,
+            Id: track.id,
             Title: track.name,
             Author: track.artists.map((artist) => artist.name).join(", "),
             Url: track.external_urls.spotify,
-            Thumbnail: track.album.images[0].url,
+            ArtworkUrl: track.album.images[0].url,
             Duration: Math.round(track.duration_ms / 1000),
-            RequestedBy: {
-              Username: "",
-              DisplayName: "",
-              AvatarUrl: null,
-            },
-            Lyrics: null,
+            RequestedBy: null,
           }}
           withPlay
           withAdd
@@ -76,17 +75,14 @@ export function SearchLazyList({ query }: { query: string | null }) {
     );
   };
 
-  const SKELETON_COUNT = Math.floor(LIST_HEIGHT / ITEM_HEIGHT) - 1;
+  const SKELETON_COUNT = Math.floor(height / ITEM_HEIGHT) - 1;
 
   return response == null ? (
-    Array.from({ length: SKELETON_COUNT }).map((_, i) => (
-      <Skeleton
-        key={i}
-        w="100%"
-        h={ITEM_HEIGHT}
-        my={i == 0 || i == SKELETON_COUNT - 1 ? "" : "xs"}
-      />
-    ))
+    <Stack gap={0} style={{ height }}>
+      {Array.from({ length: SKELETON_COUNT }).map((_, i) => (
+        <TrackSkeleton key={i} />
+      ))}
+    </Stack>
   ) : (
     <LazyList<Track>
       items={items}
@@ -95,8 +91,9 @@ export function SearchLazyList({ query }: { query: string | null }) {
       loadMoreItems={loadNextPage}
       hasMoreItems={response?.next !== null}
       isLoadingNextPage={isLoading}
-      height={LIST_HEIGHT}
+      height={height}
       itemHeight={ITEM_HEIGHT}
+      skeleton={<TrackSkeleton />}
     />
   );
 }

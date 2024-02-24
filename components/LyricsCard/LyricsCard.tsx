@@ -1,86 +1,71 @@
 "use client";
 
-import { serverSessionTokenAtom, trackAtom } from "@/utils/atoms";
-import {
-  Box,
-  Card,
-  Center,
-  LoadingOverlay,
-  ScrollArea,
-  Stack,
-  Text,
-} from "@mantine/core";
-import { IconMoodSad, IconSettings } from "@tabler/icons-react";
+import { botTokenAtom, currentTrackAtom } from "@/utils/atoms";
+import { Box, Center, ScrollArea, Skeleton, Stack, Text } from "@mantine/core";
+import { IconMoodSad } from "@tabler/icons-react";
 import { useAtomValue } from "jotai";
 import { useEffect, useState } from "react";
+import { getLyrics } from "../actions";
+import { useSize } from "../useSize";
 
 export function LyricsCard() {
   const [lyricsHtml, setLyricsHtml] = useState<string | null>(null);
-  const [fontSize, setFontSize] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
-  const track = useAtomValue(trackAtom);
-  const token = useAtomValue(serverSessionTokenAtom);
+  const track = useAtomValue(currentTrackAtom);
+  const token = useAtomValue(botTokenAtom);
+  const windowSize = useSize();
+  const height = (windowSize[1] - 425) / 2;
 
   useEffect(() => {
     async function fetchLyricsHtml() {
       setIsLoading(true);
       setLyricsHtml(null);
-      const res = await fetch(`/api/player/lyrics?token=${token}`);
-      if (res.ok) {
-        const html = await res.text();
-        setLyricsHtml(html);
+      const res = await getLyrics(token);
+      if (res.success) {
+        setLyricsHtml(res.message);
       }
       setIsLoading(false);
     }
 
     if (track?.Url) fetchLyricsHtml();
-    else setLyricsHtml(null);
+    else {
+      setLyricsHtml(null);
+      setIsLoading(false);
+    }
   }, [token, track]);
 
-  return (
-    <Box pos="relative">
-      <LoadingOverlay
-        visible={isLoading}
-        overlayProps={{ radius: "lg", blur: 3 }}
-      />
-      <Card pos="relative">
-        {/*<Popover position="left" width={150}>
-          <Popover.Target>
-            <ActionIcon variant="light" color="gray">
-              <IconSettings />
-            </ActionIcon>
-          </Popover.Target>
-          <Popover.Dropdown>
-            <Slider
-              title="Font Size"
-              step={0.1}
-              defaultValue={1}
-              min={0.1}
-              max={2}
-              onChange={(val) => setFontSize(val)}
-            />
-          </Popover.Dropdown>
-  </Popover>*/}
+  const SKELETON_COUNT = height / 20 - 2;
+  const skeleton = Array.from({ length: SKELETON_COUNT }).map((_, index) => (
+    <Skeleton key={index} height={20} />
+  ));
 
-        <ScrollArea h={403}>
-          {lyricsHtml === null ? (
-            <Center h={403} p="xl">
-              <Stack gap={0} align="center">
-                <IconMoodSad size={100} />
-                <Text fw={700} size="xl">
-                  No Lyrics Found
-                </Text>
-              </Stack>
-            </Center>
-          ) : (
+  return (
+    <Box pos="relative" maw={350} w={350}>
+      <Box pos="relative">
+        {isLoading && (
+          <Stack h={height} gap="xs">
+            {skeleton}
+          </Stack>
+        )}
+        {lyricsHtml && (
+          <ScrollArea h={height}>
             <Text
-              size={`${fontSize}rem`}
               lh={1.4}
               dangerouslySetInnerHTML={{ __html: lyricsHtml || "" }}
             />
-          )}
-        </ScrollArea>
-      </Card>
+          </ScrollArea>
+        )}
+        {!lyricsHtml && !isLoading && (
+          <Center h={height} w="100%" p="xl">
+            <Stack gap={0} align="center">
+              <IconMoodSad size={100} />
+              <Text fw={700} size="xl">
+                No lyrics found
+              </Text>
+            </Stack>
+          </Center>
+        )}
+      </Box>
     </Box>
   );
 }

@@ -1,13 +1,13 @@
 "use client";
 
-import { Card, Divider, Group, Skeleton, Stack, Text } from "@mantine/core";
-import { Track } from "../Track/Track";
-import { useAtomValue } from "jotai";
 import { queueAtom } from "@/utils/atoms";
+import { Card, Divider, Group, Skeleton, Stack, Text } from "@mantine/core";
 import { IconMoodSad, IconPlayerTrackNext } from "@tabler/icons-react";
+import { useAtomValue } from "jotai";
+import { Track } from "../Track/Track";
 import classes from "./NextTrack.module.css";
 
-export default function NextTrack() {
+export function NextTrack() {
   const tracks = useAtomValue(queueAtom);
   const track = tracks ? (tracks.length > 0 ? tracks[0] : undefined) : null;
 

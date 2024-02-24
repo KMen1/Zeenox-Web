@@ -1,3 +1,4 @@
+import { dark } from "@clerk/themes";
 import {
   ColorSchemeScript,
   Container,
@@ -5,15 +6,14 @@ import {
   Stack,
 } from "@mantine/core";
 import type { Metadata } from "next";
-import { dark } from "@clerk/themes";
 
-import { theme } from "../theme";
-import "./globals.css";
-import "@mantine/core/styles.css";
-import "@mantine/notifications/styles.css";
-import { Notifications } from "@mantine/notifications";
 import { Navbar } from "@/components/Navbar/Navbar";
 import { ClerkProvider } from "@clerk/nextjs";
+import "@mantine/core/styles.css";
+import { Notifications } from "@mantine/notifications";
+import "@mantine/notifications/styles.css";
+import { theme } from "../theme";
+import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Zeenox",
@@ -43,7 +43,7 @@ export default function RootLayout({
         </head>
         <body>
           <MantineProvider defaultColorScheme="dark" theme={theme}>
-            <Container p="md" size="xl">
+            <Container p="md" size="125rem">
               <Stack gap="md">
                 <Navbar />
                 {children}

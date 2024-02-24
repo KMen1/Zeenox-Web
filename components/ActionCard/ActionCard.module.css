@@ -1,3 +1,7 @@
+.root {
+  border: 1px solid light-dark(white, var(--mantine-color-dark-5));
+}
+
 .root[data-hasimage="true"] {
   background-color: rgba(0, 0, 0, 0.6);
 }
@@ -8,7 +12,8 @@
 
 .container {
   position: relative;
-  max-width: 350px;
+  width: 100%;
+  min-width: 200px;
 }
 
 .bgimage {

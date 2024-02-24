@@ -1,18 +1,8 @@
+import { memo } from "react";
 import { FixedSizeList, areEqual } from "react-window";
 import InfiniteLoader from "react-window-infinite-loader";
-import { Skeleton } from "@mantine/core";
-import { memo } from "react";
 
-export function LazyList<T>({
-  items,
-  itemFactory,
-  totalCount,
-  loadMoreItems,
-  hasMoreItems,
-  isLoadingNextPage,
-  height,
-  itemHeight,
-}: {
+type LazyListProps<T> = {
   items: T[];
   itemFactory: ({
     index,
@@ -27,7 +17,20 @@ export function LazyList<T>({
   isLoadingNextPage: boolean;
   height: number;
   itemHeight: number;
-}) {
+  skeleton: JSX.Element;
+};
+
+export function LazyList<T>({
+  items,
+  itemFactory,
+  totalCount,
+  loadMoreItems,
+  hasMoreItems,
+  isLoadingNextPage,
+  height,
+  itemHeight,
+  skeleton,
+}: LazyListProps<T>) {
   const loadNext = isLoadingNextPage ? () => {} : loadMoreItems;
   const isItemLoaded = (index: number) => !hasMoreItems || index < items.length;
 
@@ -40,8 +43,8 @@ export function LazyList<T>({
   }) {
     if (!isItemLoaded(index)) {
       return (
-        <div style={style}>
-          <Skeleton w="100%" h={itemHeight} />
+        <div style={style} key={index}>
+          {skeleton}
         </div>
       );
     }

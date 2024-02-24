@@ -1,0 +1,6 @@
+.root[data-disabled="true"] {
+  background-color: light-dark(
+    var(--mantine-color-gray-1),
+    var(--mantine-color-dark-5)
+  );
+}

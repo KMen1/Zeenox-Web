@@ -1,12 +1,12 @@
 "use client";
 
-import { Flex, Group, Text, Avatar, Skeleton } from "@mantine/core";
-import classes from "./PlayerSongRequesterDisplay.module.css";
+import { currentTrackAtom } from "@/utils/atoms";
+import { Avatar, Flex, Group, Skeleton, Text } from "@mantine/core";
 import { useAtomValue } from "jotai";
-import { trackAtom } from "@/utils/atoms";
+import classes from "./PlayerSongRequesterDisplay.module.css";
 
 export function PlayerSongRequesterDisplay() {
-  const track = useAtomValue(trackAtom);
+  const track = useAtomValue(currentTrackAtom);
   if (!track) return <Skeleton w={100} h={10} />;
 
   const requestedBy = track.RequestedBy;
@@ -14,13 +14,13 @@ export function PlayerSongRequesterDisplay() {
   return (
     <Flex align="center" gap={5}>
       <Avatar
-        src={requestedBy.AvatarUrl}
-        alt={requestedBy.Username}
+        src={requestedBy?.AvatarUrl}
+        alt={requestedBy?.Username}
         radius="xl"
         size="xs"
       />
       <Group gap={2}>
-        {requestedBy.Username ? (
+        {requestedBy?.Username ? (
           <>
             <Text size="10" lh={1} fw={400} className={classes.main}>
               Added By
