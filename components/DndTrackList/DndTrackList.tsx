@@ -59,14 +59,7 @@ function Item({
       style={getStyle({ provided, style, isDragging })}
       className={`item ${isDragging ? "is-dragging" : ""}`}
     >
-      <TrackComponent
-        track={item}
-        index={index}
-        withControls
-        withMove
-        withRemove
-        withSkipTo
-      />
+      <TrackComponent track={item} index={index} withRemove mode="skipTo" />
     </div>
   );
 }
@@ -101,11 +94,10 @@ export function DndTrackList({
             <TrackComponent
               track={item}
               index={index}
-              withControls
               hoverable
-              withSkipTo
+              mode="skipTo"
               withRemove
-              withMove
+              showRequestedBy
               dragHandleProps={provided.dragHandleProps}
             />
           </div>

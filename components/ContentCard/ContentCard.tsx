@@ -6,6 +6,7 @@ type ContentCardProps = {
   icon: React.ReactNode;
   children: React.ReactNode;
   rightSection?: React.ReactNode;
+  bg?: string;
 };
 
 export function ContentCard({
@@ -13,6 +14,7 @@ export function ContentCard({
   icon,
   children,
   rightSection,
+  bg,
 }: ContentCardProps) {
   return (
     <Box px="md" pb="md" className={classes.card}>
@@ -23,7 +25,9 @@ export function ContentCard({
         </Group>
         {rightSection}
       </Group>
-      <Card className={classes.content}>{children}</Card>
+      <Card className={classes.content} bg={bg}>
+        {children}
+      </Card>
     </Box>
   );
 }

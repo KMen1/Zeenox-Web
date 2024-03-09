@@ -1,0 +1,3 @@
+.track {
+  padding: calc(var(--mantine-spacing-sm) / 2);
+}

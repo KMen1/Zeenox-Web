@@ -1,8 +1,13 @@
-import { getBotToken, getDiscordGuilds } from "@/app/actions";
-import { PlayerLayout } from "@/components/PlayerLayout/PlayerLayout";
-import { Socket } from "@/components/Socket";
+import { ActionsPanel } from "@/features/actions-panel";
+import { LyricsCard } from "@/features/lyrics-panel";
+import { PlayerBar } from "@/features/player-panel/";
+import { QueuePanel } from "@/features/queue-panel";
+import { SearchPanel } from "@/features/search-panel";
+import { Socket } from "@/features/socket";
+import { SpotifyPanel } from "@/features/spotify-panel";
+import { getBotToken, getGuild } from "@/utils/actions";
 import { currentUser } from "@clerk/nextjs";
-import { Skeleton } from "@mantine/core";
+import { Grid, GridCol, Skeleton, Stack } from "@mantine/core";
 import { Provider as JotaiProvider } from "jotai";
 import { Metadata } from "next";
 
@@ -13,18 +18,14 @@ type Props = {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const id = params.guildId;
-
-  const guilds = await getDiscordGuilds((await currentUser())!.id);
-
-  const guild = guilds?.find((g) => g.id === id);
+  const guild = await getGuild(id);
 
   return {
-    title: `Listening in ${guild?.name ?? "Unknown"}`,
+    title: `Listening in ${guild?.Name ?? "Unknown"}`,
     icons: {
       icon: [
         {
-          url:
-            "https://cdn.discordapp.com/icons/" + guild?.id + "/" + guild?.icon,
+          url: guild?.IconUrl ?? "/favicon.ico",
         },
       ],
     },
@@ -41,6 +42,9 @@ export default async function Page({
     (a) => a.provider === "oauth_discord"
   )?.externalId;
   const serverSessionToken = await getBotToken(discordId!, params.guildId);
+  const spotify = user?.externalAccounts.find(
+    (a) => a.provider === "oauth_spotify"
+  );
 
   if (!serverSessionToken) {
     return <Skeleton w="100%" h={500} />;
@@ -49,7 +53,29 @@ export default async function Page({
   return (
     <JotaiProvider>
       <Socket id={params.guildId} botToken={serverSessionToken} />
-      <PlayerLayout />
+      <Stack justify="space-between" h="100%">
+        <Grid style={{ overflow: "visible" }}>
+          <GridCol span="auto">
+            <Grid>
+              <GridCol span={6}>
+                {spotify ? <SpotifyPanel /> : <SearchPanel />}
+              </GridCol>
+
+              <GridCol span="auto">
+                <QueuePanel />
+              </GridCol>
+            </Grid>
+            {/* <Group wrap="nowrap" grow></Group> */}
+          </GridCol>
+          <GridCol span="content">
+            <Stack>
+              <ActionsPanel />
+              <LyricsCard />
+            </Stack>
+          </GridCol>
+        </Grid>
+        <PlayerBar />
+      </Stack>
     </JotaiProvider>
   );
 }

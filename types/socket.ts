@@ -7,7 +7,17 @@ export type Track = {
   Url: string | null;
   ArtworkUrl: string | null;
   RequestedBy: SocketUser | null;
-  Lyrics?: string | null;
+  TimedLyrics?: Line[] | null;
+};
+
+type Line = {
+  Line: string;
+  Range: Range;
+};
+
+type Range = {
+  Start: number;
+  End: number;
 };
 
 export type Queue = {
@@ -22,13 +32,6 @@ export type Player = {
   Position: number;
   IsAutoPlayEnabled: boolean;
   Listeners: SocketUser[];
-};
-
-export type Action = {
-  Type: ActionType;
-  User: SocketUser;
-  Message: string;
-  Timestamp: number;
 };
 
 /// MISC ///
@@ -75,14 +78,6 @@ export type SocketGuild = {
 };
 
 /// ENUMS ///
-export enum PayloadType {
-  InitPlayer,
-  UpdatePlayer,
-  UpdateQueue,
-  UpdateTrack,
-  AddAction,
-  AddActions,
-}
 
 export enum PlayerState {
   Destroyed,
@@ -95,30 +90,4 @@ export enum TrackRepeatMode {
   None,
   Track,
   Queue,
-}
-
-export enum QueueActionType {
-  AddTrack,
-  AddPlaylist,
-  Clear,
-  Distinct,
-  Reverse,
-  Shuffle,
-  MoveTrack,
-  RemoveTrack,
-}
-
-export enum ActionType {
-  Play,
-  Queue,
-  Rewind,
-  Pause,
-  Resume,
-  Skip,
-  Stop,
-  Seek,
-  VolumeUp,
-  VolumeDown,
-  ChangeLoopMode,
-  ToggleAutoPlay,
 }

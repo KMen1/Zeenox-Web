@@ -1,6 +1,6 @@
 "use client";
 
-import { listenersAtom } from "@/utils/atoms";
+import { listenersAtom } from "@/stores/atoms";
 import { Avatar, Skeleton, Tooltip } from "@mantine/core";
 import { useAtomValue } from "jotai";
 

@@ -1,16 +1,16 @@
-import { AddPlaylistAction } from "@/types/actions";
+import { AddPlaylistAction } from "@/features/actions-panel";
+import { botTokenAtom } from "@/stores/atoms";
 import { PlaylistInfo, Track } from "@/types/socket";
 import { Playlist } from "@/types/spotify";
-import { botTokenAtom } from "@/utils/atoms";
 import { ActionIcon, Group, Stack, Text, Tooltip } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconChevronRight, IconPlayerPlayFilled } from "@tabler/icons-react";
 import { useAtomValue } from "jotai";
 import Image from "next/image";
-import { PlaylistModal } from "../Modals/PlaylistModal";
-import { playTrack } from "../actions";
-import { withNotification } from "../withNotification";
+import { playTrack } from "../../utils/actions";
+import { withNotification } from "../../utils/withNotification";
 import classes from "./Playlist.module.css";
+import { PlaylistModal } from "./PlaylistModal";
 
 type PlaylistProps = {
   playlist: AddPlaylistAction | Playlist | (PlaylistInfo & { Tracks: Track[] });

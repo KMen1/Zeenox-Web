@@ -1,8 +1,8 @@
-import { GuildCard } from "@/components/GuildCard/GuildCard";
+import { GuildPicker } from "@/features/guild-picker";
+import { getAvailableGuilds } from "@/utils/actions";
 import { currentUser } from "@clerk/nextjs";
 import { Card, Group, SimpleGrid, Stack, Title } from "@mantine/core";
 import { IconServer } from "@tabler/icons-react";
-import { getAvailableGuilds } from "./actions";
 
 export default async function Home() {
   const user = await currentUser();
@@ -19,9 +19,7 @@ export default async function Home() {
           <Title order={2}>Please Select a Server</Title>
         </Group>
         <SimpleGrid cols={5}>
-          {guilds?.map((guild) => (
-            <GuildCard key={guild.Id} guild={guild} />
-          ))}
+          <GuildPicker guilds={guilds ?? []} />
         </SimpleGrid>
       </Stack>
     </Card>
