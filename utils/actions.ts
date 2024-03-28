@@ -164,7 +164,7 @@ export async function fetchJSON<T>(
   method: string,
   auth: string | null | undefined,
   revalidate: number = 600
-) {
+): Promise<T> {
   const res = await fetch(url, {
     method: method,
     headers: {
@@ -177,7 +177,7 @@ export async function fetchJSON<T>(
   });
 
   if (!res.ok) {
-    return null;
+    return {} as T;
   }
 
   const data = await res.json();
