@@ -27,3 +27,4 @@ export const channelNameAtom = atom<string | null>(null);
 export const startedAtAtom = atom<number | null>(null);
 export const resumeSessionAtom = atom<PlayerResumeSession | null>(null);
 export const trackColorAtom = atom<string>("black");
+export const selectedAtom = atom<"lyrics" | "actions">("lyrics");
