@@ -10,7 +10,7 @@ import { LyricsCardScrollArea } from "../LyricsCardScrollArea/LyricsCardScrollAr
 
 export function LyricsCard() {
   const windowSize = useSize();
-  const height = (windowSize[1] - 425) / 2;
+  const height = /* (windowSize[1] - 425) / 2 */ windowSize[1] - 312;
 
   const color = useAtomValue(trackColorAtom);
 
@@ -20,7 +20,7 @@ export function LyricsCard() {
       icon={<IconBlockquote />}
       bg={typeof color == "string" ? color : undefined}
     >
-      <Box pos="relative" maw={350} w={350}>
+      <Box pos="relative" miw={350}>
         <LyricsCardScrollArea height={height} />
       </Box>
     </ContentCard>

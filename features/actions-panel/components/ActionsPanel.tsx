@@ -15,7 +15,7 @@ export function ActionsPanel() {
   const actions = useAtomValue(actionsAtom);
   const windowSize = useSize();
 
-  const height = (windowSize[1] - 425) / 2;
+  const height = /* (windowSize[1] - 425) / 2 */ windowSize[1] - 312;
 
   if (actions === null)
     return (

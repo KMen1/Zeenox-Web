@@ -1,5 +1,4 @@
-import { ActionsPanel } from "@/features/actions-panel";
-import { LyricsCard } from "@/features/lyrics-panel";
+import { LyricsActionsSwitcher } from "@/components/PanelSwitcher/LyricsActionsSwitcher";
 import { PlayerBar } from "@/features/player-panel/";
 import { QueuePanel } from "@/features/queue-panel";
 import { SearchPanel } from "@/features/search-panel";
@@ -55,7 +54,7 @@ export default async function Page({
       <Socket id={params.guildId} botToken={serverSessionToken} />
       <Stack justify="space-between" h="100%">
         <Grid style={{ overflow: "visible" }}>
-          <GridCol span="auto">
+          <GridCol span={8}>
             <Grid>
               <GridCol span={6}>
                 {spotify ? <SpotifyPanel /> : <SearchPanel />}
@@ -65,13 +64,9 @@ export default async function Page({
                 <QueuePanel />
               </GridCol>
             </Grid>
-            {/* <Group wrap="nowrap" grow></Group> */}
           </GridCol>
-          <GridCol span="content">
-            <Stack>
-              <ActionsPanel />
-              <LyricsCard />
-            </Stack>
+          <GridCol span="auto">
+            <LyricsActionsSwitcher />
           </GridCol>
         </Grid>
         <PlayerBar />

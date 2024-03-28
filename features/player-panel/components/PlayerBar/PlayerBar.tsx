@@ -1,15 +1,19 @@
 "use client";
 
-import { currentTrackAtom, trackColorAtom } from "@/stores/atoms";
+import { currentTrackAtom, selectedAtom, trackColorAtom } from "@/stores/atoms";
 import { getAvgColor } from "@/utils/colorHelpers";
 import {
+  ActionIcon,
   Box,
   Card,
   Group,
   Stack,
   Text,
+  darken,
+  luminance,
   useMantineColorScheme,
 } from "@mantine/core";
+import { IconLayoutList, IconMicrophone2 } from "@tabler/icons-react";
 import { useAtom, useAtomValue } from "jotai";
 import Image from "next/image";
 import { useCallback, useEffect } from "react";
@@ -23,21 +27,33 @@ export function PlayerBar() {
   const track = useAtomValue(currentTrackAtom);
   const { colorScheme } = useMantineColorScheme();
   const [color, setColor] = useAtom(trackColorAtom);
+  const [selectedPanel, setSelectedPanel] = useAtom(selectedAtom);
 
   const handleColorChange = useCallback(() => {
     const color = getAvgColor(document, ".player2-background")?.value;
-    setColor(
-      color
-        ? `rgba(${color?.[0]}, ${color?.[1]}, ${color?.[2]}, ${
-            colorScheme === "dark" ? 0.8 : 1
-          })`
-        : "black"
-    );
-  }, [colorScheme, setColor]);
+    const rgba = `rgba(${color?.[0]}, ${color?.[1]}, ${color?.[2]}, 1)`;
+    setColor(color ? rgba : "black");
+
+    const cLuminance = luminance(rgba);
+    const tLuminance = 1;
+
+    const contrast = (tLuminance + 0.05) / (cLuminance + 0.05);
+    if (contrast < 4.5) {
+      const darkenAmount = 0.5 - contrast / 10;
+      const newColor = darken(rgba, darkenAmount);
+      setColor(newColor);
+
+      const newContrast = (tLuminance + 0.05) / (luminance(newColor) + 0.05);
+      console.info(
+        "Color contrast is too low, darkening the color",
+        newContrast
+      );
+    }
+  }, [setColor]);
 
   useEffect(() => {
     handleColorChange();
-  }, [colorScheme, handleColorChange, track]);
+  }, [colorScheme, handleColorChange]);
 
   return (
     <Card
@@ -94,7 +110,26 @@ export function PlayerBar() {
           </Stack>
         </Box>
         <Box style={{ display: "flex", flex: 1, justifyContent: "flex-end" }}>
-          <PlayerVolumeSlider />
+          <Group gap={3}>
+            <div>
+              <ActionIcon
+                variant="transparent"
+                color={selectedPanel === "actions" ? "black" : "white"}
+                onClick={() => setSelectedPanel("actions")}
+              >
+                <IconLayoutList size={18} />
+              </ActionIcon>
+              <ActionIcon
+                variant="transparent"
+                color={selectedPanel === "lyrics" ? "black" : "white"}
+                onClick={() => setSelectedPanel("lyrics")}
+              >
+                <IconMicrophone2 size={18} />
+              </ActionIcon>
+            </div>
+
+            <PlayerVolumeSlider />
+          </Group>
         </Box>
       </Group>
     </Card>
