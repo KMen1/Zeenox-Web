@@ -69,7 +69,7 @@ export function GuildCard({ guild }: GuildCardProps) {
           label={isPlaying ? "Now Playing" : "Not Playing"}
           color={lighten(getColor(1), 0.4)}
         />
-        {isPlaying && <Track small track={guild.CurrentTrack!} mode="none" />}
+        {isPlaying && <Track track={guild.CurrentTrack!} mode="none" />}
         {!isPlaying && (
           <Stack gap={5} px="xs">
             <Group gap={10}>
