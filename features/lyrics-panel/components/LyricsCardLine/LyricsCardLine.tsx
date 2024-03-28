@@ -12,9 +12,9 @@ const LyricsCardLine = memo(function LyricsCardLine({
   start,
 }: {
   line: string;
-  isPast: boolean;
-  isCurrent: boolean;
-  start: number;
+  isPast?: boolean;
+  isCurrent?: boolean;
+  start?: number;
 }) {
   const botToken = useAtomValue(botTokenAtom);
   const ref = useRef<HTMLDivElement>(null);
@@ -27,18 +27,20 @@ const LyricsCardLine = memo(function LyricsCardLine({
   }
 
   const seek = useCallback(async () => {
+    if (!botToken || !start) return;
     await seekTrack(Math.round(start / 1000), botToken);
   }, [botToken, start]);
 
   return (
     <Text
-      size="lg"
+      size="xl"
       style={{ whiteSpace: "pre-wrap" }}
       c={isCurrent ? "white" : isPast ? "rgba(255, 255, 255, 0.7)" : "black"}
       ref={ref}
       fw={600}
-      onClick={seek}
+      onClick={start ? seek : undefined}
       className={classes.line}
+      data-synced={start ? true : false}
     >
       {line}
     </Text>

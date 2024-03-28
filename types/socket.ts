@@ -8,6 +8,7 @@ export type Track = {
   ArtworkUrl: string | null;
   RequestedBy: SocketUser | null;
   TimedLyrics?: Line[] | null;
+  Lyrics?: string[] | null;
 };
 
 type Line = {
