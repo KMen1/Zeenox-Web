@@ -1,6 +1,5 @@
 import { SignedIn, UserButton } from "@clerk/nextjs";
 import { Box, Card, Group, Title } from "@mantine/core";
-import { ColorSchemeToggler } from "../ColorSchemeToggler/ColorSchemeToggler";
 import classes from "./Navbar.module.css";
 import { NavbarBackButton } from "./NavbarBackButton";
 
@@ -17,12 +16,9 @@ export async function Navbar() {
           </Group>
         </Box>
         <Box style={{ display: "flex", flex: 1, justifyContent: "flex-end" }}>
-          <Group gap="xs">
-            <ColorSchemeToggler />
-            <SignedIn>
-              <UserButton />
-            </SignedIn>
-          </Group>
+          <SignedIn>
+            <UserButton />
+          </SignedIn>
         </Box>
       </Group>
     </Card>
