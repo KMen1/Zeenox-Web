@@ -1,6 +1,8 @@
 import { TrackRepeatMode } from "@/types/socket";
 import { toTime } from "@/utils/helpers";
 import { Text } from "@mantine/core";
+import { Playlist } from "../../../components/Playlist/Playlist";
+import { Track } from "../../../components/Track/Track";
 import {
   Action,
   ActionType,
@@ -14,9 +16,7 @@ import {
   QueueActionType,
   SeekAction,
   SkipAction,
-} from "..";
-import { Playlist } from "../../../components/Playlist/Playlist";
-import { Track } from "../../../components/Track/Track";
+} from "../types/actions";
 
 const queueTitleDict: Record<QueueActionType, string> = {
   [QueueActionType.AddTrack]: "Added to queue",
