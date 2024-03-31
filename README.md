@@ -11,10 +11,11 @@ Web interface for the Zeenox Discord music bot, for more information about the b
 - Player controls
 - Queue management
 - Spotify integration
-- Server settings (WIP)
 - Real-time updates and data display
+- Synced lyrics
+- Server settings (WIP)
 
-<img src="https://img001.prntscr.com/file/img001/jidWn2lfTfSMF-csVhoZJQ.png">
+<img src="https://img001.prntscr.com/file/img001/WIcCX6cXS2aSbbrPxyXv2Q.png">
 
 ## Setup
 
