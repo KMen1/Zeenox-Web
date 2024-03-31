@@ -1,1 +1,1 @@
-export * from "./components/LyricsCard/LyricsCard";
+export * from "./components/LyricsPanel";

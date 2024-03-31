@@ -1,6 +1,5 @@
 import { TrackRepeatMode } from "@/types/socket";
 import { toTime } from "@/utils/helpers";
-import { Text } from "@mantine/core";
 import { Playlist } from "../../../components/Playlist/Playlist";
 import { Track } from "../../../components/Track/Track";
 import {
@@ -141,36 +140,13 @@ export function getChildren(action: Action): React.ReactNode {
     return (
       <>
         <Track track={track} transparent hoverable mode="play" withAdd />
-        <Text c="white" size="1rem" fw={600} lh={1.4} lineClamp={1}>
+        <span className="text-white font-semibold line-clamp-1 lead">
           Skipped
-        </Text>
+        </span>
         <Track track={prevTrack} transparent hoverable mode="play" withAdd />
       </>
     );
   }
 
   return null;
-}
-
-export function getItemSize(action: Action): number {
-  switch (action.Type) {
-    case ActionType.Queue:
-      switch ((action as QueueAction).QueueActionType) {
-        case QueueActionType.AddPlaylist:
-        case QueueActionType.AddTrack:
-        case QueueActionType.RemoveTrack:
-          return 160;
-        case QueueActionType.MoveTrack:
-          return 160;
-        default:
-          return 100;
-      }
-    case ActionType.Play:
-    case ActionType.Rewind:
-      return 160;
-    case ActionType.Skip:
-      return 260;
-    default:
-      return 100;
-  }
 }

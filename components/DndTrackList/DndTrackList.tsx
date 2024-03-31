@@ -7,29 +7,14 @@ import {
   DraggableLocation,
   Droppable,
 } from "@hello-pangea/dnd";
-import React, { useEffect, useState } from "react";
-import { FixedSizeList, areEqual } from "react-window";
+import { useEffect, useState } from "react";
+import { Virtuoso } from "react-virtuoso";
 import { Track as TrackComponent } from "../Track/Track";
-
-function getStyle({ provided, style, isDragging }: any) {
-  const combined = {
-    ...style,
-    ...provided.draggableProps.style,
-  };
-
-  const marginBottom = 8;
-  const withSpacing = {
-    ...combined,
-    height: isDragging ? combined.height : combined.height - marginBottom,
-    marginBottom,
-  };
-  return withSpacing;
-}
 
 function reorder(
   list: Iterable<unknown> | ArrayLike<unknown>,
   startIndex: number,
-  endIndex: number
+  endIndex: number,
 ) {
   const result = Array.from(list);
   const [removed] = result.splice(startIndex, 1);
@@ -39,27 +24,32 @@ function reorder(
 }
 
 function Item({
+  index,
   provided,
   item,
-  style,
   isDragging,
-  index,
 }: {
   provided: any;
   item: Track;
-  style?: any;
   isDragging?: boolean;
   index?: number;
 }) {
   return (
     <div
       {...provided.draggableProps}
-      {...provided.dragHandleProps}
       ref={provided.innerRef}
-      style={getStyle({ provided, style, isDragging })}
+      style={provided.draggableProps.style}
       className={`item ${isDragging ? "is-dragging" : ""}`}
     >
-      <TrackComponent track={item} index={index} withRemove mode="skipTo" />
+      <TrackComponent
+        dragHandleProps={provided.dragHandleProps}
+        track={item}
+        index={index}
+        hoverable
+        withRemove
+        showRequestedBy
+        mode="skipTo"
+      />
     </div>
   );
 }
@@ -81,31 +71,6 @@ export function DndTrackList({
     setTracks(baseTracks);
   }, [baseTracks]);
 
-  const Row = React.memo(function Row({ index, style }: any) {
-    const item = tracks[index];
-    return (
-      <Draggable draggableId={item.Url!} index={index} key={item.Url}>
-        {(provided) => (
-          <div
-            ref={provided.innerRef}
-            {...provided.draggableProps}
-            style={getStyle({ provided, style })}
-          >
-            <TrackComponent
-              track={item}
-              index={index}
-              hoverable
-              mode="skipTo"
-              withRemove
-              showRequestedBy
-              dragHandleProps={provided.dragHandleProps}
-            />
-          </div>
-        )}
-      </Draggable>
-    );
-  }, areEqual);
-
   function onDragEnd(result: {
     destination: DraggableLocation | null | undefined;
     source: DraggableLocation;
@@ -120,41 +85,86 @@ export function DndTrackList({
     const newItems = reorder(
       tracks,
       result.source.index,
-      result.destination.index
+      result.destination.index,
     );
     setTracks(newItems as Track[]);
     onMove(result.source.index, result.destination?.index ?? 0);
   }
 
   return (
-    <DragDropContext
-      onDragEnd={({ destination, source }) => {
-        onDragEnd({ destination, source });
+    <>
+      <style>
+        {`
+      .height-preserving-container:empty {
+        min-height: calc(var(--child-height));
+        box-sizing: border-box;
+        }
+    `}
+      </style>
+
+      <DragDropContext
+        onDragEnd={({ destination, source }) => {
+          onDragEnd({ destination, source });
+        }}
+      >
+        <Droppable
+          droppableId="dnd-list"
+          mode="virtual"
+          renderClone={(provided, snapshot, rubric) => (
+            <Item
+              provided={provided}
+              isDragging={snapshot.isDragging}
+              item={tracks[rubric.source.index]}
+            />
+          )}
+        >
+          {(provided) => (
+            <Virtuoso
+              scrollerRef={provided.innerRef as any}
+              components={{
+                Item: HeightPreservingItem,
+              }}
+              data={tracks}
+              style={{ height }}
+              itemContent={(index, item) => {
+                return (
+                  <Draggable draggableId={item.Id} index={index} key={item.Id}>
+                    {(provided) => (
+                      <Item
+                        index={index}
+                        provided={provided}
+                        item={item}
+                        isDragging={false}
+                      />
+                    )}
+                  </Draggable>
+                );
+              }}
+            />
+          )}
+        </Droppable>
+      </DragDropContext>
+    </>
+  );
+}
+
+function HeightPreservingItem({ children, ...props }: any) {
+  const [size, setSize] = useState(0);
+  const knownSize = props["data-known-size"];
+  useEffect(() => {
+    setSize((prevSize) => {
+      return knownSize == 0 ? prevSize : knownSize;
+    });
+  }, [knownSize]);
+  return (
+    <div
+      {...props}
+      className="height-preserving-container"
+      style={{
+        "--child-height": `${size}px`,
       }}
     >
-      <Droppable
-        droppableId="dnd-list"
-        mode="virtual"
-        renderClone={(provided, snapshot, rubric) => (
-          <Item
-            provided={provided}
-            isDragging={snapshot.isDragging}
-            item={tracks[rubric.source.index]}
-          />
-        )}
-      >
-        {(provided) => (
-          <FixedSizeList
-            height={height}
-            itemCount={tracks?.length || 0}
-            itemSize={50}
-            width="100%"
-            outerRef={provided.innerRef}
-          >
-            {Row}
-          </FixedSizeList>
-        )}
-      </Droppable>
-    </DragDropContext>
+      {children}
+    </div>
   );
 }

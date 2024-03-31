@@ -1,7 +1,0 @@
-.main {
-  color: white;
-}
-
-.sub {
-  color: light-dark(var(--mantine-color-gray-4), var(--mantine-color-dimmed));
-}

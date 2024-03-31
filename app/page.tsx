@@ -1,7 +1,6 @@
 import { GuildPicker } from "@/features/guild-picker";
 import { getAvailableGuilds } from "@/utils/actions";
 import { currentUser } from "@clerk/nextjs";
-import { Card, Group, SimpleGrid, Stack, Title } from "@mantine/core";
 import { IconServer } from "@tabler/icons-react";
 
 export default async function Home() {
@@ -12,16 +11,16 @@ export default async function Home() {
   const guilds = user ? await getAvailableGuilds(discordId!) : null;
 
   return (
-    <Card>
-      <Stack>
-        <Group>
+    <div className="bg-card rounded-xl p-4">
+      <div className="flex flex-col gap-4">
+        <div className="flex items-center gap-2">
           <IconServer size={36} />
-          <Title order={2}>Please Select a Server</Title>
-        </Group>
-        <SimpleGrid cols={5}>
+          <h2 className="text-xl">Please Select a Server</h2>
+        </div>
+        <div className="grid grid-cols-5 gap-4">
           <GuildPicker guilds={guilds ?? []} />
-        </SimpleGrid>
-      </Stack>
-    </Card>
+        </div>
+      </div>
+    </div>
   );
 }

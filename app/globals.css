@@ -2,34 +2,80 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 240 10% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
+    --primary: 142.1 76.2% 36.3%;
+    --primary-foreground: 355.7 100% 97.3%;
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
+    --accent: 240 4.8% 95.9%;
+    --accent-foreground: 240 5.9% 10%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 142.1 76.2% 36.3%;
+    --radius: 1rem;
+  }
+
+  .dark {
+    --background: 20 14.3% 4.1%;
+    --foreground: 0 0% 95%;
+    --card: 24 9.8% 10%;
+    --card-foreground: 0 0% 95%;
+    --popover: 0 0% 9%;
+    --popover-foreground: 0 0% 95%;
+    --primary: 142.1 70.6% 45.3%;
+    --primary-foreground: 144.9 80.4% 10%;
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 0 0% 15%;
+    --muted-foreground: 240 5% 64.9%;
+    --accent: 12 6.5% 15.1%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 85.7% 97.3%;
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 142.4 71.8% 29.2%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
 .cl-userButtonPopoverCard {
-  background-color: light-dark(white, var(--mantine-color-dark-6));
-  border-radius: var(--mantine-radius-lg);
-  border: 1px solid
-    light-dark(var(--mantine-color-dark-9), var(--mantine-color-dark-4));
-  width: 15rem;
-  padding: 0;
-  padding-top: var(--mantine-spacing-md);
+  @apply bg-card text-card-foreground rounded-xl border-2 w-64 p-0 pt-4;
 }
 
 .cl-userPreview {
-  padding-left: var(--mantine-spacing-md);
-  padding-right: var(--mantine-spacing-md);
+  @apply px-4;
 }
 
 .cl-userButtonPopoverActionButton {
-  padding: var(--mantine-spacing-xs) var(--mantine-spacing-md);
+  @apply px-4 py-2;
 }
 
 .cl-userButtonPopoverFooter {
-  padding-left: var(--mantine-spacing-md);
-  padding-right: var(--mantine-spacing-md);
-  padding-bottom: var(--mantine-spacing-md);
-  padding-top: var(--mantine-spacing-xs);
+  @apply px-4 pb-4 pt-2;
 }
 
 .cl-card {
-  background-color: light-dark(white, var(--mantine-color-dark-6));
+  @apply bg-card border-2;
 }
 
 /* ===== Scrollbar CSS ===== */
@@ -37,32 +83,23 @@
 @supports not selector(::-webkit-scrollbar) {
   * {
     scrollbar-width: auto;
-    scrollbar-color: light-dark(
-        var(--mantine-color-gray-4),
-        var(--mantine-color-dark-4)
-      )
-      light-dark(var(--mantine-color-gray-5), var(--mantine-color-dark-5));
+    scrollbar-color: rgb(23 23 23 / var(--tw-bg-opacity)),
+      rgb(38 38 38 / var(--tw-bg-opacity));
   }
 }
 
 /* Chrome, Edge, and Safari */
 *::-webkit-scrollbar {
-  width: 8px;
+  width: 6px;
 }
 
 *::-webkit-scrollbar-track {
-  background: light-dark(
-    var(--mantine-color-gray-5),
-    var(--mantine-color-dark-5)
-  );
   border-radius: 10px;
+  @apply bg-neutral-900;
 }
 
 *::-webkit-scrollbar-thumb {
-  background-color: light-dark(
-    var(--mantine-color-gray-4),
-    var(--mantine-color-dark-4)
-  );
   border-radius: 10px;
   padding: 3px;
+  @apply bg-neutral-800;
 }
