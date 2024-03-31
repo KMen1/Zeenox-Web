@@ -1,5 +1,11 @@
 "use client";
 
+import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import {
   botTokenAtom,
   isAutoPlayEnabledAtom,
@@ -23,7 +29,6 @@ import {
   faForwardStep,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Center, Flex, Group, Skeleton, Tooltip } from "@mantine/core";
 import {
   IconRefreshDot,
   IconRefreshOff,
@@ -32,32 +37,12 @@ import {
   IconRepeatOnce,
 } from "@tabler/icons-react";
 import { useAtomValue } from "jotai";
-import classes from "./PlayerControls.module.css";
 
-const mainSizeDict = {
-  sm: "2x",
-  md: "3x",
-};
-
-const controlSizeDict = {
-  sm: "xl",
-  md: "2xl",
-};
-
-const iconSizeDict = {
-  sm: "1rem",
-  md: "1rem",
-};
-
-export function PlayerControls({ size }: { size: "sm" | "md" }) {
+export function PlayerControls() {
   const token = useAtomValue(botTokenAtom);
   const state = useAtomValue(playerStateAtom);
   const repeatMode = useAtomValue(trackRepeatModeAtom);
   const autoPlay = useAtomValue(isAutoPlayEnabledAtom);
-
-  const mainSize = mainSizeDict[size] as any;
-  const controlSize = controlSizeDict[size] as any;
-  const iconSize = iconSizeDict[size];
 
   async function pauseOrResume() {
     if (state === PlayerState.Playing) {
@@ -69,130 +54,150 @@ export function PlayerControls({ size }: { size: "sm" | "md" }) {
 
   if (repeatMode === null)
     return (
-      <Center>
-        <Group gap={15}>
-          <Skeleton circle w={16} h={16} />
-          <Skeleton circle w={20} h={32} />
-          <Skeleton circle w={45} h={45} />
-          <Skeleton circle w={20} h={32} />
-          <Skeleton circle w={16} h={16} />
-        </Group>
-      </Center>
+      <div className="flex items-center justify-center gap-4">
+        <Skeleton className="h-[16px] w-[16px] rounded-full" />
+        <Skeleton className="h-[32px] w-[20px] rounded-full" />
+        <Skeleton className="h-[45px] w-[45px] rounded-full" />
+        <Skeleton className="h-[32px] w-[20px] rounded-full" />
+        <Skeleton className="h-[16px] w-[16px] rounded-full" />
+      </div>
     );
 
   return (
-    <Center>
-      <Flex gap={15} align="center">
-        <Flex align="center" gap={15}>
-          {repeatMode === TrackRepeatMode.None && (
-            <Tooltip label="No repeat">
+    <div className="flex items-center justify-center gap-4">
+      <div className="flex items-center gap-4">
+        {repeatMode === TrackRepeatMode.None && (
+          <Tooltip>
+            <TooltipTrigger>
               <IconRepeatOff
-                size={iconSize}
+                size="1rem"
                 color="white"
                 role="button"
                 onClick={async () =>
                   withNotification(await cycleRepeatMode(token))
                 }
-                className={classes.controlIcon}
+                className="transition-all duration-100 ease-in-out hover:text-white"
               />
-            </Tooltip>
-          )}
-          {repeatMode === TrackRepeatMode.Track && (
-            <Tooltip label="Repeat current track">
+            </TooltipTrigger>
+            <TooltipContent>No repeat</TooltipContent>
+          </Tooltip>
+        )}
+        {repeatMode === TrackRepeatMode.Track && (
+          <Tooltip>
+            <TooltipTrigger>
               <IconRepeatOnce
-                size={iconSize}
+                size="1rem"
                 color="white"
                 role="button"
                 onClick={async () =>
                   withNotification(await cycleRepeatMode(token))
                 }
-                className={classes.controlIcon}
+                className="transition-all duration-100 ease-in-out hover:text-white"
               />
-            </Tooltip>
-          )}
-          {repeatMode === TrackRepeatMode.Queue && (
-            <Tooltip label="Repeat queue">
+            </TooltipTrigger>
+            <TooltipContent>Repeating current track</TooltipContent>
+          </Tooltip>
+        )}
+        {repeatMode === TrackRepeatMode.Queue && (
+          <Tooltip>
+            <TooltipTrigger>
               <IconRepeat
-                size={iconSize}
+                size="1rem"
                 color="white"
                 role="button"
                 onClick={async () =>
                   withNotification(await cycleRepeatMode(token))
                 }
-                className={classes.controlIcon}
+                className="transition-all duration-100 ease-in-out hover:text-white"
               />
-            </Tooltip>
-          )}
-          <Tooltip label="Rewind">
+            </TooltipTrigger>
+            <TooltipContent>Repeating queue</TooltipContent>
+          </Tooltip>
+        )}
+        <Tooltip>
+          <TooltipTrigger>
             <FontAwesomeIcon
               icon={faBackwardStep}
               color="white"
-              size={controlSize}
+              size="xl"
               role="button"
               onClick={async () => withNotification(await rewindTrack(token))}
-              className={classes.controlIcon}
+              className="transition-all duration-100 ease-in-out hover:text-white"
             />
-          </Tooltip>
-          {state === PlayerState.Playing ? (
-            <Tooltip label="Pause">
+          </TooltipTrigger>
+          <TooltipContent>Rewind</TooltipContent>
+        </Tooltip>
+        {state === PlayerState.Playing ? (
+          <Tooltip>
+            <TooltipTrigger>
               <FontAwesomeIcon
                 icon={faCirclePause}
                 color="white"
-                size={mainSize}
+                size="2x"
                 role="button"
                 onClick={pauseOrResume}
                 className="transition-all duration-100 ease-in-out hover:text-gray-300"
               />
-            </Tooltip>
-          ) : (
-            <Tooltip label="Resume">
+            </TooltipTrigger>
+            <TooltipContent>Pause</TooltipContent>
+          </Tooltip>
+        ) : (
+          <Tooltip>
+            <TooltipTrigger>
               <FontAwesomeIcon
                 icon={faCirclePlay}
                 color="white"
-                size={mainSize}
+                size="2x"
                 role="button"
                 onClick={pauseOrResume}
                 className="transition-all duration-100 ease-in-out hover:text-gray-300"
               />
-            </Tooltip>
-          )}
-          <Tooltip label="Skip">
+            </TooltipTrigger>
+            <TooltipContent>Resume</TooltipContent>
+          </Tooltip>
+        )}
+        <Tooltip>
+          <TooltipTrigger>
             <FontAwesomeIcon
               icon={faForwardStep}
               color="white"
-              size={controlSize}
+              size="xl"
               role="button"
               onClick={async () => withNotification(await skipTrack(token))}
-              className={classes.controlIcon}
+              className="transition-all duration-100 ease-in-out hover:text-white"
             />
-          </Tooltip>
-          {autoPlay ? (
-            <Tooltip label="Autoplay enabled">
+          </TooltipTrigger>
+          <TooltipContent>Skip</TooltipContent>
+        </Tooltip>
+        <Tooltip>
+          <TooltipTrigger>
+            {autoPlay ? (
               <IconRefreshDot
-                size={iconSize}
+                size="1rem"
                 color="white"
                 role="button"
-                className={classes.controlIcon}
+                className="transition-all duration-100 ease-in-out hover:text-white"
                 onClick={async () =>
                   withNotification(await toggleAutoPlay(token))
                 }
               />
-            </Tooltip>
-          ) : (
-            <Tooltip label="Autoplay disabled">
+            ) : (
               <IconRefreshOff
-                size={iconSize}
+                size="1rem"
                 color="white"
                 role="button"
-                className={classes.controlIcon}
+                className="transition-all duration-100 ease-in-out hover:text-white"
                 onClick={async () =>
                   withNotification(await toggleAutoPlay(token))
                 }
               />
-            </Tooltip>
-          )}
-        </Flex>
-      </Flex>
-    </Center>
+            )}
+          </TooltipTrigger>
+          <TooltipContent>
+            Autoplay {autoPlay ? "enabled" : "disabled"}
+          </TooltipContent>
+        </Tooltip>
+      </div>
+    </div>
   );
 }

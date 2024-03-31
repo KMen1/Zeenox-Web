@@ -2,15 +2,23 @@ import { AddPlaylistAction } from "@/features/actions-panel";
 import { botTokenAtom } from "@/stores/atoms";
 import { PlaylistInfo, Track } from "@/types/socket";
 import { Playlist } from "@/types/spotify";
-import { ActionIcon, Group, Stack, Text, Tooltip } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
 import { IconChevronRight, IconPlayerPlayFilled } from "@tabler/icons-react";
 import { useAtomValue } from "jotai";
 import Image from "next/image";
+import { Virtuoso } from "react-virtuoso";
 import { playTrack } from "../../utils/actions";
 import { withNotification } from "../../utils/withNotification";
-import classes from "./Playlist.module.css";
-import { PlaylistModal } from "./PlaylistModal";
+import { Track as TrackComponent } from "../Track/Track";
+import { Button } from "../ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "../ui/dialog";
+import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 
 type PlaylistProps = {
   playlist: AddPlaylistAction | Playlist | (PlaylistInfo & { Tracks: Track[] });
@@ -28,7 +36,6 @@ export function Playlist({
   onClick,
 }: PlaylistProps) {
   const token = useAtomValue(botTokenAtom);
-  const [opened, { open, close }] = useDisclosure(false);
 
   const url =
     (playlist as AddPlaylistAction)?.Playlist?.Url ||
@@ -47,85 +54,97 @@ export function Playlist({
   const tracks = (playlist as AddPlaylistAction)?.Tracks;
 
   return (
-    <>
-      {expandable ? (
-        <PlaylistModal
-          opened={opened}
-          onClose={close}
-          name={name}
-          tracks={tracks}
+    <div
+      className={`group flex cursor-pointer flex-nowrap items-center gap-2 rounded p-1.5 hover:bg-neutral-900 ${
+        isSelected ? "bg-neutral-800" : ""
+      } ${transparent ? "hover:bg-[rgba(255,255,255,0.1)]" : ""}`}
+      onClick={onClick}
+    >
+      <div className="relative min-h-[40px] min-w-[40px]">
+        <Image
+          src={
+            artworkUrl || tracks?.[0]?.ArtworkUrl || "/placeholder-album.jpeg"
+          }
+          width={40}
+          height={40}
+          alt={name || "Playlist"}
+          className="absolute left-0 top-0 h-[40px] w-[40px] rounded transition-all duration-100 ease-in-out group-hover:brightness-50"
         />
-      ) : null}
-      <Group
-        gap="xs"
-        wrap="nowrap"
-        className={classes.playlist}
-        data-transparent={transparent}
-        data-selected={isSelected}
-        onClick={onClick}
-      >
-        <div className="relative min-w-[40px] min-h-[40px]">
-          <Image
-            src={
-              artworkUrl || tracks?.[0]?.ArtworkUrl || "/placeholder-album.jpeg"
-            }
-            width={40}
-            height={40}
-            alt={name || "Playlist"}
-            className={classes.playlistImage}
-          />
-          {url ? (
-            <div className="absolute top-[.5rem] left-[.5rem]">
-              <Tooltip label={`Add ${name}`}>
+        {url ? (
+          <div className="absolute left-[.5rem] top-[.5rem]">
+            <Tooltip>
+              <TooltipTrigger>
                 <IconPlayerPlayFilled
                   role="button"
                   size="1.5rem"
-                  className={classes.playlistPlay}
+                  className="text-white opacity-0 transition-all duration-100 ease-in-out hover:text-neutral-400 group-hover:opacity-100"
                   onClick={async (e) => {
                     e.stopPropagation();
                     withNotification(await playTrack(url, token));
                   }}
                 />
-              </Tooltip>
-            </div>
-          ) : null}
-        </div>
-
-        <Stack gap={0}>
-          <Text
-            size="sm"
-            lineClamp={1}
-            lh={1.4}
-            component="a"
-            target="_blank"
-            href={url || "#"}
-            title={name || "Playlist"}
-            className={classes.playlistTitle}
-          >
-            {name || "Resume Session"}
-          </Text>
-          <Text
-            size="sm"
-            lineClamp={1}
-            lh={1.4}
-            title={owner || "Unknown"}
-            className={classes.playlistOwner}
-          >
-            {owner || "Unknown"}
-          </Text>
-        </Stack>
-
-        {expandable ? (
-          <ActionIcon
-            className="ml-auto"
-            variant="light"
-            color="dark.1"
-            onClick={open}
-          >
-            <IconChevronRight />
-          </ActionIcon>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>{`Add ${name}`}</p>
+              </TooltipContent>
+            </Tooltip>
+          </div>
         ) : null}
-      </Group>
-    </>
+      </div>
+
+      <div className="flex flex-col">
+        <a
+          className="line-clamp-1 text-sm font-semibold text-foreground hover:underline"
+          target="_blank"
+          href={url || "#"}
+          title={name || "Playlist"}
+        >
+          {name || "From previous session"}
+        </a>
+        <p
+          className="line-clamp-1 text-sm text-neutral-400"
+          title={owner || "Unknown"}
+        >
+          {owner || "Unknown"}
+        </p>
+      </div>
+
+      {expandable ? (
+        <Dialog>
+          <DialogTrigger className="ml-auto">
+            <Button size="icon" variant="ghost">
+              <IconChevronRight />
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>
+                {name} by {owner}
+              </DialogTitle>
+              <DialogDescription>
+                Listing {tracks?.length} songs
+              </DialogDescription>
+              {tracks?.length > 0 && (
+                <Virtuoso
+                  style={{ height: "435px" }}
+                  width="100%"
+                  data={tracks}
+                  itemContent={(_, item) => {
+                    return (
+                      <TrackComponent
+                        track={item}
+                        hoverable
+                        mode="play"
+                        withAdd
+                      />
+                    );
+                  }}
+                />
+              )}
+            </DialogHeader>
+          </DialogContent>
+        </Dialog>
+      ) : null}
+    </div>
   );
 }

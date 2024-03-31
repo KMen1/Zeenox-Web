@@ -1,8 +1,9 @@
+import { Center } from "@/components/ui/center";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { currentTrackAtom, localPositionAtom } from "@/stores/atoms";
-import { Center, ScrollArea, Text } from "@mantine/core";
 import { useAtomValue } from "jotai";
 import { useRef } from "react";
-import { LyricsCardLine } from "../LyricsCardLine/LyricsCardLine";
+import { LyricsLine } from "./LyricsLine";
 
 type LyricsCardScrollAreaProps = {
   height: number;
@@ -17,7 +18,7 @@ export function LyricsCardScrollArea({ height }: LyricsCardScrollAreaProps) {
 
   const lyricsLines =
     timedLyrics?.map((line, index) => (
-      <LyricsCardLine
+      <LyricsLine
         key={index}
         line={line.Line}
         isPast={positionMs > line.Range.End}
@@ -27,18 +28,18 @@ export function LyricsCardScrollArea({ height }: LyricsCardScrollAreaProps) {
         start={line.Range.Start}
       />
     )) ??
-    lyrics?.map((line, index) => <LyricsCardLine key={index} line={line} />) ??
+    lyrics?.map((line, index) => <LyricsLine key={index} line={line} />) ??
     null;
 
   return (
-    <ScrollArea h={height} ref={scrollRef}>
+    <ScrollArea style={{ height }} ref={scrollRef}>
       {lyricsLines ? (
         lyricsLines
       ) : (
-        <Center h={height}>
-          <Text size="xl" c="white" ta="center" fw={600}>
+        <Center height={height}>
+          <p className="text-center text-2xl font-semibold">
             No lyrics available!
-          </Text>
+          </p>
         </Center>
       )}
     </ScrollArea>

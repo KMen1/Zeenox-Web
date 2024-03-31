@@ -1,18 +1,23 @@
 "use client";
 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Action } from "@/features/actions-panel";
 import { botTokenAtom } from "@/stores/atoms";
 import { Player, Queue, Track } from "@/types/socket";
-import { useDisclosure } from "@mantine/hooks";
-import { showNotification } from "@mantine/notifications";
-import { IconCheck } from "@tabler/icons-react";
 import { useSetAtom } from "jotai";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
 import { useSetters } from "../hooks/useSetters";
 import { Payload, PayloadType } from "../types/socket";
 import { getPlayer, getSessionData } from "../utils/actions";
-import { ReconnectModal } from "./ReconnectModal";
-import { ResumeSessionModal } from "./ResumeSessionModal";
 
 let socket: WebSocket | null = null;
 
@@ -23,9 +28,7 @@ export function Socket({ id, botToken }: { id: string; botToken: string }) {
     setToken(botToken);
   }, [botToken, setToken]);
 
-  const [reconnectModalOpened, reconnectModalHandlers] = useDisclosure(false);
-  const openReconnectModal = reconnectModalHandlers.open;
-  const closeReconnectModal = reconnectModalHandlers.close;
+  const [isDisconnectedOpen, setIsDisconnectedOpen] = useState(false);
 
   const setters = useSetters();
 
@@ -66,24 +69,16 @@ export function Socket({ id, botToken }: { id: string; botToken: string }) {
     }
 
     socket = new WebSocket(
-      `${process.env.NEXT_PUBLIC_WS_URL}/api/v1/socket?id=${id}`
+      `${process.env.NEXT_PUBLIC_WS_URL}/api/v1/socket?id=${id}`,
     );
     socket.onopen = async () => {
       socket?.send(botToken);
-      showNotification({
-        title: `Connected`,
-        loading: false,
-        message: null,
-        color: "green",
-        icon: <IconCheck size={18} />,
-        autoClose: true,
-        withBorder: true,
-      });
-      closeReconnectModal();
+      toast("Connected to server");
+      setIsDisconnectedOpen(false);
       await initPlayer();
     };
     socket.onclose = () => {
-      openReconnectModal();
+      setIsDisconnectedOpen(true);
     };
     socket.onmessage = async (event: MessageEvent<string>) => {
       const payload = JSON.parse(event.data) as Payload;
@@ -111,9 +106,26 @@ export function Socket({ id, botToken }: { id: string; botToken: string }) {
   }, []);
 
   return (
-    <>
-      <ResumeSessionModal />
-      <ReconnectModal opened={reconnectModalOpened} />
-    </>
+    <AlertDialog open={isDisconnectedOpen}>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Disconnected from server!</AlertDialogTitle>
+          <AlertDialogDescription>
+            Seems like you have been disconnected from the server. This can
+            happen due to a network error, the server being restarted or because
+            of inactivity.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogAction
+            onClick={() => {
+              window.location.reload();
+            }}
+          >
+            Reconnect
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 }

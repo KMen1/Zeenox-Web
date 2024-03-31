@@ -27,7 +27,8 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "components/DndTrackList"
+    "components/DndTrackList",
+    "prettier.config.ss"
   ],
   "exclude": ["node_modules"]
 }

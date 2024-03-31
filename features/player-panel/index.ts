@@ -1,1 +1,1 @@
-export * from "./components/PlayerBar/PlayerBar";
+export * from "./components/PlayerPanel";

@@ -1,19 +1,20 @@
 import { dark } from "@clerk/themes";
-import {
-  ColorSchemeScript,
-  Container,
-  MantineProvider,
-  Stack,
-} from "@mantine/core";
 import type { Metadata } from "next";
 
 import { Navbar } from "@/components/Navbar/Navbar";
+import { Toaster } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import { ClerkProvider } from "@clerk/nextjs";
-import "@mantine/core/styles.css";
-import { Notifications } from "@mantine/notifications";
-import "@mantine/notifications/styles.css";
-import { theme } from "../theme";
+import { ThemeProvider } from "next-themes";
 import "./globals.css";
+
+import { Inter as FontSans } from "next/font/google";
+import { cn } from "@/lib/utils";
+
+const fontSans = FontSans({
+  subsets: ["latin"],
+  variable: "--font-sans",
+});
 
 export const metadata: Metadata = {
   title: "Zeenox",
@@ -39,18 +40,28 @@ export default function RootLayout({
             name="viewport"
             content="width=device-width, initial-scale=1.0"
           />
-          <ColorSchemeScript />
         </head>
-        <body>
-          <MantineProvider defaultColorScheme="dark" theme={theme}>
-            <Container p="md" size="125rem">
-              <Stack gap="md">
-                <Navbar />
-                {children}
-              </Stack>
-            </Container>
-            <Notifications position="top-right" />
-          </MantineProvider>
+        <body
+          className={cn(
+            "min-h-screen bg-background font-sans antialiased",
+            fontSans.variable
+          )}
+        >
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="dark"
+            disableTransitionOnChange
+          >
+            <TooltipProvider delayDuration={50}>
+              <div className="mx-auto p-4">
+                <div className="flex flex-col gap-4">
+                  <Navbar />
+                  {children}
+                </div>
+              </div>
+            </TooltipProvider>
+          </ThemeProvider>
+          <Toaster />
         </body>
       </html>
     </ClerkProvider>

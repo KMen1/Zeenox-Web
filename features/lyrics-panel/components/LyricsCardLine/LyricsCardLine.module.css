@@ -1,9 +1,0 @@
-.line[data-synced="true"] {
-  cursor: pointer;
-
-  &:hover {
-    color: white !important;
-  }
-
-  @apply transition-colors duration-75 ease-in-out;
-}

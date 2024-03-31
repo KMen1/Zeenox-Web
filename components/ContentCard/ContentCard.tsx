@@ -1,6 +1,3 @@
-import { Box, Card, Group, Text } from "@mantine/core";
-import classes from "./ContentCard.module.css";
-
 type ContentCardProps = {
   title: string;
   icon: React.ReactNode;
@@ -17,17 +14,17 @@ export function ContentCard({
   bg,
 }: ContentCardProps) {
   return (
-    <Box px="md" pb="md" className={classes.card}>
-      <Group py="sm" justify="space-between">
-        <Group gap={10}>
+    <div className="rounded-2xl border-2 px-4 pb-4">
+      <div className="flex justify-between pb-3 pt-4">
+        <div className="flex gap-2">
           {icon}
-          <Text>{title}</Text>
-        </Group>
+          <h2>{title}</h2>
+        </div>
         {rightSection}
-      </Group>
-      <Card className={classes.content} bg={bg}>
+      </div>
+      <div className={`rounded-2xl`} style={{ background: bg }}>
         {children}
-      </Card>
-    </Box>
+      </div>
+    </div>
   );
 }

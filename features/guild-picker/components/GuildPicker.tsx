@@ -1,5 +1,5 @@
 import { SocketGuild } from "@/types/socket";
-import { GuildCard } from "./GuildCard/GuildCard";
+import { GuildCard } from "./GuildCard";
 
 type GuildPickerProps = {
   guilds: SocketGuild[];

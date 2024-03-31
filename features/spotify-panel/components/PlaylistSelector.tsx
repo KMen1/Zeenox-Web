@@ -5,11 +5,9 @@ import {
   Playlist,
   PlaylistsResponse,
 } from "@/types/spotify";
-import { Stack } from "@mantine/core";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { LazyList } from "../../../components/LazyLoaders/LazyList";
+import { Virtuoso } from "react-virtuoso";
 import { Playlist as PlaylistComponent } from "../../../components/Playlist/Playlist";
-import { TrackSkeleton } from "../../../components/Track/TrackSkeleton";
 import { useSize } from "../../../hooks/useSize";
 import { getPlaylists } from "../../../utils/actions";
 
@@ -55,30 +53,26 @@ type PlaylistSelectorProps = {
   setSelected: Dispatch<SetStateAction<string>>;
 };
 
-export function PlaylistLazyList({
+export function PlaylistSelector({
   selected,
   setSelected,
 }: PlaylistSelectorProps) {
   const [response, setResponse] = useState<PlaylistsResponse | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
   const [items, setItems] = useState<Playlist[]>([SAVED]);
   const windowSize = useSize();
-  const height = windowSize[1] - 357;
+  const height = windowSize[1] - 342;
 
   async function loadNextPage() {
-    setIsLoading(true);
     const nextUrl = response?.next;
     if (nextUrl == null) return;
     const offset = new URL(nextUrl).searchParams.get("offset");
     const res = await getPlaylists(Number(offset));
     setResponse(res);
     setItems(items.concat(res?.items ?? []));
-    setIsLoading(false);
   }
 
   useEffect(() => {
     setResponse(null);
-    setIsLoading(false);
 
     async function fetchPlaylist() {
       const data = await getPlaylists();
@@ -89,44 +83,28 @@ export function PlaylistLazyList({
     fetchPlaylist();
   }, []);
 
-  const itemFactory = ({
-    index,
-    style,
-  }: {
-    index: number;
-    style: React.CSSProperties;
-  }) => {
-    const playlist = items[index];
-    return (
-      <div style={style}>
-        <PlaylistComponent
-          playlist={playlist}
-          isSelected={selected === playlist.id}
-          onClick={() => setSelected(playlist.id)}
-        />
-      </div>
-    );
-  };
-
   const SKELETON_COUNT = Math.floor(height / ITEM_HEIGHT) + 1;
 
   return response == null ? (
-    <Stack gap={0} style={{ height }}>
+    <div className={`flex flex-col h-[${height}px]`}>
       {Array.from({ length: SKELETON_COUNT }).map((_, i) => (
         <PlaylistSkeleton key={i} />
       ))}
-    </Stack>
+    </div>
   ) : (
-    <LazyList<Playlist>
-      items={items}
-      itemFactory={itemFactory}
-      totalCount={response?.total ?? 0}
-      loadMoreItems={loadNextPage}
-      hasMoreItems={response?.next !== null}
-      isLoadingNextPage={isLoading}
-      height={height}
-      itemHeight={ITEM_HEIGHT}
-      skeleton={<TrackSkeleton />}
+    <Virtuoso
+      style={{ height }}
+      data={items}
+      endReached={loadNextPage}
+      itemContent={(_, item) => {
+        return (
+          <PlaylistComponent
+            playlist={item}
+            isSelected={selected === item.id}
+            onClick={() => setSelected(item.id)}
+          />
+        );
+      }}
     />
   );
 }

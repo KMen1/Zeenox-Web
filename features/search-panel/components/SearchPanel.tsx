@@ -1,11 +1,12 @@
 "use client";
 
 import { ContentCard } from "@/components/ContentCard/ContentCard";
-import { SearchResult, Track } from "@/types/socket";
-import { Center, Stack, Text, TextInput } from "@mantine/core";
-import { IconListSearch, IconMoodSad, IconSearch } from "@tabler/icons-react";
+import { Center } from "@/components/ui/center";
+import { Input } from "@/components/ui/input";
+import { SearchResult } from "@/types/socket";
+import { IconListSearch, IconMoodSad } from "@tabler/icons-react";
 import { useFormState, useFormStatus } from "react-dom";
-import { MemoizedList } from "../../../components/MemoizedList/MemoizedList";
+import { Virtuoso } from "react-virtuoso";
 import { Playlist } from "../../../components/Playlist/Playlist";
 import { Track as TrackComponent } from "../../../components/Track/Track";
 import { TrackSkeleton } from "../../../components/Track/TrackSkeleton";
@@ -18,44 +19,40 @@ type SearchPanelFormProps = {
 
 function SearchPanelForm({ state }: SearchPanelFormProps) {
   const windowSize = useSize();
-  const height = windowSize[1] - 357;
+  const height = windowSize[1] - 342;
   const { pending } = useFormStatus();
   const SKELETON_COUNT = height / 50 - 1;
   const playlist = state?.Playlist;
 
   return (
-    <Stack gap="xs" h={height + 46}>
-      <TextInput
+    <div className={`flex flex-col gap-2 h-[${height}]`}>
+      <Input
         name="query"
         placeholder="What do you want to listen to?"
-        variant="filled"
-        leftSection={<IconSearch size="1rem" />}
         disabled={pending}
       />
       {!state && !pending && (
-        <Center h={height} p="xl">
-          <Stack gap={0} align="center">
-            <Text fw={700} size="xl">
+        <Center height={height} className="p-4">
+          <div className="flex flex-col items-center">
+            <p className="text-xl font-bold">
               Start searching and results will appear here!
-            </Text>
-          </Stack>
+            </p>
+          </div>
         </Center>
       )}
       {pending && (
-        <Stack gap={0} style={{ height }}>
+        <div className={`flex flex-col h-[${height}]`}>
           {Array.from({ length: SKELETON_COUNT }).map((_, i) => (
             <TrackSkeleton key={i} />
           ))}
-        </Stack>
+        </div>
       )}
       {state?.Tracks.length === 0 && (
-        <Center h={height} p="xl">
-          <Stack gap={0} align="center">
+        <Center height={height} className="p-4">
+          <div className="flex flex-col items-center">
             <IconMoodSad size={100} />
-            <Text fw={700} size="xl">
-              No Results Found
-            </Text>
-          </Stack>
+            <p className="text-xl font-bold">No Results Found</p>
+          </div>
         </Center>
       )}
       {playlist && (
@@ -71,15 +68,12 @@ function SearchPanelForm({ state }: SearchPanelFormProps) {
         />
       )}
       {!playlist && state?.Tracks && state.Tracks.length > 0 && (
-        <MemoizedList<Track>
-          items={state?.Tracks || []}
-          height={height}
-          width={"100%"}
-          itemHeight={50}
-          renderItem={function (item: Track, index: number) {
+        <Virtuoso
+          style={{ height }}
+          data={state?.Tracks || []}
+          itemContent={(_, item) => {
             return (
               <TrackComponent
-                index={index}
                 key={item.Id}
                 track={item}
                 mode="play"
@@ -90,7 +84,7 @@ function SearchPanelForm({ state }: SearchPanelFormProps) {
           }}
         />
       )}
-    </Stack>
+    </div>
   );
 }
 

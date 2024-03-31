@@ -1,11 +1,9 @@
 import { botTokenAtom } from "@/stores/atoms";
 import { seekTrack } from "@/utils/actions";
-import { Text } from "@mantine/core";
 import { useAtomValue } from "jotai";
 import { memo, useCallback, useRef } from "react";
-import classes from "./LyricsCardLine.module.css";
 
-const LyricsCardLine = memo(function LyricsCardLine({
+const LyricsLine = memo(function LyricsLine({
   line,
   isPast,
   isCurrent,
@@ -32,19 +30,24 @@ const LyricsCardLine = memo(function LyricsCardLine({
   }, [botToken, start]);
 
   return (
-    <Text
-      size="xl"
+    <p
+      className={`text-xl font-semibold leading-relaxed ${
+        isCurrent
+          ? "text-white"
+          : isPast
+            ? "text-[rgba(255,255,255,0.7)]"
+            : "text-black"
+      } ${
+        start ? "cursor-pointer hover:text-white" : "cursor-default"
+      } transition-colors duration-75 ease-in-out`}
       style={{ whiteSpace: "pre-wrap" }}
-      c={isCurrent ? "white" : isPast ? "rgba(255, 255, 255, 0.7)" : "black"}
       ref={ref}
-      fw={600}
+      role="button"
       onClick={start ? seek : undefined}
-      className={classes.line}
-      data-synced={start ? true : false}
     >
       {line}
-    </Text>
+    </p>
   );
 });
 
-export { LyricsCardLine };
+export { LyricsLine };

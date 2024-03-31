@@ -1,11 +1,10 @@
+import { Slider } from "@/components/ui/slider";
 import { botTokenAtom, volumeAtom } from "@/stores/atoms";
 import { setVolume } from "@/utils/actions";
 import { withNotification } from "@/utils/withNotification";
-import { Group, Slider } from "@mantine/core";
 import { IconVolume2 } from "@tabler/icons-react";
 import { useAtomValue } from "jotai";
 import { useEffect, useState } from "react";
-import classes from "./PlayerVolumeSlider.module.css";
 
 export function PlayerVolumeSlider() {
   const token = useAtomValue(botTokenAtom);
@@ -17,17 +16,17 @@ export function PlayerVolumeSlider() {
   }, [volume]);
 
   return (
-    <Group wrap="nowrap" gap={7} w={120}>
+    <div className="flex w-[120px] flex-nowrap items-center gap-2">
       <IconVolume2 size={25} color="white" />
       <Slider
-        color="blue"
-        size={4}
-        value={volumeLocal ?? 0}
-        onChange={(v) => setVolumeLocal(v)}
-        onChangeEnd={async (v) => withNotification(await setVolume(token, v))}
-        w="100%"
-        classNames={classes}
+        step={1}
+        max={100}
+        value={[volumeLocal ?? 0]}
+        onValueChange={(v) => setVolumeLocal(v[0])}
+        onValueCommit={async (v) =>
+          withNotification(await setVolume(token, v[0]))
+        }
       />
-    </Group>
+    </div>
   );
 }

@@ -1,5 +1,5 @@
 export function toTime(seconds: number | null) {
-  if (!seconds) return "0:00";
+  if (typeof seconds !== "number") return "0:00";
   const hours = Math.floor(seconds / 3600);
   const minutes = Math.floor(seconds / 60) % 60;
   const sec = seconds % 60;
