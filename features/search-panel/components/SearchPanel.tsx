@@ -1,10 +1,15 @@
 "use client";
 
 import { ContentCard } from "@/components/ContentCard/ContentCard";
+import { Button } from "@/components/ui/button";
 import { Center } from "@/components/ui/center";
 import { Input } from "@/components/ui/input";
 import { SearchResult } from "@/types/socket";
-import { IconListSearch, IconMoodSad } from "@tabler/icons-react";
+import {
+  IconBrandSpotify,
+  IconListSearch,
+  IconMoodSad,
+} from "@tabler/icons-react";
 import { useFormState, useFormStatus } from "react-dom";
 import { Virtuoso } from "react-virtuoso";
 import { Playlist } from "../../../components/Playlist/Playlist";
@@ -92,7 +97,20 @@ export function SearchPanel() {
   const [state, formAction] = useFormState(searchTracks, null);
 
   return (
-    <ContentCard title={"Search for a song"} icon={<IconListSearch />}>
+    <ContentCard
+      title={"Search for a song"}
+      icon={<IconListSearch />}
+      rightSection={
+        <Button asChild className="h-7">
+          <a href="/api/login/spotify">
+            <div className="flex items-center gap-2">
+              <IconBrandSpotify size={20} />
+              Connect Spotify
+            </div>
+          </a>
+        </Button>
+      }
+    >
       <form action={formAction}>
         <SearchPanelForm state={state} />
       </form>

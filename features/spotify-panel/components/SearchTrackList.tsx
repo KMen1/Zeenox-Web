@@ -54,6 +54,7 @@ export function SearchLazyList({ query }: SearchLazyListProps) {
       style={{ height }}
       data={items}
       endReached={loadNextPage}
+      increaseViewportBy={400}
       itemContent={(_, item) => {
         return (
           <TrackComponent

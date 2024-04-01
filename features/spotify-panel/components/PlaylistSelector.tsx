@@ -96,6 +96,7 @@ export function PlaylistSelector({
       style={{ height }}
       data={items}
       endReached={loadNextPage}
+      increaseViewportBy={400}
       itemContent={(_, item) => {
         return (
           <PlaylistComponent

@@ -1,8 +1,10 @@
 export function toTime(seconds: number | null) {
   if (typeof seconds !== "number") return "0:00";
-  const hours = Math.floor(seconds / 3600);
-  const minutes = Math.floor(seconds / 60) % 60;
-  const sec = seconds % 60;
+  const absSeconds = Math.abs(seconds);
+
+  const hours = Math.floor(absSeconds / 3600);
+  const minutes = Math.floor(absSeconds / 60) % 60;
+  const sec = absSeconds % 60;
   return `${hours > 0 ? `${hours}:` : ""}${
     minutes < 10 && hours > 0 ? `0${minutes}` : minutes
   }:${sec < 10 ? `0${sec}` : sec}`;

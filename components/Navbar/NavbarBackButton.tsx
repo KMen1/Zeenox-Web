@@ -8,7 +8,7 @@ export function NavbarBackButton() {
   const pathname = usePathname();
 
   return pathname.startsWith("/dashboard") ? (
-    <Button className="rounded-2xl" variant="outline" size="sm" asChild>
+    <Button className="rounded-2xl" variant="link" size="sm" asChild>
       <Link href="/">Back</Link>
     </Button>
   ) : null;

@@ -22,15 +22,13 @@ Web interface for the Zeenox Discord music bot, for more information about the b
 ### Requirements
 
 - Node.js with npm
-- Clerk application, [click here](https://clerk.com/) to create one
 - Spotify application, [click here](https://developer.spotify.com/dashboard/applications) to create one
-- Discord OAuth application, [click here](https://discord.com/developers/applications) to create one
+- Discord application, [click here](https://discord.com/developers/applications) to create one
 - Running instance of the Zeenox bot
 
 ---
 
 > ⚠️ **_Note:_** The bot is required to be running for the web interface to work! <br>
-> ⚙️ **_Clerk Settings:_** Only allow login with discord, but allow to link spotify<br>
 > 🔎 **_Required Scopes (discord):_** identify, email, guilds<br>
 > 🔎 **_Required Scopes (spotify):_** user-read-email, playlist-read-private, user-library-modify, user-library-read<br>
 > ⚠️ **_Note:_** You will need to add every user to your spotify application in order for them to be able to use spotify related features!
@@ -56,8 +54,11 @@ npm install
 ```env
 BOT_URL= # URL to the Zeenox bot (https://example.com)
 NEXT_PUBLIC_WS_URL= # URL to the Zeenox bot websocket (wss://example.com)
-NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY= # Clerk publishable key
-CLERK_SECRET_KEY= # Clerk secret key
+DATABASE_URL= # Neon postgres url
+DISCORD_CLIENT_ID=
+DISCORD_CLIENT_SECRET=
+SPOTIFY_CLIENT_ID=
+SPOTIFY_CLIENT_SECRET=
 ```
 
 4. Start the server
