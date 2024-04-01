@@ -1,17 +1,23 @@
 import { GuildPicker } from "@/features/guild-picker";
+import { db, validateRequest } from "@/lib/auth";
 import { getAvailableGuilds } from "@/utils/actions";
-import { currentUser } from "@clerk/nextjs";
 import { IconServer } from "@tabler/icons-react";
+import { redirect } from "next/navigation";
 
 export default async function Home() {
-  const user = await currentUser();
-  const discordId = user?.externalAccounts.find(
-    (a) => a.provider === "oauth_discord"
-  )?.externalId;
+  const { user } = await validateRequest();
+  if (!user) {
+    return redirect("/api/login/discord");
+  }
+
+  const [discord] =
+    await db`SELECT * FROM oauth_account WHERE provider_id = 'discord' AND user_id = ${user.id}`;
+
+  const discordId = discord?.provider_user_id;
   const guilds = user ? await getAvailableGuilds(discordId!) : null;
 
   return (
-    <div className="bg-card rounded-xl p-4">
+    <div className="rounded-xl bg-card p-4">
       <div className="flex flex-col gap-4">
         <div className="flex items-center gap-2">
           <IconServer size={36} />

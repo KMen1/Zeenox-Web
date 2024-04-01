@@ -5,10 +5,11 @@ import { QueuePanel } from "@/features/queue-panel";
 import { SearchPanel } from "@/features/search-panel";
 import { Socket } from "@/features/socket";
 import { SpotifyPanel } from "@/features/spotify-panel";
+import { db, validateRequest } from "@/lib/auth";
 import { getBotToken, getGuild } from "@/utils/actions";
-import { currentUser } from "@clerk/nextjs";
 import { Provider as JotaiProvider } from "jotai";
 import { Metadata } from "next";
+import { redirect } from "next/navigation";
 
 type Props = {
   params: { guildId: string };
@@ -36,15 +37,17 @@ export default async function Page({
 }: {
   params: { guildId: string };
 }) {
-  const user = await currentUser();
-  const discordId = user?.externalAccounts.find(
-    (a) => a.provider === "oauth_discord",
-  )?.externalId;
-  const serverSessionToken = await getBotToken(discordId!, params.guildId);
-  const spotify = user?.externalAccounts.find(
-    (a) => a.provider === "oauth_spotify",
-  );
+  const { user } = await validateRequest();
+  if (!user) {
+    return redirect("/api/login/discord");
+  }
+  const [discord] =
+    await db`SELECT * FROM oauth_account WHERE provider_id = 'discord' AND user_id = ${user.id}`;
+  const [spotify] =
+    await db`SELECT * FROM oauth_account WHERE provider_id = 'spotify' AND user_id = ${user.id}`;
 
+  const discordId = discord?.provider_user_id;
+  const serverSessionToken = await getBotToken(discordId!, params.guildId);
   if (!serverSessionToken) {
     return <Skeleton className="h-[500px] w-full" />;
   }

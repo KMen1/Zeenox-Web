@@ -1,6 +1,6 @@
 "use server";
 
-import { AccessTokenResponse, Provider } from "@/types/clerk";
+import { db, discord, spotify, validateRequest } from "@/lib/auth";
 import { SearchResult, SocketGuild } from "@/types/socket";
 import {
   PlaylistsResponse,
@@ -8,7 +8,7 @@ import {
   TracksResponse,
 } from "@/types/spotify";
 import { getErrorMessageFromCode } from "@/utils/helpers";
-import { currentUser } from "@clerk/nextjs";
+import { DiscordTokens, SpotifyTokens } from "arctic";
 
 type Result = {
   message: string;
@@ -20,34 +20,40 @@ const baseUrl = `${process.env.BOT_URL}/api/v1`;
 
 export async function getAccessToken(
   userId: string,
-  provider: Provider
+  provider: "discord" | "spotify",
 ): Promise<string | null> {
-  const url = `https://api.clerk.com/v1/users/${userId}/oauth_access_tokens/${provider}`;
-  const res = await fetch(url, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${process.env.CLERK_SECRET_KEY}`,
-    },
-    next: {
-      revalidate: 600,
-    },
-  });
+  const [account] =
+    await db`SELECT access_token, refresh_token FROM oauth_account WHERE provider_id = ${provider} AND user_id = ${userId}`;
 
-  if (!res.ok) {
+  if (!account) {
     return null;
   }
 
-  const data = (await res.json()) as AccessTokenResponse[];
-  const tokenToUse = data.find((token) => token.provider === provider);
-  if (!tokenToUse) {
-    return null;
+  const now = Math.floor(Date.now() / 1000);
+  if (account.expires_at < now) {
+    const refreshToken = account.refresh_token;
+    const newTokens: DiscordTokens | SpotifyTokens =
+      provider === "discord"
+        ? await discord.refreshAccessToken(refreshToken)
+        : await spotify.refreshAccessToken(refreshToken);
+
+    if (!newTokens) {
+      return null;
+    }
+
+    const expiresAt = Math.floor(
+      newTokens.accessTokenExpiresAt.getTime() / 1000,
+    );
+
+    await db`UPDATE oauth_account SET access_token = ${newTokens.accessToken}, expires_at = ${expiresAt}, refresh_token = ${newTokens.refreshToken} WHERE provider_id = ${provider} AND user_id = ${userId}`;
+    return newTokens.accessToken;
   }
-  return tokenToUse.token;
+
+  return account.access_token;
 }
 
 export async function getAvailableGuilds(
-  userId: string
+  userId: string,
 ): Promise<SocketGuild[] | null> {
   const url = `${baseUrl}/guilds/available`;
 
@@ -104,7 +110,7 @@ export async function getGuild(guildId: string): Promise<SocketGuild | null> {
 
 export async function getBotToken(
   userId: string,
-  guildId: string
+  guildId: string,
 ): Promise<string | null> {
   const url = `${baseUrl}/identity`;
 
@@ -130,7 +136,7 @@ export async function getBotToken(
 export async function fetchWithToken(
   url: string,
   token: string | null | undefined,
-  method: string
+  method: string,
 ): Promise<Result> {
   if (!token) {
     return {
@@ -163,8 +169,8 @@ export async function fetchJSON<T>(
   url: string,
   method: string,
   auth: string | null | undefined,
-  revalidate: number = 600
-): Promise<T> {
+  revalidate: number = 600,
+): Promise<T | null> {
   const res = await fetch(url, {
     method: method,
     headers: {
@@ -177,7 +183,7 @@ export async function fetchJSON<T>(
   });
 
   if (!res.ok) {
-    return {} as T;
+    return null;
   }
 
   const data = await res.json();
@@ -186,7 +192,7 @@ export async function fetchJSON<T>(
 
 export async function addTrack(
   trackUrl: string,
-  token: string | null | undefined
+  token: string | null | undefined,
 ): Promise<Result> {
   const url = new URL(`${baseUrl}/player/add`);
   url.searchParams.set("url", trackUrl);
@@ -195,7 +201,7 @@ export async function addTrack(
 
 export async function playTrack(
   trackUrl: string,
-  token: string | null | undefined
+  token: string | null | undefined,
 ): Promise<Result> {
   const url = new URL(`${baseUrl}/player/play`);
   url.searchParams.set("url", trackUrl);
@@ -203,35 +209,35 @@ export async function playTrack(
 }
 
 export async function skipTrack(
-  token: string | null | undefined
+  token: string | null | undefined,
 ): Promise<Result> {
   const url = new URL(`${baseUrl}/player/next`);
   return fetchWithToken(url.toString(), token, "POST");
 }
 
 export async function rewindTrack(
-  token: string | null | undefined
+  token: string | null | undefined,
 ): Promise<Result> {
   const url = new URL(`${baseUrl}/player/rewind`);
   return fetchWithToken(url.toString(), token, "POST");
 }
 
 export async function pauseTrack(
-  token: string | null | undefined
+  token: string | null | undefined,
 ): Promise<Result> {
   const url = new URL(`${baseUrl}/player/pause`);
   return fetchWithToken(url.toString(), token, "POST");
 }
 
 export async function resumeTrack(
-  token: string | null | undefined
+  token: string | null | undefined,
 ): Promise<Result> {
   const url = new URL(`${baseUrl}/player/resume`);
   return fetchWithToken(url.toString(), token, "POST");
 }
 
 export async function stopTrack(
-  token: string | null | undefined
+  token: string | null | undefined,
 ): Promise<Result> {
   const url = new URL(`${baseUrl}/player/stop`);
   return fetchWithToken(url.toString(), token, "POST");
@@ -239,7 +245,7 @@ export async function stopTrack(
 
 export async function setVolume(
   token: string | null | undefined,
-  volume: number
+  volume: number,
 ): Promise<Result> {
   const url = new URL(`${baseUrl}/player/volume`);
   url.searchParams.set("volume", volume.toString());
@@ -249,7 +255,7 @@ export async function setVolume(
 export async function moveTrack(
   from: number,
   to: number,
-  token: string | null | undefined
+  token: string | null | undefined,
 ): Promise<Result> {
   const url = new URL(`${baseUrl}/player/move`);
   url.searchParams.set("from", from.toString());
@@ -259,7 +265,7 @@ export async function moveTrack(
 
 export async function removeTrack(
   index: number,
-  token: string | null | undefined
+  token: string | null | undefined,
 ): Promise<Result> {
   const url = new URL(`${baseUrl}/player/removetrack`);
   url.searchParams.set("index", index.toString());
@@ -268,7 +274,7 @@ export async function removeTrack(
 
 export async function seekTrack(
   position: number,
-  token: string | null | undefined
+  token: string | null | undefined,
 ): Promise<Result> {
   const url = new URL(`${baseUrl}/player/seek`);
   url.searchParams.set("position", position.toString());
@@ -277,7 +283,7 @@ export async function seekTrack(
 
 export async function skipToTrack(
   index: number,
-  token: string | null | undefined
+  token: string | null | undefined,
 ): Promise<Result> {
   const url = new URL(`${baseUrl}/player/skipTo`);
   url.searchParams.set("index", index.toString());
@@ -285,148 +291,148 @@ export async function skipToTrack(
 }
 
 export async function shuffleQueue(
-  token: string | null | undefined
+  token: string | null | undefined,
 ): Promise<Result> {
   const url = new URL(`${baseUrl}/player/shuffle`);
   return fetchWithToken(url.toString(), token, "POST");
 }
 
 export async function clearQueue(
-  token: string | null | undefined
+  token: string | null | undefined,
 ): Promise<Result> {
   const url = new URL(`${baseUrl}/player/clear`);
   return fetchWithToken(url.toString(), token, "POST");
 }
 
 export async function reverseQueue(
-  token: string | null | undefined
+  token: string | null | undefined,
 ): Promise<Result> {
   const url = new URL(`${baseUrl}/player/reverse`);
   return fetchWithToken(url.toString(), token, "POST");
 }
 
 export async function distinctQueue(
-  token: string | null | undefined
+  token: string | null | undefined,
 ): Promise<Result> {
   const url = new URL(`${baseUrl}/player/distinct`);
   return fetchWithToken(url.toString(), token, "POST");
 }
 
 export async function cycleRepeatMode(
-  token: string | null | undefined
+  token: string | null | undefined,
 ): Promise<Result> {
   const url = new URL(`${baseUrl}/player/repeat`);
   return fetchWithToken(url.toString(), token, "POST");
 }
 
 export async function resumePreviousSession(
-  token: string | null | undefined
+  token: string | null | undefined,
 ): Promise<Result> {
   const url = new URL(`${baseUrl}/player/resumesession`);
   return fetchWithToken(url.toString(), token, "POST");
 }
 
 export async function deletePreviousSession(
-  token: string | null | undefined
+  token: string | null | undefined,
 ): Promise<Result> {
   const url = new URL(`${baseUrl}/player/resumesession`);
   return fetchWithToken(url.toString(), token, "DELETE");
 }
 
 export async function toggleAutoPlay(
-  token: string | null | undefined
+  token: string | null | undefined,
 ): Promise<Result> {
   const url = new URL(`${baseUrl}/player/autoplay`);
   return fetchWithToken(url.toString(), token, "POST");
 }
 
 export async function getLyrics(
-  token: string | null | undefined
+  token: string | null | undefined,
 ): Promise<Result> {
   const url = new URL(`${baseUrl}/player/lyrics`);
   return fetchWithToken(url.toString(), token, "GET");
 }
 
 export async function getLikedTracks(
-  offset: number = 0
+  offset: number = 0,
 ): Promise<TracksResponse | null> {
   const url = new URL(`${spotifyApiUrl}/me/tracks`);
   url.searchParams.set("offset", offset.toString());
   url.searchParams.set("limit", "50");
-  const user = await currentUser();
+  const { user } = await validateRequest();
   if (!user) return null;
 
-  const accessToken = await getAccessToken(user.id, Provider.Spotify);
+  const accessToken = await getAccessToken(user.id, "spotify");
   const data = await fetchJSON<TracksResponse>(
     url.toString(),
     "GET",
-    accessToken
+    accessToken,
   );
   return data;
 }
 
 export async function getPlaylistTracks(
   id: string,
-  offset: number = 0
+  offset: number = 0,
 ): Promise<TracksResponse | null> {
   if (id === "saved") return getLikedTracks(offset);
 
   const url = new URL(`${spotifyApiUrl}/playlists/${id}/tracks`);
   url.searchParams.set("offset", offset.toString());
   url.searchParams.set("limit", "50");
-  const user = await currentUser();
+  const { user } = await validateRequest();
   if (!user) return null;
 
-  const accessToken = await getAccessToken(user.id, Provider.Spotify);
+  const accessToken = await getAccessToken(user.id, "spotify");
   const data = await fetchJSON<TracksResponse>(
     url.toString(),
     "GET",
-    accessToken
+    accessToken,
   );
   return data;
 }
 
 export async function getSearchResults(
   query: string,
-  offset: number = 0
+  offset: number = 0,
 ): Promise<SearchResponse | null> {
   const url = new URL(`${spotifyApiUrl}/search`);
   url.searchParams.set("q", query);
   url.searchParams.set("type", "track");
   url.searchParams.set("offset", offset.toString());
   url.searchParams.set("limit", "50");
-  const user = await currentUser();
+  const { user } = await validateRequest();
   if (!user) return null;
 
-  const accessToken = await getAccessToken(user.id, Provider.Spotify);
+  const accessToken = await getAccessToken(user.id, "spotify");
   const data = await fetchJSON<SearchResponse>(
     url.toString(),
     "GET",
-    accessToken
+    accessToken,
   );
   return data;
 }
 
 export async function getPlaylists(
-  offset: number = 0
+  offset: number = 0,
 ): Promise<PlaylistsResponse | null> {
-  const user = await currentUser();
+  const { user } = await validateRequest();
   if (!user) return null;
 
-  const accessToken = await getAccessToken(user.id, Provider.Spotify);
+  const accessToken = await getAccessToken(user.id, "spotify");
   const url = new URL(`${spotifyApiUrl}/me/playlists`);
   url.searchParams.set("offset", offset.toString());
   const data = await fetchJSON<PlaylistsResponse>(
     url.toString(),
     "GET",
-    accessToken
+    accessToken,
   );
   return data;
 }
 
 export async function searchTracks(
   _prevState: any,
-  formData: FormData
+  formData: FormData,
 ): Promise<SearchResult | null> {
   const botToken = await getBotToken("0", "0");
   const query = formData.get("query") as string;
