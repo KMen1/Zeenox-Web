@@ -2,7 +2,7 @@ import { Center } from "@/components/ui/center";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { currentTrackAtom, localPositionAtom } from "@/stores/atoms";
 import { useAtomValue } from "jotai";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { LyricsLine } from "./LyricsLine";
 
 export function LyricsCardScrollArea() {
@@ -11,15 +11,27 @@ export function LyricsCardScrollArea() {
   const lyrics = track?.Lyrics;
   const scrollRef = useRef<HTMLDivElement>(null);
   const positionMs = useAtomValue(localPositionAtom);
+  const [position, setPosition] = useState(positionMs);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setPosition((p) => p + 50);
+    }, 50);
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    setPosition(positionMs);
+  }, [positionMs]);
 
   const lyricsLines =
     timedLyrics?.map((line, index) => (
       <LyricsLine
         key={index}
         line={line.Line}
-        isPast={positionMs > line.Range.End}
+        isPast={position > line.Range.End}
         isCurrent={
-          positionMs - line.Range.Start >= 0 && positionMs < line.Range.End
+          position - line.Range.Start >= 0 && position < line.Range.End
         }
         start={line.Range.Start}
       />

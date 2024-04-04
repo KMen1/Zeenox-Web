@@ -37,8 +37,8 @@ export function PlayerPositionSlider() {
       state === PlayerState.Playing
     ) {
       const interval = setInterval(() => {
-        setLocalPosition((p) => p + 50);
-      }, 50);
+        setLocalPosition((p) => p + 1000);
+      }, 1000);
       return () => clearInterval(interval);
     }
   }, [duration, isDragging, localPosition, setLocalPosition, state]);
@@ -64,7 +64,7 @@ export function PlayerPositionSlider() {
 
   return (
     <div className="flex flex-nowrap items-center gap-2">
-      <span className="w-min text-xs">
+      <span className="w-max text-xs">
         {toTime(Math.round(localPosition / 1000))}
       </span>
 
@@ -75,7 +75,7 @@ export function PlayerPositionSlider() {
         onValueChange={(v) => onChangeCache(v[0])}
         onValueCommit={async (v) => await onChangeEnd(v[0])}
       />
-      <span className="w-min text-xs">
+      <span className="w-max text-xs">
         {`-${toTime(Math.round(duration / 1000 - localPosition / 1000))}`}
       </span>
     </div>
