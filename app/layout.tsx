@@ -6,7 +6,6 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "next-themes";
 import "./globals.css";
 
-import { WindowSizeProvider } from "@/components/WindowSizeProvider";
 import { cn } from "@/lib/utils";
 import { Inter as FontSans } from "next/font/google";
 
@@ -26,7 +25,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" className="h-full">
       <head>
         <meta charSet="UTF-8" />
         <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
@@ -34,7 +33,7 @@ export default function RootLayout({
       </head>
       <body
         className={cn(
-          "min-h-screen bg-background font-sans antialiased",
+          "flex h-full flex-col bg-background p-4 font-sans antialiased",
           fontSans.variable,
         )}
       >
@@ -44,12 +43,8 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <TooltipProvider delayDuration={50}>
-            <div className="mx-auto p-4">
-              <div className="flex flex-col gap-4">
-                <Navbar />
-                <WindowSizeProvider>{children}</WindowSizeProvider>
-              </div>
-            </div>
+            <Navbar />
+            {children}
           </TooltipProvider>
         </ThemeProvider>
         <Toaster />

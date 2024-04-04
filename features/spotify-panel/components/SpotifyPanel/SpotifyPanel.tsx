@@ -15,8 +15,12 @@ export function SpotifyPanel() {
   const [searchQuery, setSearchQuery] = useState<string>("");
 
   return (
-    <ContentCard title={"Add from Spotify"} icon={<IconBrandSpotify />}>
-      <div className="flex flex-col gap-2">
+    <ContentCard
+      title={"Add from Spotify"}
+      icon={<IconBrandSpotify />}
+      className="[grid-area:tracks]"
+    >
+      <div className="flex h-full flex-col gap-2" id="spotify">
         <Input
           type="text"
           placeholder="What do you want to listen to?"

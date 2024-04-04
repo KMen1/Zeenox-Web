@@ -55,12 +55,10 @@ export default async function Page({
   return (
     <JotaiProvider>
       <Socket id={params.guildId} botToken={serverSessionToken} />
-      <div className="flex h-full flex-col justify-between gap-4">
-        <div className="grid grid-cols-3 gap-4">
-          {spotify ? <SpotifyPanel /> : <SearchPanel />}
-          <QueuePanel />
-          <LyricsActionsSwitcher />
-        </div>
+      <div className="relative grid h-[calc(-30px_+_100vh)] min-h-[750px] min-w-[1000px] gap-4 [grid-template-areas:'tracks_queue_extra''player_player_player'] [grid-template-columns:1fr_1fr_1fr] [grid-template-rows:1fr_auto]">
+        {spotify ? <SpotifyPanel /> : <SearchPanel />}
+        <QueuePanel />
+        <LyricsActionsSwitcher />
         <PlayerPanel />
       </div>
     </JotaiProvider>

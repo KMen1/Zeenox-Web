@@ -56,7 +56,7 @@ export function PlayerPanel() {
 
   return (
     <div
-      className="player2-background relative bottom-0 flex flex-col rounded-xl p-4"
+      className="player2-background flex flex-col rounded-xl p-4 [grid-area:player]"
       style={{ background: color }}
     >
       <div className="flex justify-between">

@@ -5,11 +5,7 @@ import { useAtomValue } from "jotai";
 import { useRef } from "react";
 import { LyricsLine } from "./LyricsLine";
 
-type LyricsCardScrollAreaProps = {
-  height: number;
-};
-
-export function LyricsCardScrollArea({ height }: LyricsCardScrollAreaProps) {
+export function LyricsCardScrollArea() {
   const track = useAtomValue(currentTrackAtom);
   const timedLyrics = track?.TimedLyrics;
   const lyrics = track?.Lyrics;
@@ -31,17 +27,17 @@ export function LyricsCardScrollArea({ height }: LyricsCardScrollAreaProps) {
     lyrics?.map((line, index) => <LyricsLine key={index} line={line} />) ??
     null;
 
-  return (
-    <ScrollArea style={{ height }} ref={scrollRef}>
-      {lyricsLines ? (
-        lyricsLines
-      ) : (
-        <Center height={height}>
-          <p className="text-center text-2xl font-semibold">
-            No lyrics available!
-          </p>
-        </Center>
-      )}
+  return lyricsLines ? (
+    <ScrollArea
+      className="p-4"
+      ref={scrollRef}
+      style={{ height: "max(calc(-200px + 750px), calc(-300px + 100vh))" }}
+    >
+      {lyricsLines}
     </ScrollArea>
+  ) : (
+    <Center>
+      <p className="text-center text-2xl font-semibold">No lyrics available!</p>
+    </Center>
   );
 }

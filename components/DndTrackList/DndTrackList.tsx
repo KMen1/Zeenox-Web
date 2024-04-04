@@ -57,14 +57,9 @@ function Item({
 type DndTrackListProps = {
   baseTracks: Track[];
   onMove: (from: number, to: number) => void;
-  height: number;
 };
 
-export function DndTrackList({
-  baseTracks,
-  onMove,
-  height,
-}: DndTrackListProps) {
+export function DndTrackList({ baseTracks, onMove }: DndTrackListProps) {
   const [tracks, setTracks] = useState<Track[]>(baseTracks);
 
   useEffect(() => {
@@ -125,7 +120,7 @@ export function DndTrackList({
                 Item: HeightPreservingItem,
               }}
               data={tracks}
-              style={{ height }}
+              style={{ height: "100%" }}
               itemContent={(index, item) => {
                 return (
                   <Draggable draggableId={item.Id} index={index} key={item.Id}>

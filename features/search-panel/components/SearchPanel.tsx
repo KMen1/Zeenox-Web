@@ -1,7 +1,6 @@
 "use client";
 
 import { ContentCard } from "@/components/ContentCard/ContentCard";
-import { useWindowSize } from "@/components/WindowSizeProvider";
 import { Button } from "@/components/ui/button";
 import { Center } from "@/components/ui/center";
 import { Input } from "@/components/ui/input";
@@ -23,21 +22,18 @@ type SearchPanelFormProps = {
 };
 
 function SearchPanelForm({ state }: SearchPanelFormProps) {
-  const windowSize = useWindowSize();
-  const height = windowSize[1] - 342;
   const { pending } = useFormStatus();
-  const SKELETON_COUNT = height / 50 - 1;
   const playlist = state?.Playlist;
 
   return (
-    <div className={`flex flex-col gap-2 h-[${height}]`}>
+    <div className={`flex flex-col gap-2`}>
       <Input
         name="query"
         placeholder="What do you want to listen to?"
         disabled={pending}
       />
       {!state && !pending && (
-        <Center height={height} className="p-4">
+        <Center className="p-4">
           <div className="flex flex-col items-center">
             <p className="text-xl font-bold">
               Start searching and results will appear here!
@@ -46,14 +42,14 @@ function SearchPanelForm({ state }: SearchPanelFormProps) {
         </Center>
       )}
       {pending && (
-        <div className={`flex flex-col h-[${height}]`}>
-          {Array.from({ length: SKELETON_COUNT }).map((_, i) => (
+        <div className={`flex flex-col`}>
+          {Array.from({ length: 1 }).map((_, i) => (
             <TrackSkeleton key={i} />
           ))}
         </div>
       )}
       {state?.Tracks.length === 0 && (
-        <Center height={height} className="p-4">
+        <Center className="p-4">
           <div className="flex flex-col items-center">
             <IconMoodSad size={100} />
             <p className="text-xl font-bold">No Results Found</p>
@@ -74,7 +70,7 @@ function SearchPanelForm({ state }: SearchPanelFormProps) {
       )}
       {!playlist && state?.Tracks && state.Tracks.length > 0 && (
         <Virtuoso
-          style={{ height }}
+          style={{ height: "100%" }}
           data={state?.Tracks || []}
           itemContent={(_, item) => {
             return (

@@ -1,10 +1,10 @@
-type ContentCardProps = {
+interface ContentCardProps extends React.HTMLAttributes<HTMLDivElement> {
   title: string;
   icon: React.ReactNode;
   children: React.ReactNode;
   rightSection?: React.ReactNode;
   bg?: string;
-};
+}
 
 export function ContentCard({
   title,
@@ -14,7 +14,7 @@ export function ContentCard({
   bg,
 }: ContentCardProps) {
   return (
-    <div className="rounded-2xl border-2 px-4 pb-4">
+    <div className="flex flex-col rounded-2xl border-2 px-4 pb-4">
       <div className="flex justify-between pb-3 pt-4">
         <div className="flex gap-2">
           {icon}
@@ -22,7 +22,10 @@ export function ContentCard({
         </div>
         {rightSection}
       </div>
-      <div className={`rounded-2xl`} style={{ background: bg }}>
+      <div
+        className={`flex h-full flex-col rounded-2xl`}
+        style={{ background: bg }}
+      >
         {children}
       </div>
     </div>

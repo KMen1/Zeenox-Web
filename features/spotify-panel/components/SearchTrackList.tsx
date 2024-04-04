@@ -1,12 +1,9 @@
-import { useWindowSize } from "@/components/WindowSizeProvider";
 import { Track, TracksResponse } from "@/types/spotify";
 import { useEffect, useState } from "react";
 import { Virtuoso } from "react-virtuoso";
 import { Track as TrackComponent } from "../../../components/Track/Track";
 import { TrackSkeleton } from "../../../components/Track/TrackSkeleton";
 import { getSearchResults } from "../../../utils/actions";
-
-const ITEM_HEIGHT = 50;
 
 type SearchLazyListProps = {
   query: string;
@@ -15,8 +12,6 @@ type SearchLazyListProps = {
 export function SearchLazyList({ query }: SearchLazyListProps) {
   const [response, setResponse] = useState<TracksResponse | null>(null);
   const [items, setItems] = useState<Track[]>([]);
-  const windowSize = useWindowSize();
-  const height = windowSize[1] - 357;
 
   async function loadNextPage() {
     const nextUrl = response?.next;
@@ -41,17 +36,15 @@ export function SearchLazyList({ query }: SearchLazyListProps) {
     fetchSearchResults();
   }, [query]);
 
-  const SKELETON_COUNT = Math.floor(height / ITEM_HEIGHT) + 1;
-
   return response == null ? (
-    <div className={`flex flex-col h-[${height}px]`}>
-      {Array.from({ length: SKELETON_COUNT }).map((_, i) => (
+    <div className={`flex flex-col`}>
+      {Array.from({ length: 1 }).map((_, i) => (
         <TrackSkeleton key={i} />
       ))}
     </div>
   ) : (
     <Virtuoso
-      style={{ height }}
+      style={{ height: "100%" }}
       data={items}
       endReached={loadNextPage}
       increaseViewportBy={400}

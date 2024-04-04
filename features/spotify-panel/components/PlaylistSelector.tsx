@@ -1,5 +1,4 @@
 import { PlaylistSkeleton } from "@/components/Playlist/PlaylistSkeleton";
-import { useWindowSize } from "@/components/WindowSizeProvider";
 import {
   ItemType,
   OwnerType,
@@ -59,8 +58,6 @@ export function PlaylistSelector({
 }: PlaylistSelectorProps) {
   const [response, setResponse] = useState<PlaylistsResponse | null>(null);
   const [items, setItems] = useState<Playlist[]>([SAVED]);
-  const windowSize = useWindowSize();
-  const height = windowSize[1] - 342;
 
   async function loadNextPage() {
     const nextUrl = response?.next;
@@ -83,17 +80,17 @@ export function PlaylistSelector({
     fetchPlaylist();
   }, []);
 
-  const SKELETON_COUNT = Math.floor(height / ITEM_HEIGHT) + 1;
+  //const SKELETON_COUNT = Math.floor(height / ITEM_HEIGHT) + 1;
 
   return response == null ? (
-    <div className={`flex flex-col h-[${height}px]`}>
-      {Array.from({ length: SKELETON_COUNT }).map((_, i) => (
+    <div className={`flex flex-col`}>
+      {Array.from({ length: 1 }).map((_, i) => (
         <PlaylistSkeleton key={i} />
       ))}
     </div>
   ) : (
     <Virtuoso
-      style={{ height }}
+      style={{ height: "100%" }}
       data={items}
       endReached={loadNextPage}
       increaseViewportBy={400}
