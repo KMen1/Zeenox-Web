@@ -17,7 +17,7 @@ export async function Navbar() {
   const { user } = await validateRequest();
 
   return (
-    <div className="w-full rounded-2xl border-2 bg-card px-4 py-3">
+    <div className="mb-4 w-full rounded-2xl border-2 bg-card px-4 py-3">
       <div className="flex justify-between">
         <div className="flex flex-1 justify-start">
           <NavbarBackButton />
