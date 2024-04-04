@@ -23,7 +23,7 @@ export async function getAccessToken(
   provider: "discord" | "spotify",
 ): Promise<string | null> {
   const [account] =
-    await db`SELECT access_token, refresh_token FROM oauth_account WHERE provider_id = ${provider} AND user_id = ${userId}`;
+    await db`SELECT access_token, refresh_token, expires_at FROM oauth_account WHERE provider_id = ${provider} AND user_id = ${userId}`;
 
   if (!account) {
     return null;
@@ -183,6 +183,7 @@ export async function fetchJSON<T>(
   });
 
   if (!res.ok) {
+    console.log(await res.text());
     return null;
   }
 
