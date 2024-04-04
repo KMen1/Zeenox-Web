@@ -1,9 +1,9 @@
+import { useWindowSize } from "@/components/WindowSizeProvider";
 import { Track, TracksResponse } from "@/types/spotify";
 import { useEffect, useState } from "react";
 import { Virtuoso } from "react-virtuoso";
 import { Track as TrackComponent } from "../../../components/Track/Track";
 import { TrackSkeleton } from "../../../components/Track/TrackSkeleton";
-import { useSize } from "../../../hooks/useSize";
 import { getPlaylistTracks } from "../../../utils/actions";
 
 const ITEM_HEIGHT = 50;
@@ -15,7 +15,7 @@ type PlaylistTrackLazyListProps = {
 export function PlaylistTrackLazyList({ id }: PlaylistTrackLazyListProps) {
   const [response, setResponse] = useState<TracksResponse | null>(null);
   const [items, setItems] = useState<Track[]>([]);
-  const windowSize = useSize();
+  const windowSize = useWindowSize();
   const height = windowSize[1] - 342;
 
   async function loadNextPage() {

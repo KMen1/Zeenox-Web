@@ -1,14 +1,14 @@
 "use client";
 
+import { useWindowSize } from "@/components/WindowSizeProvider";
 import { trackColorAtom } from "@/stores/atoms";
 import { IconBlockquote } from "@tabler/icons-react";
 import { useAtomValue } from "jotai";
 import { ContentCard } from "../../../components/ContentCard/ContentCard";
-import { useSize } from "../../../hooks/useSize";
 import { LyricsCardScrollArea } from "./LyricsScrollArea";
 
 export function LyricsCard() {
-  const windowSize = useSize();
+  const windowSize = useWindowSize();
   const height = windowSize[1] - 326;
   const color = useAtomValue(trackColorAtom);
 

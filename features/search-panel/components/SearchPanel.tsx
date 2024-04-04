@@ -1,6 +1,7 @@
 "use client";
 
 import { ContentCard } from "@/components/ContentCard/ContentCard";
+import { useWindowSize } from "@/components/WindowSizeProvider";
 import { Button } from "@/components/ui/button";
 import { Center } from "@/components/ui/center";
 import { Input } from "@/components/ui/input";
@@ -15,7 +16,6 @@ import { Virtuoso } from "react-virtuoso";
 import { Playlist } from "../../../components/Playlist/Playlist";
 import { Track as TrackComponent } from "../../../components/Track/Track";
 import { TrackSkeleton } from "../../../components/Track/TrackSkeleton";
-import { useSize } from "../../../hooks/useSize";
 import { searchTracks } from "../../../utils/actions";
 
 type SearchPanelFormProps = {
@@ -23,7 +23,7 @@ type SearchPanelFormProps = {
 };
 
 function SearchPanelForm({ state }: SearchPanelFormProps) {
-  const windowSize = useSize();
+  const windowSize = useWindowSize();
   const height = windowSize[1] - 342;
   const { pending } = useFormStatus();
   const SKELETON_COUNT = height / 50 - 1;

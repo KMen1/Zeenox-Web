@@ -1,19 +1,19 @@
 "use client";
 
 import { ContentCard } from "@/components/ContentCard/ContentCard";
+import { useWindowSize } from "@/components/WindowSizeProvider";
 import { Center } from "@/components/ui/center";
 import { Skeleton } from "@/components/ui/skeleton";
 import { actionsAtom } from "@/stores/atoms";
 import { IconLayoutList, IconMoodSad } from "@tabler/icons-react";
 import { useAtomValue } from "jotai";
 import { Virtuoso } from "react-virtuoso";
-import { useSize } from "../../../hooks/useSize";
 import { getChildren, getImage, getTitle } from "../utils/helpers";
 import { ActionCard } from "./ActionCard";
 
 export function ActionsPanel() {
   const actions = useAtomValue(actionsAtom);
-  const windowSize = useSize();
+  const windowSize = useWindowSize();
 
   const height = /* (windowSize[1] - 425) / 2 */ windowSize[1] - 312;
 

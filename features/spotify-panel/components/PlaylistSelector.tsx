@@ -1,4 +1,5 @@
 import { PlaylistSkeleton } from "@/components/Playlist/PlaylistSkeleton";
+import { useWindowSize } from "@/components/WindowSizeProvider";
 import {
   ItemType,
   OwnerType,
@@ -8,7 +9,6 @@ import {
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Virtuoso } from "react-virtuoso";
 import { Playlist as PlaylistComponent } from "../../../components/Playlist/Playlist";
-import { useSize } from "../../../hooks/useSize";
 import { getPlaylists } from "../../../utils/actions";
 
 const SAVED = {
@@ -59,7 +59,7 @@ export function PlaylistSelector({
 }: PlaylistSelectorProps) {
   const [response, setResponse] = useState<PlaylistsResponse | null>(null);
   const [items, setItems] = useState<Playlist[]>([SAVED]);
-  const windowSize = useSize();
+  const windowSize = useWindowSize();
   const height = windowSize[1] - 342;
 
   async function loadNextPage() {

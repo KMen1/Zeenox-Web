@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "next-themes";
 import "./globals.css";
 
+import { WindowSizeProvider } from "@/components/WindowSizeProvider";
 import { cn } from "@/lib/utils";
 import { Inter as FontSans } from "next/font/google";
 
@@ -46,7 +47,7 @@ export default function RootLayout({
             <div className="mx-auto p-4">
               <div className="flex flex-col gap-4">
                 <Navbar />
-                {children}
+                <WindowSizeProvider>{children}</WindowSizeProvider>
               </div>
             </div>
           </TooltipProvider>
