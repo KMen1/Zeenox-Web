@@ -111,9 +111,8 @@ export function Socket({ id, botToken }: { id: string; botToken: string }) {
         <AlertDialogHeader>
           <AlertDialogTitle>Disconnected from server!</AlertDialogTitle>
           <AlertDialogDescription>
-            Seems like you have been disconnected from the server. This can
-            happen due to a network error, the server being restarted or because
-            of inactivity.
+            You&apos;ve been disconnected from the server. Please reconnect to
+            continue.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
