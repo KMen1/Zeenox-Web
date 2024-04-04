@@ -56,7 +56,7 @@ export function Track({
     <ContextMenu>
       <ContextMenuTrigger>
         <div
-          className={`group flex flex-nowrap items-center gap-2 rounded px-2 py-1 duration-75 ease-in-out ${
+          className={`group flex flex-nowrap items-center gap-2 rounded px-2 py-1 ${
             hoverable
               ? transparent
                 ? "hover:bg-[rgba(255,255,255,0.1)]"
@@ -79,7 +79,7 @@ export function Track({
               }
               width={36}
               height={36}
-              className={`absolute left-0 top-0 rounded transition-all duration-100 ease-in-out group-hover:brightness-50`}
+              className={`absolute left-0 top-0 rounded group-hover:brightness-50`}
               alt={track?.Title ?? "Nothing here"}
             />
             {track && mode !== "none" && (
@@ -89,7 +89,7 @@ export function Track({
                     <IconPlayerPlayFilled
                       role="button"
                       size="1.2rem"
-                      className="text-white opacity-0 transition-all duration-100 ease-in-out hover:text-neutral-400 group-hover:opacity-100"
+                      className="text-white opacity-0 hover:text-neutral-300 group-hover:opacity-100"
                       onClick={
                         mode === "skipTo"
                           ? async () =>
@@ -194,7 +194,7 @@ export function Track({
             withNotification(await removeTrack(index!, token))
           }
         >
-          Remove from queue
+          Remove
         </ContextMenuItem>
         <ContextMenuItem
           inset

@@ -68,7 +68,7 @@ export function Playlist({
           width={40}
           height={40}
           alt={name || "Playlist"}
-          className="absolute left-0 top-0 h-[40px] w-[40px] rounded transition-all duration-100 ease-in-out group-hover:brightness-50"
+          className="absolute left-0 top-0 h-[40px] w-[40px] rounded group-hover:brightness-50"
         />
         {url ? (
           <div className="absolute left-[.5rem] top-[.5rem]">
@@ -77,7 +77,7 @@ export function Playlist({
                 <IconPlayerPlayFilled
                   role="button"
                   size="1.5rem"
-                  className="text-white opacity-0 transition-all duration-100 ease-in-out hover:text-neutral-400 group-hover:opacity-100"
+                  className="text-white opacity-0 hover:text-neutral-300 group-hover:opacity-100"
                   onClick={async (e) => {
                     e.stopPropagation();
                     withNotification(await playTrack(url, token));
