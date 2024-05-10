@@ -1,7 +1,7 @@
-import { AddPlaylistAction } from "@/features/actions-panel";
 import { botTokenAtom } from "@/stores/atoms";
+import { AddPlaylistAction } from "@/types/playerActions";
 import { PlaylistInfo, Track } from "@/types/socket";
-import { Playlist } from "@/types/spotify";
+import { Playlist as SpotifyPlaylist } from "@/types/spotify";
 import { IconChevronRight, IconPlayerPlayFilled } from "@tabler/icons-react";
 import { useAtomValue } from "jotai";
 import Image from "next/image";
@@ -21,7 +21,10 @@ import {
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 
 type PlaylistProps = {
-  playlist: AddPlaylistAction | Playlist | (PlaylistInfo & { Tracks: Track[] });
+  playlist:
+    | AddPlaylistAction
+    | SpotifyPlaylist
+    | (PlaylistInfo & { Tracks: Track[] });
   isSelected?: boolean;
   transparent?: boolean;
   expandable?: boolean;
@@ -39,18 +42,18 @@ export function Playlist({
 
   const url =
     (playlist as AddPlaylistAction)?.Playlist?.Url ||
-    (playlist as Playlist)?.external_urls?.spotify ||
+    (playlist as SpotifyPlaylist)?.external_urls?.spotify ||
     "";
   const name =
     (playlist as AddPlaylistAction)?.Playlist?.Name ||
-    (playlist as Playlist)?.name;
+    (playlist as SpotifyPlaylist)?.name;
   const artworkUrl =
     (playlist as AddPlaylistAction)?.Playlist?.ArtworkUrl ||
     (playlist as PlaylistInfo)?.ArtworkUrl ||
-    (playlist as Playlist).images?.at(0)?.url;
+    (playlist as SpotifyPlaylist).images?.at(0)?.url;
   const owner =
     (playlist as AddPlaylistAction)?.Playlist?.Author ||
-    (playlist as Playlist)?.owner?.display_name;
+    (playlist as SpotifyPlaylist)?.owner?.display_name;
   const tracks = (playlist as AddPlaylistAction)?.Tracks;
 
   return (

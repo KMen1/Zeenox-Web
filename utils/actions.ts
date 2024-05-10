@@ -32,12 +32,15 @@ export async function getAccessToken(
   const now = Math.floor(Date.now() / 1000);
   if (account.expires_at < now) {
     const refreshToken = account.refresh_token;
-    const newTokens: DiscordTokens | SpotifyTokens =
-      provider === "discord"
-        ? await discord.refreshAccessToken(refreshToken)
-        : await spotify.refreshAccessToken(refreshToken);
 
-    if (!newTokens) {
+    let newTokens: DiscordTokens | SpotifyTokens;
+    try {
+      newTokens =
+        provider === "discord"
+          ? await discord.refreshAccessToken(refreshToken)
+          : await spotify.refreshAccessToken(refreshToken);
+    } catch (err: any) {
+      await db`DELETE FROM oauth_account WHERE provider_id = ${provider} AND user_id = ${userId}`;
       return null;
     }
 
@@ -183,7 +186,7 @@ export async function fetchJSON<T>(
   });
 
   if (!res.ok) {
-    console.log(await res.text());
+    console.log(method, url, await res.text());
     return null;
   }
 

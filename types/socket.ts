@@ -1,4 +1,26 @@
+import { Action } from "./playerActions";
+
 /// BASE TYPES ///
+export enum PayloadType {
+  None = 0,
+  UpdatePlayer = 1,
+  UpdateQueue = 2,
+  UpdateTrack = 4,
+  UpdateActions = 8,
+  Initialize = 16,
+}
+
+export type Payload = {
+  Type: PayloadType;
+  CurrentTrack?: Track;
+  Queue?: Queue;
+  State?: Player;
+  Actions?: Action[];
+  VoiceChannelName?: string;
+  StartedAt?: number;
+  ResumeSession?: PlayerResumeSession;
+};
+
 export type Track = {
   Id: string;
   Title: string;

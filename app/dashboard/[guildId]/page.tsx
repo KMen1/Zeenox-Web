@@ -1,10 +1,10 @@
 import { LyricsActionsSwitcher } from "@/components/PanelSwitcher/LyricsActionsSwitcher";
+import { PlayerPanel } from "@/components/PlayerPanel/PlayerPanel";
+import { QueuePanel } from "@/components/QueuePanel/QueuePanel";
+import { SearchPanel } from "@/components/SearchPanel/SearchPanel";
+import { Socket } from "@/components/Socket";
+import { SpotifyPanel } from "@/components/SpotifyPanel/SpotifyPanel";
 import { Skeleton } from "@/components/ui/skeleton";
-import { PlayerPanel } from "@/features/player-panel/";
-import { QueuePanel } from "@/features/queue-panel";
-import { SearchPanel } from "@/features/search-panel";
-import { Socket } from "@/features/socket";
-import { SpotifyPanel } from "@/features/spotify-panel";
 import { db, validateRequest } from "@/lib/auth";
 import { getBotToken, getGuild } from "@/utils/actions";
 import { Provider as JotaiProvider } from "jotai";

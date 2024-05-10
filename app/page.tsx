@@ -1,4 +1,4 @@
-import { GuildPicker } from "@/features/guild-picker";
+import { GuildPicker } from "@/components/GuildPicker/GuildPicker";
 import { db, validateRequest } from "@/lib/auth";
 import { getAvailableGuilds } from "@/utils/actions";
 import { IconServer } from "@tabler/icons-react";
@@ -18,7 +18,7 @@ export default async function Home() {
 
   return (
     <div className="rounded-xl bg-card p-4">
-      <div className="flex flex-col gap-4">
+      <div className="flex h-full flex-col gap-4">
         <div className="flex items-center gap-2">
           <IconServer size={36} />
           <h2 className="text-xl">Please Select a Server</h2>

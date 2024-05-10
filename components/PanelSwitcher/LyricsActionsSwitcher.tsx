@@ -1,9 +1,9 @@
 "use client";
 
-import { ActionsPanel } from "@/features/actions-panel";
-import { LyricsCard } from "@/features/lyrics-panel";
 import { selectedAtom } from "@/stores/atoms";
 import { useAtomValue } from "jotai";
+import { ActionsPanel } from "../ActionsPanel/ActionsPanel";
+import { LyricsCard } from "../LyricsPanel/LyricsPanel";
 import { PanelSwitcher } from "./PanelSwitcher";
 
 export function LyricsActionsSwitcher() {

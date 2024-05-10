@@ -1,7 +1,7 @@
 "use client";
 
 import { botTokenAtom } from "@/stores/atoms";
-import { Track } from "@/types/socket";
+import { Track as TrackType } from "@/types/socket";
 import { toTime } from "@/utils/helpers";
 import { DraggableProvidedDragHandleProps } from "@hello-pangea/dnd";
 import {
@@ -28,7 +28,7 @@ import {
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 
 type TrackProps = {
-  track: Track;
+  track: TrackType;
   index?: number;
   hoverable?: boolean;
   transparent?: boolean;
@@ -79,7 +79,7 @@ export function Track({
               }
               width={36}
               height={36}
-              className={`absolute left-0 top-0 rounded group-hover:brightness-50`}
+              className={`absolute left-0 top-0 rounded ${hoverable ? "group-hover:brightness-50" : ""}`}
               alt={track?.Title ?? "Nothing here"}
             />
             {track && mode !== "none" && (

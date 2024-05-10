@@ -1,4 +1,4 @@
-import { Action } from "@/features/actions-panel";
+import { Action } from "@/types/playerActions";
 import {
   PlayerResumeSession,
   PlayerState,
