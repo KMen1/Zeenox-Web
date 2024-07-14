@@ -6,9 +6,9 @@
   }
 
   position: relative;
-  @apply relative bg-neutral-900 hover:bg-neutral-800 w-1 mx-1 rounded-lg cursor-col-resize duration-100 ease-in-out;
+  @apply relative mx-1 w-1 cursor-col-resize rounded-lg bg-white/10 duration-100 ease-in-out hover:bg-white/20;
 }
 
 .resizeIcon {
-  @apply -translate-x-1/2 translate-y-1/2 opacity-0 absolute top-1/2 left-1/2 rotate-90 w-3 h-3 duration-100 ease-in-out;
+  @apply absolute left-1/2 top-1/2 h-3 w-3 -translate-x-1/2 translate-y-1/2 rotate-90 opacity-0 duration-100 ease-in-out;
 }

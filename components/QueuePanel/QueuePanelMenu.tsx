@@ -34,7 +34,7 @@ export function QueuePanelMenu({ disabled }: QueuePanelMenuProps) {
   return (
     <div className="flex flex-wrap items-center gap-2">
       <Button
-        variant="secondary"
+        variant="transparent"
         size="sm"
         color="blue"
         onClick={async () => withNotification(await shuffleQueue(token))}
@@ -48,7 +48,7 @@ export function QueuePanelMenu({ disabled }: QueuePanelMenuProps) {
         </div>
       </Button>
       <Button
-        variant="secondary"
+        variant="transparent"
         size="sm"
         color="blue"
         onClick={async () => withNotification(await reverseQueue(token))}
@@ -62,7 +62,7 @@ export function QueuePanelMenu({ disabled }: QueuePanelMenuProps) {
         </div>
       </Button>
       <Button
-        variant="secondary"
+        variant="transparent"
         size="sm"
         color="yellow"
         onClick={async () => withNotification(await reverseQueue(token))}
@@ -76,7 +76,7 @@ export function QueuePanelMenu({ disabled }: QueuePanelMenuProps) {
         </div>
       </Button>
       <Button
-        variant="secondary"
+        variant="transparent"
         size="sm"
         color="red"
         onClick={async () => withNotification(await clearQueue(token))}
@@ -92,7 +92,7 @@ export function QueuePanelMenu({ disabled }: QueuePanelMenuProps) {
       <Dialog>
         <DialogTrigger className="ml-auto" asChild>
           <Button
-            variant="secondary"
+            variant="transparent"
             size="sm"
             color="blue"
             aria-label="Open history"

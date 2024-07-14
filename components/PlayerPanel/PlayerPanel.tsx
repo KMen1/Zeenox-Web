@@ -58,7 +58,14 @@ export function PlayerPanel() {
         setColor(newColor);
       }
     }
-  }, [setColor]);
+
+    if (track?.ArtworkUrl) {
+      document.documentElement.style.setProperty(
+        "--background-image",
+        `url(${track.ArtworkUrl})`,
+      );
+    }
+  }, [setColor, track?.ArtworkUrl]);
 
   return (
     <div

@@ -21,7 +21,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const guild = await getGuild(id);
 
   return {
-    title: `Listening in ${guild?.Name ?? "Unknown"}`,
+    title: `Zeenox | ${guild?.Name ?? "Unknown"}`,
     icons: {
       icon: [
         {

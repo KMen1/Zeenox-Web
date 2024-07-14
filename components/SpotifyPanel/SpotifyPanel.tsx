@@ -16,7 +16,7 @@ export function SpotifyPanel() {
 
   return (
     <ContentCard
-      title={"Add from Spotify"}
+      title={"Spotify Library"}
       icon={<IconBrandSpotify />}
       className="[grid-area:tracks]"
     >
@@ -24,7 +24,7 @@ export function SpotifyPanel() {
         <Input
           type="text"
           placeholder="What do you want to listen to?"
-          className="bg-neutral-800"
+          className="border-none bg-white/10 text-white/90"
           onKeyDown={(event) => {
             if (event.key === "Enter" && event.currentTarget.value !== "") {
               setSearchQuery(event.currentTarget.value);

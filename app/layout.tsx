@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 
 import { Navbar } from "@/components/Navbar/Navbar";
-import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "next-themes";
 import "./globals.css";
 
+import { Toaster } from "@/components/ui/toaster";
 import { cn } from "@/lib/utils";
 import { Inter as FontSans } from "next/font/google";
 
@@ -33,7 +33,7 @@ export default function RootLayout({
       </head>
       <body
         className={cn(
-          "flex h-full flex-col bg-background p-4 font-sans antialiased",
+          "flex h-full flex-col bg-gradient p-4 font-sans antialiased",
           fontSans.variable,
         )}
       >
@@ -45,9 +45,9 @@ export default function RootLayout({
           <TooltipProvider delayDuration={50}>
             <Navbar />
             {children}
+            <Toaster />
           </TooltipProvider>
         </ThemeProvider>
-        <Toaster />
       </body>
     </html>
   );

@@ -14,11 +14,11 @@ export function ContentCard({
   bg,
 }: ContentCardProps) {
   return (
-    <div className="flex flex-col rounded-2xl border-2 px-4 pb-4">
+    <div className="flex flex-col rounded-2xl bg-black/50 px-4 pb-4">
       <div className="flex justify-between pb-3 pt-4">
         <div className="flex gap-2">
           {icon}
-          <h2>{title}</h2>
+          <h2 className="font-semibold">{title}</h2>
         </div>
         {rightSection}
       </div>

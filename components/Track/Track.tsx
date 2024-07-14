@@ -60,7 +60,7 @@ export function Track({
             hoverable
               ? transparent
                 ? "hover:bg-[rgba(255,255,255,0.1)]"
-                : "hover:bg-neutral-900"
+                : "hover:bg-white/5"
               : ""
           }`}
           data-hoverable={hoverable}

@@ -17,16 +17,17 @@ import { deletePreviousSession, resumePreviousSession } from "@/utils/actions";
 import { IconClockPlay, IconTrash } from "@tabler/icons-react";
 import { useAtomValue, useSetAtom } from "jotai";
 import { useEffect, useState } from "react";
-import { toast } from "sonner";
 import { Payload, PayloadType } from "../types/socket";
 import { useSetters } from "../utils/useSetters";
+import { ActionCard } from "./ActionsPanel/ActionCard";
 import { Track as TrackComponent } from "./Track/Track";
+import { useToast } from "./ui/use-toast";
 
 let socket: WebSocket | null = null;
 
 export function Socket({ id, botToken }: { id: string; botToken: string }) {
   const setToken = useSetAtom(botTokenAtom);
-
+  const { toast } = useToast();
   useEffect(() => {
     setToken(botToken);
   }, [botToken, setToken]);
@@ -64,7 +65,7 @@ export function Socket({ id, botToken }: { id: string; botToken: string }) {
     );
     socket.onopen = async () => {
       socket?.send(botToken);
-      toast("Connected to server");
+      //toast("Connected to server");
       setIsDisconnectedOpen(false);
     };
     socket.onclose = () => {
@@ -85,6 +86,10 @@ export function Socket({ id, botToken }: { id: string; botToken: string }) {
       }
       if (type & PayloadType.UpdateActions) {
         setActions(payload.Actions!);
+        toast({
+          element: <ActionCard action={payload.Actions![0]} />,
+          variant: "unstyled",
+        });
       }
 
       if (type & PayloadType.Initialize) {

@@ -23,13 +23,10 @@ import {
 } from "@/utils/actions";
 import { withNotification } from "@/utils/withNotification";
 import {
-  faBackwardStep,
-  faCirclePause,
-  faCirclePlay,
-  faForwardStep,
-} from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
+  IconPlayerPauseFilled,
+  IconPlayerPlayFilled,
+  IconPlayerSkipBackFilled,
+  IconPlayerSkipForwardFilled,
   IconRefreshDot,
   IconRefreshOff,
   IconRepeat,
@@ -70,7 +67,7 @@ export function PlayerControls() {
           <Tooltip>
             <TooltipTrigger>
               <IconRepeatOff
-                size="1rem"
+                size="1.2rem"
                 color="white"
                 role="button"
                 onClick={async () =>
@@ -86,7 +83,7 @@ export function PlayerControls() {
           <Tooltip>
             <TooltipTrigger>
               <IconRepeatOnce
-                size="1rem"
+                size="1.2rem"
                 color="white"
                 role="button"
                 onClick={async () =>
@@ -102,7 +99,7 @@ export function PlayerControls() {
           <Tooltip>
             <TooltipTrigger>
               <IconRepeat
-                size="1rem"
+                size="1.2rem"
                 color="white"
                 role="button"
                 onClick={async () =>
@@ -116,10 +113,9 @@ export function PlayerControls() {
         )}
         <Tooltip>
           <TooltipTrigger>
-            <FontAwesomeIcon
-              icon={faBackwardStep}
+            <IconPlayerSkipBackFilled
+              size="1.5rem"
               color="white"
-              size="xl"
               role="button"
               onClick={async () => withNotification(await rewindTrack(token))}
               className="transition-all duration-100 ease-in-out hover:text-white"
@@ -130,10 +126,9 @@ export function PlayerControls() {
         {state === PlayerState.Playing ? (
           <Tooltip>
             <TooltipTrigger>
-              <FontAwesomeIcon
-                icon={faCirclePause}
+              <IconPlayerPauseFilled
                 color="white"
-                size="2x"
+                size="2rem"
                 role="button"
                 onClick={pauseOrResume}
                 className="transition-all duration-100 ease-in-out hover:text-gray-300"
@@ -144,10 +139,9 @@ export function PlayerControls() {
         ) : (
           <Tooltip>
             <TooltipTrigger>
-              <FontAwesomeIcon
-                icon={faCirclePlay}
+              <IconPlayerPlayFilled
                 color="white"
-                size="2x"
+                size="2rem"
                 role="button"
                 onClick={pauseOrResume}
                 className="transition-all duration-100 ease-in-out hover:text-gray-300"
@@ -158,10 +152,9 @@ export function PlayerControls() {
         )}
         <Tooltip>
           <TooltipTrigger>
-            <FontAwesomeIcon
-              icon={faForwardStep}
+            <IconPlayerSkipForwardFilled
               color="white"
-              size="xl"
+              size="1.5rem"
               role="button"
               onClick={async () => withNotification(await skipTrack(token))}
               className="transition-all duration-100 ease-in-out hover:text-white"
@@ -173,7 +166,7 @@ export function PlayerControls() {
           <TooltipTrigger>
             {autoPlay ? (
               <IconRefreshDot
-                size="1rem"
+                size="1.2rem"
                 color="white"
                 role="button"
                 className="transition-all duration-100 ease-in-out hover:text-white"
@@ -183,7 +176,7 @@ export function PlayerControls() {
               />
             ) : (
               <IconRefreshOff
-                size="1rem"
+                size="1.2rem"
                 color="white"
                 role="button"
                 className="transition-all duration-100 ease-in-out hover:text-white"

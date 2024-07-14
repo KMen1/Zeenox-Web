@@ -58,8 +58,8 @@ export function Playlist({
 
   return (
     <div
-      className={`group flex cursor-pointer flex-nowrap items-center gap-2 rounded p-1.5 hover:bg-neutral-900 ${
-        isSelected ? "bg-neutral-800" : ""
+      className={`group flex cursor-pointer flex-nowrap items-center gap-2 rounded p-1.5 hover:bg-white/5 ${
+        isSelected ? "bg-white/10" : ""
       } ${transparent ? "hover:bg-[rgba(255,255,255,0.1)]" : ""}`}
       onClick={onClick}
     >
