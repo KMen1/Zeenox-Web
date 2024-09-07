@@ -6,25 +6,36 @@ import { LyricsLine } from "./LyricsLine";
 
 export function LyricsCardScrollArea() {
   const track = useAtomValue(currentTrackAtom);
-  const timedLyrics = track?.TimedLyrics;
   const lyrics = track?.Lyrics;
   const scrollRef = useRef<HTMLDivElement>(null);
   const position = useAtomValue(localPositionAtom);
 
-  const lyricsLines =
-    timedLyrics?.map((line, index) => (
-      <LyricsLine
-        key={index}
-        line={line.Line}
-        isPast={position > line.Range.End}
-        isCurrent={
-          position - line.Range.Start >= 0 && position < line.Range.End
-        }
-        start={line.Range.Start}
-      />
-    )) ??
-    lyrics?.map((line, index) => <LyricsLine key={index} line={line} />) ??
-    null;
+  let lyricsLines = lyrics?.lines?.map((line, index) => (
+    <LyricsLine
+      key={index}
+      line={line.line}
+      isPast={position > line.timestamp}
+      isCurrent={false}
+      start={line.timestamp}
+    />
+  ));
+
+  if (lyricsLines) {
+    const currentLine = lyricsLines.findIndex(
+      (line) => line.props.start && position < line.props.start,
+    );
+    if (currentLine !== -1) {
+      lyricsLines = lyricsLines.map((line, index) => (
+        <LyricsLine
+          key={index}
+          line={line.props.line}
+          isPast={index < currentLine}
+          isCurrent={index === currentLine}
+          start={line.props.start}
+        />
+      ));
+    }
+  }
 
   if (!lyricsLines) {
     return (

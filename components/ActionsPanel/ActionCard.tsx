@@ -74,6 +74,8 @@ type ActionCardProps = {
 };
 
 export function ActionCard({ action }: ActionCardProps) {
+  if (!action) return null;
+
   const title = action.Message;
   const timestampMs = action.Timestamp;
   const user = action.User;

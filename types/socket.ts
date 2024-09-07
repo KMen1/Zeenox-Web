@@ -29,18 +29,22 @@ export type Track = {
   Url: string | null;
   ArtworkUrl: string | null;
   RequestedBy: SocketUser | null;
-  TimedLyrics?: Line[] | null;
-  Lyrics?: string[] | null;
+  Lyrics?: Lyrics;
 };
 
-type Line = {
-  Line: string;
-  Range: Range;
+type Lyrics = {
+  sourceName: string;
+  provider: string;
+  text: string | null;
+  lines: LyricsLine[];
+  plugin: object;
 };
 
-type Range = {
-  Start: number;
-  End: number;
+type LyricsLine = {
+  timestamp: number;
+  duration: number;
+  line: string;
+  plugin: object;
 };
 
 export type Queue = {
