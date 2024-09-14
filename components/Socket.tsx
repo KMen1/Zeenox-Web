@@ -24,6 +24,7 @@ import { Track as TrackComponent } from "./Track/Track";
 import { useToast } from "./ui/use-toast";
 
 let socket: WebSocket | null = null;
+const regex = new RegExp("(?<=//)([^:/]+)");
 
 export function Socket({ id, botToken }: { id: string; botToken: string }) {
   const setToken = useSetAtom(botTokenAtom);
@@ -60,9 +61,8 @@ export function Socket({ id, botToken }: { id: string; botToken: string }) {
       setters.setActions(actions.reverse().slice(0, 10));
     }
 
-    socket = new WebSocket(
-      `${process.env.NEXT_PUBLIC_WS_URL}/api/v1/socket?id=${id}`,
-    );
+    const host = regex.exec(window.location.href);
+    socket = new WebSocket(`ws://${host?.[0]}:8080/api/v1/socket?id=${id}`);
     socket.onopen = async () => {
       socket?.send(botToken);
       //toast("Connected to server");
@@ -101,6 +101,7 @@ export function Socket({ id, botToken }: { id: string; botToken: string }) {
     return () => {
       socket?.close();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
