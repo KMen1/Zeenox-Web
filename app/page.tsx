@@ -1,5 +1,6 @@
 import { GuildPicker } from "@/components/GuildPicker/GuildPicker";
-import { db, validateRequest } from "@/lib/auth";
+import { validateRequest } from "@/lib/auth";
+import { sql } from "@/lib/db";
 import { getAvailableGuilds } from "@/utils/actions";
 import { IconServer } from "@tabler/icons-react";
 import { redirect } from "next/navigation";
@@ -11,7 +12,7 @@ export default async function Home() {
   }
 
   const [discord] =
-    await db`SELECT * FROM oauth_account WHERE provider_id = 'discord' AND user_id = ${user.id}`;
+    await sql`SELECT * FROM oauth_account WHERE provider_id = 'discord' AND user_id = ${user.id}`;
 
   const discordId = discord?.provider_user_id;
   const guilds = user ? await getAvailableGuilds(discordId!) : null;

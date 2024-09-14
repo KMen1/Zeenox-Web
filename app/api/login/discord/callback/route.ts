@@ -1,4 +1,5 @@
-import { db, discord, lucia } from "@/lib/auth";
+import { discord, lucia } from "@/lib/auth";
+import { sql } from "@/lib/db";
 import { OAuth2RequestError } from "arctic";
 import { generateId } from "lucia";
 import { parseCookies } from "oslo/cookie";
@@ -31,7 +32,7 @@ export async function GET(request: Request) {
     const expiresAt = Math.floor(tokens.accessTokenExpiresAt.getTime() / 1000);
 
     const [existingAccount] =
-      await db`SELECT * FROM oauth_account WHERE provider_id = 'discord' AND provider_user_id = ${discordUser.id}`;
+      await sql`SELECT * FROM oauth_account WHERE provider_id = 'discord' AND provider_user_id = ${discordUser.id}`;
 
     if (existingAccount) {
       const session = await lucia.createSession(existingAccount.user_id, {});
@@ -48,8 +49,8 @@ export async function GET(request: Request) {
     const userId = generateId(15);
 
     const avatarUrl = `https://cdn.discordapp.com/avatars/${discordUser.id}/${discordUser.avatar}.png`;
-    await db`INSERT INTO "auth_user" (id, username, avatar_url) VALUES (${userId}, ${discordUser.username}, ${avatarUrl})`;
-    await db`INSERT INTO "oauth_account" (provider_id, provider_user_id, user_id, access_token, refresh_token, expires_at) VALUES ('discord', ${discordUser.id}, ${userId}, ${tokens.accessToken}, ${tokens.refreshToken}, ${expiresAt})`;
+    await sql`INSERT INTO "auth_user" (id, username, avatar_url) VALUES (${userId}, ${discordUser.username}, ${avatarUrl})`;
+    await sql`INSERT INTO "oauth_account" (provider_id, provider_user_id, user_id, access_token, refresh_token, expires_at) VALUES ('discord', ${discordUser.id}, ${userId}, ${tokens.accessToken}, ${tokens.refreshToken}, ${expiresAt})`;
 
     const session = await lucia.createSession(userId, {});
     const sessionCookie = lucia.createSessionCookie(session.id);

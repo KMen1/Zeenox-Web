@@ -5,7 +5,8 @@ import { SearchPanel } from "@/components/SearchPanel/SearchPanel";
 import { Socket } from "@/components/Socket";
 import { SpotifyPanel } from "@/components/SpotifyPanel/SpotifyPanel";
 import { Skeleton } from "@/components/ui/skeleton";
-import { db, validateRequest } from "@/lib/auth";
+import { validateRequest } from "@/lib/auth";
+import { sql } from "@/lib/db";
 import { getBotToken, getGuild } from "@/utils/actions";
 import { Provider as JotaiProvider } from "jotai";
 import { Metadata } from "next";
@@ -42,9 +43,9 @@ export default async function Page({
     return redirect("/api/login/discord");
   }
   const [discord] =
-    await db`SELECT * FROM oauth_account WHERE provider_id = 'discord' AND user_id = ${user.id}`;
+    await sql`SELECT * FROM oauth_account WHERE provider_id = 'discord' AND user_id = ${user.id}`;
   const [spotify] =
-    await db`SELECT * FROM oauth_account WHERE provider_id = 'spotify' AND user_id = ${user.id}`;
+    await sql`SELECT * FROM oauth_account WHERE provider_id = 'spotify' AND user_id = ${user.id}`;
 
   const discordId = discord?.provider_user_id;
   const serverSessionToken = await getBotToken(discordId!, params.guildId);

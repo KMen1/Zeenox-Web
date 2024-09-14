@@ -1,4 +1,5 @@
-import { db, lucia, spotify } from "@/lib/auth";
+import { lucia, spotify } from "@/lib/auth";
+import { sql } from "@/lib/db";
 import { OAuth2RequestError } from "arctic";
 import { cookies } from "next/headers";
 import { parseCookies } from "oslo/cookie";
@@ -42,10 +43,10 @@ export async function GET(request: Request) {
     const expiresAt = Math.floor(tokens.accessTokenExpiresAt.getTime() / 1000);
 
     const [alreadyLinked] =
-      await db`SELECT * FROM oauth_account WHERE provider_id = 'spotify' AND provider_user_id = ${spotifyUser.id} AND user_id = ${user.id}`;
+      await sql`SELECT * FROM oauth_account WHERE provider_id = 'spotify' AND provider_user_id = ${spotifyUser.id} AND user_id = ${user.id}`;
 
     if (!alreadyLinked) {
-      await db`INSERT INTO "oauth_account" (provider_id, provider_user_id, user_id, access_token, refresh_token, expires_at) VALUES ('spotify', ${spotifyUser.id}, ${user.id}, ${tokens.accessToken}, ${tokens.refreshToken}, ${expiresAt})`;
+      await sql`INSERT INTO "oauth_account" (provider_id, provider_user_id, user_id, access_token, refresh_token, expires_at) VALUES ('spotify', ${spotifyUser.id}, ${user.id}, ${tokens.accessToken}, ${tokens.refreshToken}, ${expiresAt})`;
     }
 
     return new Response(null, {

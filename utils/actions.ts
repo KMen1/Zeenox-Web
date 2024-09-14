@@ -1,6 +1,7 @@
 "use server";
 
-import { db, discord, spotify, validateRequest } from "@/lib/auth";
+import { discord, spotify, validateRequest } from "@/lib/auth";
+import { sql } from "@/lib/db";
 import { SearchResult, SocketGuild } from "@/types/socket";
 import {
   PlaylistsResponse,
@@ -23,7 +24,7 @@ export async function getAccessToken(
   provider: "discord" | "spotify",
 ): Promise<string | null> {
   const [account] =
-    await db`SELECT access_token, refresh_token, expires_at FROM oauth_account WHERE provider_id = ${provider} AND user_id = ${userId}`;
+    await sql`SELECT access_token, refresh_token, expires_at FROM oauth_account WHERE provider_id = ${provider} AND user_id = ${userId}`;
 
   if (!account) {
     return null;
@@ -40,7 +41,7 @@ export async function getAccessToken(
           ? await discord.refreshAccessToken(refreshToken)
           : await spotify.refreshAccessToken(refreshToken);
     } catch (err: any) {
-      await db`DELETE FROM oauth_account WHERE provider_id = ${provider} AND user_id = ${userId}`;
+      await sql`DELETE FROM oauth_account WHERE provider_id = ${provider} AND user_id = ${userId}`;
       return null;
     }
 
@@ -48,7 +49,7 @@ export async function getAccessToken(
       newTokens.accessTokenExpiresAt.getTime() / 1000,
     );
 
-    await db`UPDATE oauth_account SET access_token = ${newTokens.accessToken}, expires_at = ${expiresAt}, refresh_token = ${newTokens.refreshToken} WHERE provider_id = ${provider} AND user_id = ${userId}`;
+    await sql`UPDATE oauth_account SET access_token = ${newTokens.accessToken}, expires_at = ${expiresAt}, refresh_token = ${newTokens.refreshToken} WHERE provider_id = ${provider} AND user_id = ${userId}`;
     return newTokens.accessToken;
   }
 

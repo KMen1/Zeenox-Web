@@ -1,13 +1,11 @@
-import { NeonHTTPAdapter } from "@lucia-auth/adapter-postgresql";
-import { neon } from "@neondatabase/serverless";
+import { PostgresJsAdapter } from "@lucia-auth/adapter-postgresql";
 import { Discord, Spotify } from "arctic";
 import { Lucia, Session, User } from "lucia";
 import { cookies } from "next/headers";
 import { cache } from "react";
+import { sql } from "./db";
 
-export const db = neon(process.env.DATABASE_URL!);
-
-const adapter = new NeonHTTPAdapter(db, {
+const adapter = new PostgresJsAdapter(sql, {
   user: "auth_user",
   session: "user_session",
 });
@@ -64,13 +62,13 @@ export const validateRequest = cache(
 export const discord = new Discord(
   process.env.DISCORD_CLIENT_ID!,
   process.env.DISCORD_CLIENT_SECRET!,
-  "http://localhost:3000/api/login/discord/callback",
+  `${process.env.WEB_URL}/api/login/discord/callback`,
 );
 
 export const spotify = new Spotify(
   process.env.SPOTIFY_CLIENT_ID!,
   process.env.SPOTIFY_CLIENT_SECRET!,
-  "http://localhost:3000/api/login/spotify/callback",
+  `${process.env.WEB_URL}/api/login/spotify/callback`,
 );
 
 declare module "lucia" {
