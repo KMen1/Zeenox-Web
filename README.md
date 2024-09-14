@@ -22,6 +22,7 @@ Web interface for the Zeenox Discord music bot, for more information about the b
 ### Requirements
 
 - Node.js with npm
+- PostgreSQL database
 - Spotify application, [click here](https://developer.spotify.com/dashboard/applications) to create one
 - Discord application, [click here](https://discord.com/developers/applications) to create one
 - Running instance of the Zeenox bot
@@ -52,16 +53,22 @@ npm install
 3. Create a `.env` file in the root directory and add the following variables
 
 ```env
-BOT_URL= # URL to the Zeenox bot (https://example.com)
-NEXT_PUBLIC_WS_URL= # URL to the Zeenox bot websocket (wss://example.com)
-DATABASE_URL= # Neon postgres url
+BOT_URL= # URL to the Zeenox bot (https://localhost)
+WEB_URL= # URL of the web interface (http://localhost:3000)
+DATABASE_URL= # PostgreSQL database URL (postgres://zeenox:zeenox@localhost:5432/zeenox?search_path=web) search_path is you want to use the same database for the bot and the web interface
 DISCORD_CLIENT_ID=
 DISCORD_CLIENT_SECRET=
 SPOTIFY_CLIENT_ID=
 SPOTIFY_CLIENT_SECRET=
 ```
 
-4. Start the server
+4. Import schema.sql to your PostgreSQL database
+
+```bash
+psql -U zeenox -d zeenox -f schema.sql
+```
+
+5. Start the server
 
 ```bash
 npm run dev
