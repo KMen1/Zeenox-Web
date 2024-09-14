@@ -8,6 +8,7 @@ const nextConfig = {
     locales: ["en"],
     defaultLocale: "en",
   },
+  output: "standalone",
   images: {
     unoptimized: true,
     remotePatterns: [
