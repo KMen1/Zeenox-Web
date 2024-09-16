@@ -62,7 +62,7 @@ export function Socket({ id, botToken }: { id: string; botToken: string }) {
     }
 
     const host = regex.exec(window.location.href);
-    socket = new WebSocket(`ws://${host?.[0]}:8080/api/v1/socket?id=${id}`);
+    socket = new WebSocket(`ws://${host?.[0]}:80/api/v1/socket?id=${id}`);
     socket.onopen = async () => {
       socket?.send(botToken);
       //toast("Connected to server");
@@ -174,7 +174,10 @@ export function Socket({ id, botToken }: { id: string; botToken: string }) {
           <AlertDialogFooter className="flex gap-2">
             <AlertDialogAction
               className="min-w-fit flex-1 gap-2"
-              onClick={async () => await resumePreviousSession(botToken)}
+              onClick={async () => {
+                await resumePreviousSession(botToken);
+                setters.setResumeSession(null);
+              }}
             >
               <IconClockPlay size={20} />
               Resume
