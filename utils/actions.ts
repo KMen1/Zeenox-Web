@@ -19,6 +19,13 @@ type Result = {
 const spotifyApiUrl = "https://api.spotify.com/v1";
 const baseUrl = `${process.env.BOT_URL}/api/v1`;
 
+export async function isSpotifyEnabled() {
+  return (
+    Boolean(process.env.SPOTIFY_CLIENT_ID) &&
+    Boolean(process.env.SPOTIFY_CLIENT_SECRET)
+  );
+}
+
 export async function getAccessToken(
   userId: string,
   provider: "discord" | "spotify",

@@ -89,7 +89,11 @@ function SearchPanelForm({ state }: SearchPanelFormProps) {
   );
 }
 
-export function SearchPanel() {
+export function SearchPanel({
+  isSpotifyEnabled,
+}: {
+  isSpotifyEnabled: boolean;
+}) {
   const [state, formAction] = useFormState(searchTracks, null);
 
   return (
@@ -97,14 +101,16 @@ export function SearchPanel() {
       title={"Search for a song"}
       icon={<IconListSearch />}
       rightSection={
-        <Button asChild className="h-7">
-          <a href="/api/login/spotify">
-            <div className="flex items-center gap-2">
-              <IconBrandSpotify size={20} />
-              Connect Spotify
-            </div>
-          </a>
-        </Button>
+        isSpotifyEnabled ? (
+          <Button asChild className="h-7">
+            <a href="/api/login/spotify">
+              <div className="flex items-center gap-2">
+                <IconBrandSpotify size={20} />
+                Connect Spotify
+              </div>
+            </a>
+          </Button>
+        ) : null
       }
     >
       <form action={formAction}>

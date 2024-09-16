@@ -7,7 +7,7 @@ import { SpotifyPanel } from "@/components/SpotifyPanel/SpotifyPanel";
 import { Skeleton } from "@/components/ui/skeleton";
 import { validateRequest } from "@/lib/auth";
 import { sql } from "@/lib/db";
-import { getBotToken, getGuild } from "@/utils/actions";
+import { getBotToken, getGuild, isSpotifyEnabled } from "@/utils/actions";
 import { Provider as JotaiProvider } from "jotai";
 import { Metadata } from "next";
 import { redirect } from "next/navigation";
@@ -53,11 +53,17 @@ export default async function Page({
     return <Skeleton className="h-[500px] w-full" />;
   }
 
+  const spotifyEnabled = await isSpotifyEnabled();
+
   return (
     <JotaiProvider>
       <Socket id={params.guildId} botToken={serverSessionToken} />
       <div className="relative grid h-[calc(-30px_+_100vh)] min-h-[750px] min-w-[1000px] gap-4 [grid-template-areas:'tracks_queue_extra''player_player_player'] [grid-template-columns:1fr_1fr_1fr] [grid-template-rows:1fr_auto]">
-        {spotify ? <SpotifyPanel /> : <SearchPanel />}
+        {spotify && spotifyEnabled ? (
+          <SpotifyPanel />
+        ) : (
+          <SearchPanel isSpotifyEnabled={spotifyEnabled} />
+        )}
         <QueuePanel />
         <LyricsActionsSwitcher />
         <PlayerPanel />
