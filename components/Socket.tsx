@@ -62,7 +62,7 @@ export function Socket({ id, botToken }: { id: string; botToken: string }) {
     }
 
     const host = regex.exec(window.location.href);
-    socket = new WebSocket(`ws://${host?.[0]}:80/api/v1/socket?id=${id}`);
+    socket = new WebSocket(`ws://${host?.[0]}:8080/api/v1/socket?id=${id}`);
     socket.onopen = async () => {
       socket?.send(botToken);
       //toast("Connected to server");
