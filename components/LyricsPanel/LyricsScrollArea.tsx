@@ -21,8 +21,11 @@ export function LyricsCardScrollArea() {
   ));
 
   if (lyricsLines) {
-    const currentLine = lyricsLines.findIndex(
-      (line) => line.props.start && position < line.props.start,
+    const currentLine = Math.max(
+      0,
+      lyricsLines.findIndex(
+        (line) => line.props.start && position < line.props.start,
+      ) - 1,
     );
     if (currentLine !== -1) {
       lyricsLines = lyricsLines.map((line, index) => (
